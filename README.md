@@ -1,2 +1,7 @@
-# custom-compression
-Custom Compression Algorithm (Name TBD) Made as a Summer Project
+# Custom Compression Algorithm
+
+Custom Compression Algorithm written in Go
+
+## Why?
+
+This project was created for a summer project to learn how to create a custom compression algorithm
