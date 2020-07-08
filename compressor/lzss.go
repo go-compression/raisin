@@ -1,6 +1,7 @@
 package compressor
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -10,6 +11,8 @@ const(
     Separator = ","
 )
 
+const MinimumSizeOfReference int = -1 // Use -1 to represent dynamic "smart" reference inclusion
+
 func Compress(fileContents []byte) ([]byte) {
 	searchBuffer := make([]byte, 0)
 	output := make([]string, 0)
@@ -17,8 +20,6 @@ func Compress(fileContents []byte) ([]byte) {
 	pointer := 0
 	checkNextByte := false
 	checkStartPointer := 0
-	// lastPointer := 0
-	lastIndex := 0
 	checkOffset := 0
 	checkBytesToAdd := make([]byte, 0)
 	for _, fileByte := range fileContents {
@@ -29,27 +30,36 @@ func Compress(fileContents []byte) ([]byte) {
 			index, found = FindReverse(copySearchBuffer, fileByte)
 		} else {
 			// We don't need to copy the searchBuffer because FindSequential does not modify it
-			index, found = FindSequential(searchBuffer[lastIndex + 1:], fileByte)
+			index, found = FindReverseSlice(searchBuffer, append(checkBytesToAdd, fileByte))
 		}
 
-		if found && checkNextByte && index == 0 {
+		if found && checkNextByte {
 			pointer = len(searchBuffer) - index
+			checkStartPointer = pointer
 			checkOffset++
-			// lastPointer = pointer
-			lastIndex++
 			checkBytesToAdd = append(checkBytesToAdd, fileByte)
 		} else if found && !checkNextByte {
 			pointer = len(searchBuffer) - index
 
 			checkStartPointer = pointer
-			// lastPointer = pointer
-			lastIndex = index
 			checkOffset = 1
 			checkNextByte = true
 			checkBytesToAdd = append(checkBytesToAdd, fileByte)
 		} else {
 			if checkNextByte {
-				output = append(output, Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)
+				shouldAdd := true
+
+				if MinimumSizeOfReference == -1 {
+					if len([]byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)) > len(checkBytesToAdd) {
+						shouldAdd = false 
+					}
+				}
+
+				if len(checkBytesToAdd) > MinimumSizeOfReference && shouldAdd {
+					output = append(output, Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)
+				} else {
+					output = append(output, string(checkBytesToAdd))
+				}
 				checkStartPointer = 0
 				checkOffset = 0
 				checkNextByte = false
@@ -127,6 +137,46 @@ func FindSequential(slice []byte, val byte) (int, bool) {
 		}
     }
     return -1, false
+}
+
+func FindReverseSlice(input []byte, val []byte) (int, bool) {
+	foundByte := false
+	scanIndex := -1
+
+	// Find
+    for i := len(input) - 1; i >= 0; i-- {
+		item := input[i]
+		scanIndex = i
+		for valIndex := len(val) - 1; valIndex >= 0; valIndex-- {
+			valItem := val[valIndex]
+			if valItem == item {
+				if !foundByte {
+					// lastIndex = i - valIndex
+					foundByte = true
+				}
+				if valIndex == 0 || scanIndex == 0 {
+					if valIndex != 0 {
+						foundByte = false // We haven't found all of the values we're scanning for
+					}
+					break
+				} else {
+					scanIndex--
+					if scanIndex > len(input) || scanIndex < 0 {
+						fmt.Printf("Trying to grab %v from %v\n", scanIndex, string(input))
+					}
+					item = input[scanIndex]
+				}
+			} else {
+				foundByte = false
+				break
+			}
+		}
+		if foundByte {
+			return scanIndex, foundByte
+		}
+        
+    }
+    return scanIndex, foundByte
 }
 
 func FindReverse(slice []byte, val byte) (int, bool) {
