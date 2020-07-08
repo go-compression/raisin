@@ -1,3 +1,8 @@
+# Compression testing
+COMPRESSIONTESTFILE.txt
+*.compressed
+*.decompressed
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -13,3 +18,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# IDE
+.vscode/

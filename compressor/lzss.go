@@ -11,11 +11,13 @@ const(
     Separator = ","
 )
 
-const MinimumSizeOfReference int = -1 // Use -1 to represent dynamic "smart" reference inclusion
+const MinimumSizeOfReference int = -1   // Use -1 to represent dynamic "smart" reference inclusion
 
 func Compress(fileContents []byte) ([]byte) {
+	fileContents = EncodeOpeningSymbols(fileContents)
+
 	searchBuffer := make([]byte, 0)
-	output := make([]string, 0)
+	output := make([]byte, 0)
 
 	pointer := 0
 	checkNextByte := false
@@ -56,9 +58,9 @@ func Compress(fileContents []byte) ([]byte) {
 				}
 
 				if len(checkBytesToAdd) > MinimumSizeOfReference && shouldAdd {
-					output = append(output, Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)
+					output = append(output, []byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)...)
 				} else {
-					output = append(output, string(checkBytesToAdd))
+					output = append(output, checkBytesToAdd...)
 				}
 				checkStartPointer = 0
 				checkOffset = 0
@@ -66,7 +68,7 @@ func Compress(fileContents []byte) ([]byte) {
 				searchBuffer = append(searchBuffer, checkBytesToAdd...)
 				checkBytesToAdd = make([]byte, 0)
 			}
-			output = append(output, string(fileByte))
+			output = append(output, fileByte)
 		}
 
 		if !checkNextByte {
@@ -74,14 +76,26 @@ func Compress(fileContents []byte) ([]byte) {
 		}
 	}
 	if checkNextByte {
-		output = append(output, Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)
+		shouldAdd := true
+
+		if MinimumSizeOfReference == -1 {
+			if len([]byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)) > len(checkBytesToAdd) {
+				shouldAdd = false 
+			}
+		}
+
+		if len(checkBytesToAdd) > MinimumSizeOfReference && shouldAdd {
+			output = append(output, []byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)...)
+		} else {
+			output = append(output, checkBytesToAdd...)
+		}
 	}
-	return StringsToBytes(output)
+	return output
 }
 
 func Decompress(fileContents []byte) ([]byte) {
 	searchBuffer := make([]byte, 0)
-	output := make([]string, 0)
+	output := make([]byte, 0)
 
 	pointer := 0
 	pointerBytes := make([]byte, 0)
@@ -108,25 +122,44 @@ func Decompress(fileContents []byte) ([]byte) {
 				absolutePointer := len(searchBuffer) - pointer
 				slice := searchBuffer[absolutePointer:absolutePointer + offset]
 				
-				output = append(output, string(slice))
+				output = append(output, slice...)
 				searchBuffer = append(searchBuffer, slice...)
 			} else {
 				offsetBytes = append(offsetBytes, fileByte)
 			}
 		} else {
-			output = append(output, string(fileByte))
+			output = append(output, fileByte)
 			searchBuffer = append(searchBuffer, fileByte)
 		}
 	}
-	return StringsToBytes(output)
+	output = DecodeOpeningSymbols(output)
+	return output
 }
 
-func StringsToBytes(input []string) ([]byte) {
-	output := make([]byte, 0)
-	for _, v := range input {
-		output = append(output, []byte(v)...)
+const EncodedOpening = 0xff
+
+func EncodeOpeningSymbols(bytes []byte) ([]byte) {
+	encoded := make([]byte, len(bytes))
+	for i, val := range bytes {
+		if string(val) == Opening {
+			val = EncodedOpening
+		}
+		encoded[i] = val
 	}
-	return output
+	return encoded
+}
+
+func DecodeOpeningSymbols(bytes []byte) ([]byte) {
+	decoded := make([]byte, 0)
+	for _, val := range bytes {
+		if val == EncodedOpening {
+			newVal := []byte(Opening)
+			decoded = append(decoded, newVal...)
+		} else {
+			decoded = append(decoded, val)
+		}
+	}
+	return decoded
 }
 
 func FindSequential(slice []byte, val byte) (int, bool) {

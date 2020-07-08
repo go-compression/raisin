@@ -32,7 +32,6 @@ func init() {
 }
 
 func compress(cmd *cobra.Command, args []string) {
-	fmt.Println("Compressing...")
 	file := args[0] // Args[0] = file as a string
 	engine.CompressFile(file)
 	fmt.Println("done!")
