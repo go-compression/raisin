@@ -5,20 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch file",
-      "type": "go",
-      "request": "launch",
-      "mode": "debug",
-      "program": "${file}"
-    },
-    {
-      "name": "Launch",
+      "name": "Main.go",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/custom-compressor/main.go",
-      "env": {},
-      "args": []
+      "program": "${workspaceFolder}/main.go",
+      "env": { "GOPATH": "/home/phillip/Projects" },
+      "args": ["compress", "test.txt"]
     }
   ]
 }

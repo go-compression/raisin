@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	engine "github.com/mrfleap/custom-compression/algorithm"
+	engine "github.com/mrfleap/custom-compression/engine"
 	"github.com/spf13/cobra"
 )
 
