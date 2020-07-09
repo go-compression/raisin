@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	engine "github.com/mrfleap/custom-compression/algorithm"
+	engine "github.com/mrfleap/custom-compression/engine"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +32,6 @@ func init() {
 }
 
 func compress(cmd *cobra.Command, args []string) {
-	fmt.Println("Compressing...")
 	file := args[0] // Args[0] = file as a string
 	engine.CompressFile(file)
 	fmt.Println("done!")

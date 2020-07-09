@@ -1,0 +1,14 @@
+language: go
+
+go:
+  - master
+
+services:
+  - docker
+
+before_install:
+  - docker build . -t compressor
+
+script:
+  - docker run -it compressor ./main compress rows.json
+  - docker run -it compressor ./main compress boundaries.zip
