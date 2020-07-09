@@ -3,6 +3,7 @@ package compressor
 import (
 	"fmt"
 	"strconv"
+	pb "github.com/cheggaaa/pb/v3"
 )
 
 const(
@@ -13,7 +14,7 @@ const(
 
 const MinimumSizeOfReference int = -1   // Use -1 to represent dynamic "smart" reference inclusion
 
-func Compress(fileContents []byte) ([]byte) {
+func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
 	fileContents = EncodeOpeningSymbols(fileContents)
 
 	searchBuffer := make([]byte, 0)
@@ -24,14 +25,19 @@ func Compress(fileContents []byte) ([]byte) {
 	checkStartPointer := 0
 	checkOffset := 0
 	checkBytesToAdd := make([]byte, 0)
+	bar := pb.New(len(fileContents))
+	if useProgressBar {
+		bar.Set(pb.Bytes, true)
+		bar.Start()
+	}
 	for _, fileByte := range fileContents {
+		if useProgressBar {
+			bar.Increment()
+		}
 		index, found := 0, false
 		if !checkNextByte {
-			copySearchBuffer := make([]byte, len(searchBuffer))
-			copy(copySearchBuffer, searchBuffer)
-			index, found = FindReverse(copySearchBuffer, fileByte)
+			index, found = FindReverse(searchBuffer, fileByte)
 		} else {
-			// We don't need to copy the searchBuffer because FindSequential does not modify it
 			index, found = FindReverseSlice(searchBuffer, append(checkBytesToAdd, fileByte))
 		}
 
@@ -90,10 +96,13 @@ func Compress(fileContents []byte) ([]byte) {
 			output = append(output, checkBytesToAdd...)
 		}
 	}
+	if useProgressBar {
+		bar.Finish()
+	}
 	return output
 }
 
-func Decompress(fileContents []byte) ([]byte) {
+func Decompress(fileContents []byte, useProgressBar bool) ([]byte) {
 	searchBuffer := make([]byte, 0)
 	output := make([]byte, 0)
 
@@ -229,14 +238,9 @@ func FindReverseSlice(input []byte, val []byte) (int, bool) {
 }
 
 func FindReverse(slice []byte, val byte) (int, bool) {
-	// Reverse
-	for i := len(slice)/2-1; i >= 0; i-- {
-		opp := len(slice)-1-i
-		slice[i], slice[opp] = slice[opp], slice[i]
-	}
 	// Find
-	i := len(slice) - 1
-    for _, item := range slice {
+    for i := len(slice) - 1; i >= 0; i-- {
+		item := slice[i]
         if item == val {
 			return i, true
 		}

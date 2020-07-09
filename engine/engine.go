@@ -12,13 +12,13 @@ func CompressFile(fileString string) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("LZSS Compressing... ")
-	var compressedContents = lzss.Compress(fileContents)
+	var compressedContents = lzss.Compress(fileContents, true)
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, compressedContents, 0644)
 	fmt.Printf("done.\n")
 
 	fmt.Printf("LZSS Decompressing...")
-	var decompressedContents = lzss.Decompress(compressedContents)
+	var decompressedContents = lzss.Decompress(compressedContents, true)
 	var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
 	err = ioutil.WriteFile(decompressedFilePath, decompressedContents, 0644)
 	check(err)
