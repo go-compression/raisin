@@ -136,26 +136,42 @@ func Decompress(fileContents []byte) ([]byte) {
 	return output
 }
 
-const EncodedOpening = 0xff
+const EncodedOpening = 0xff 
+const EscapeByte = 0x5c
 
 func EncodeOpeningSymbols(bytes []byte) ([]byte) {
-	encoded := make([]byte, len(bytes))
-	for i, val := range bytes {
+	encoded := make([]byte, 0)
+	foundEscape := false
+	for _, val := range bytes {
 		if string(val) == Opening {
+			if foundEscape {
+				encoded = append(encoded, EscapeByte)
+			}
 			val = EncodedOpening
+		} else if val == EncodedOpening || val == EscapeByte {
+			encoded = append(encoded, EscapeByte)
+		} else if val == EscapeByte {  
+			if foundEscape {
+				encoded = append(encoded, EscapeByte)
+			}
+			foundEscape = true
 		}
-		encoded[i] = val
+		encoded = append(encoded, val)
 	}
 	return encoded
 }
 
 func DecodeOpeningSymbols(bytes []byte) ([]byte) {
 	decoded := make([]byte, 0)
+	foundEscape := false
 	for _, val := range bytes {
-		if val == EncodedOpening {
+		if val == EncodedOpening && !foundEscape {
 			newVal := []byte(Opening)
 			decoded = append(decoded, newVal...)
+		} else if val == EscapeByte && !foundEscape {
+			foundEscape = true
 		} else {
+			foundEscape = false
 			decoded = append(decoded, val)
 		}
 	}
