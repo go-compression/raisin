@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var compressCmd = &cobra.Command{
-	Use:   "compress",
-	Short: "Compress a file using custom-compressor",
-	Long:  `Prints version number and build info`,
+var decompressCmd = &cobra.Command{
+	Use:   "decompress",
+	Short: "Decompress a file using custom-compressor",
+	Long:  `Decompress a file using custom-compressor`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("requires a file argument to compress")
@@ -24,14 +24,14 @@ var compressCmd = &cobra.Command{
 		}
 
 	},
-	Run: compress,
+	Run: decompress,
 }
 
 func init() {
-	rootCmd.AddCommand(compressCmd)
+	rootCmd.AddCommand(decompressCmd)
 }
 
-func compress(cmd *cobra.Command, args []string) {
+func decompress(cmd *cobra.Command, args []string) {
 	file := args[0] // Args[0] = file as a string
-	engine.CompressFile(file)
+	engine.DecompressFile(file)
 }

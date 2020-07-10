@@ -8,13 +8,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var compressCmd = &cobra.Command{
-	Use:   "compress",
-	Short: "Compress a file using custom-compressor",
-	Long:  `Prints version number and build info`,
+var benchmarkCmd = &cobra.Command{
+	Use:   "benchmark",
+	Short: "Benchmark a file using custom-compressor",
+	Long:  `Benchmark a file using custom-compressor`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return errors.New("requires a file argument to compress")
+			return errors.New("requires a file argument to benchmark")
 		}
 		file := args[0]
 		if _, err := os.Stat(file); os.IsNotExist(err) {
@@ -22,16 +22,15 @@ var compressCmd = &cobra.Command{
 		} else {
 			return nil
 		}
-
 	},
-	Run: compress,
+	Run: benchmark,
 }
 
 func init() {
-	rootCmd.AddCommand(compressCmd)
+	rootCmd.AddCommand(benchmarkCmd)
 }
 
-func compress(cmd *cobra.Command, args []string) {
+func benchmark(cmd *cobra.Command, args []string) {
 	file := args[0] // Args[0] = file as a string
-	engine.CompressFile(file)
+	engine.BenchmarkFile(file)
 }

@@ -1,4 +1,4 @@
-package main
+package compressor
 
 import (
 	"container/heap"

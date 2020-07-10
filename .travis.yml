@@ -10,5 +10,5 @@ before_install:
   - docker build . -t compressor
 
 script:
-  - docker run -it compressor ./main compress rows.json
-  - docker run -it compressor ./main compress boundaries.zip
+  - docker run -it compressor ./main benchmark rows.json
+  - docker run -it compressor ./main benchmark boundaries.zip
