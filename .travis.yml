@@ -12,3 +12,4 @@ before_install:
 script:
   - docker run -it compressor ./main benchmark rows.json
   - docker run -it compressor ./main benchmark boundaries.zip
+  - docker run -it compressor ./main benchmark sales.pdf
