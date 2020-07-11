@@ -1,8 +1,9 @@
-package compressor
+package main
 
 import (
 	"container/heap"
 	"fmt"
+	"io/ioutil"
 )
 
 type HuffmanTree interface {
@@ -57,7 +58,11 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 	}
 	return heap.Pop(&trees).(HuffmanTree)
 }
-
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
 func printCodes(tree HuffmanTree, prefix []byte) {
 	switch i := tree.(type) {
 	case HuffmanLeaf:
@@ -72,13 +77,19 @@ func printCodes(tree HuffmanTree, prefix []byte) {
 		prefix = prefix[:len(prefix)-1]
 	}
 }
-
+func buildResponse(contents string, tree HuffmanTree)
+{
+	var str strings.Builder
+	for char in contents:
+		str.WriteString(string())
+}
 func main() {
-	test := "This is a test string which contains many t's"
-
+	fileContents, err := ioutil.ReadFile("huffman-input.txt")
+	check(err)
+	content := string(fileContents)
 	symFreqs := make(map[rune]int)
 
-	for _, c := range test {
+	for _, c := range content {
 		symFreqs[c]++
 	}
 
