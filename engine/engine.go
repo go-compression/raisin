@@ -9,11 +9,11 @@ import (
 	lzss "github.com/mrfleap/custom-compression/compressor"
 )
 
-func CompressFile(fileString string) {
+func CompressFile(fileString string, maxSearchBufferLength int) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("LZSS Compressing...\n")
-	var compressedContents = lzss.Compress(fileContents, true)
+	var compressedContents = lzss.Compress(fileContents, true, maxSearchBufferLength)
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, compressedContents, 0644)
 
@@ -33,11 +33,11 @@ func DecompressFile(fileString string) {
 	check(err)
 }
 
-func BenchmarkFile(fileString string) {
+func BenchmarkFile(fileString string, maxSearchBufferLength int) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("LZSS Compressing...\n")
-	var compressedContents = lzss.Compress(fileContents, true)
+	var compressedContents = lzss.Compress(fileContents, true, maxSearchBufferLength)
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, compressedContents, 0644)
 

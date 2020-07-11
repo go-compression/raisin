@@ -1,7 +1,7 @@
 package compressor
 
 import (
-	"fmt"
+	"sort"
 	"strconv"
 	pb "github.com/cheggaaa/pb/v3"
 )
@@ -14,11 +14,11 @@ const(
 
 const MinimumSizeOfReference int = -1   // Use -1 to represent dynamic "smart" reference inclusion
 
-func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
+func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {
 	fileContents = EncodeOpeningSymbols(fileContents)
 
-	searchBuffer := make([]byte, 0)
-	output := make([]byte, 0)
+	var searchBuffer []byte
+	var output []byte
 
 	pointer := 0
 	checkNextByte := false
@@ -38,7 +38,11 @@ func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
 		if !checkNextByte {
 			index, found = FindReverse(searchBuffer, fileByte)
 		} else {
-			index, found = FindReverseSlice(searchBuffer, append(checkBytesToAdd, fileByte))
+			diminishingReturns := 0
+			if maxSearchBufferLength > 0 && len(searchBuffer) > maxSearchBufferLength {
+				diminishingReturns = len(searchBuffer) - maxSearchBufferLength
+			}
+			index, found = FindReverseSlice(searchBuffer[diminishingReturns:], append(checkBytesToAdd, fileByte))
 		}
 
 		if found && checkNextByte {
@@ -58,13 +62,13 @@ func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
 				shouldAdd := true
 
 				if MinimumSizeOfReference == -1 {
-					if len([]byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)) > len(checkBytesToAdd) {
+					if len(getEncoding(checkStartPointer, checkOffset)) > len(checkBytesToAdd) {
 						shouldAdd = false 
 					}
 				}
 
 				if len(checkBytesToAdd) > MinimumSizeOfReference && shouldAdd {
-					output = append(output, []byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)...)
+					output = append(output, getEncoding(checkStartPointer, checkOffset)...)
 				} else {
 					output = append(output, checkBytesToAdd...)
 				}
@@ -72,6 +76,7 @@ func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
 				checkOffset = 0
 				checkNextByte = false
 				searchBuffer = append(searchBuffer, checkBytesToAdd...)
+				// SortByteArray(searchBuffer)
 				checkBytesToAdd = make([]byte, 0)
 			}
 			output = append(output, fileByte)
@@ -79,6 +84,7 @@ func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
 
 		if !checkNextByte {
 			searchBuffer = append(searchBuffer, fileByte)
+			// SortByteArray(searchBuffer)
 		}
 	}
 	if checkNextByte {
@@ -100,6 +106,10 @@ func Compress(fileContents []byte, useProgressBar bool) ([]byte) {
 		bar.Finish()
 	}
 	return output
+}
+
+func getEncoding(relativePointer int, relativeOffset int) ([]byte) {
+	return []byte(Opening + strconv.Itoa(relativePointer) + Separator + strconv.Itoa(relativeOffset) + Closing)
 }
 
 func Decompress(fileContents []byte, useProgressBar bool) ([]byte) {
@@ -198,44 +208,39 @@ func FindSequential(slice []byte, val byte) (int, bool) {
 }
 
 func FindReverseSlice(input []byte, val []byte) (int, bool) {
-	foundByte := false
-	scanIndex := -1
+	if len(val) == 0 {
+		return -1, false
+	}
+
+	nextToCheck := len(val) - 1
 
 	// Find
     for i := len(input) - 1; i >= 0; i-- {
+		// if MinimumSizeOfReference < 0 && len(val) > 15 && len(strconv.Itoa(len(input) - i)) > len(val) {
+		// 	return -1, false
+		// }
+
 		item := input[i]
-		scanIndex = i
-		for valIndex := len(val) - 1; valIndex >= 0; valIndex-- {
-			valItem := val[valIndex]
-			if valItem == item {
-				if !foundByte {
-					// lastIndex = i - valIndex
-					foundByte = true
-				}
-				if valIndex == 0 || scanIndex == 0 {
-					if valIndex != 0 {
-						foundByte = false // We haven't found all of the values we're scanning for
-					}
-					break
-				} else {
-					scanIndex--
-					if scanIndex > len(input) || scanIndex < 0 {
-						fmt.Printf("Trying to grab %v from %v\n", scanIndex, string(input))
-					}
-					item = input[scanIndex]
-				}
-			} else {
-				foundByte = false
-				break
-			}
+		
+		if val[nextToCheck] != item {
+			nextToCheck = len(val) - 1
 		}
-		if foundByte {
-			return scanIndex, foundByte
+
+		if val[nextToCheck] == item {
+			// Byte checked out
+			nextToCheck--
 		}
-        
+
+		if nextToCheck < 0 {
+			return i, true
+		} else if i == 0 {
+			// We've reached the end of the original input but not found the value, so not found
+			return -1, false
+		}
     }
-    return scanIndex, foundByte
+    return -1, false
 }
+
 
 func FindReverse(slice []byte, val byte) (int, bool) {
 	// Find
@@ -247,4 +252,8 @@ func FindReverse(slice []byte, val byte) (int, bool) {
         i--
     }
     return -1, false
+}
+
+func SortByteArray(src []byte) {
+	sort.Slice(src, func(i, j int) bool { return src[i] < src[j]})
 }

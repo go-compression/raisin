@@ -8,10 +8,6 @@ import (
 )
 
 var (
-	// Used for flags.
-	cfgFile     string
-	userLicense string
-
 	rootCmd = &cobra.Command{
 		Use:   "custom-compress",
 		Short: "Custom compressor",
