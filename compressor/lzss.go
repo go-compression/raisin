@@ -3,6 +3,8 @@ package compressor
 import (
 	"sort"
 	"strconv"
+	"sync"
+	"bytes"
 	pb "github.com/cheggaaa/pb/v3"
 )
 
@@ -14,7 +16,93 @@ const(
 
 const MinimumSizeOfReference int = -1   // Use -1 to represent dynamic "smart" reference inclusion
 
+type Reference struct {
+	value []byte
+	isReference bool
+	negativeOffset int
+	size int
+}
+
 func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {
+	fileContents = EncodeOpeningSymbols(fileContents)
+	var waitgroup sync.WaitGroup
+
+	bar := pb.New(len(fileContents))
+	bar.Set(pb.Bytes, true)
+	bar.Start()
+
+	output := make([](chan Reference), len(fileContents))
+
+	for i := 0; i < len(fileContents); i++ {
+		waitgroup.Add(1)
+		output[i] = make(chan Reference, 1)
+
+		startIndex := 0
+		searchBuffer := fileContents[:i]
+		if maxSearchBufferLength > 0 && len(searchBuffer) > maxSearchBufferLength {
+			startIndex = len(searchBuffer) - maxSearchBufferLength
+		}
+
+		go CompressorWorkerAsync(&waitgroup, output[i], searchBuffer[startIndex:], []byte{fileContents[i]}, fileContents[i:], bar)
+	}
+
+	waitgroup.Wait()
+	for _, channel := range output {
+		close(channel)
+	}
+
+	var finalOutput []byte
+	var ignoreNextChars int
+	for _, i := range output {
+		ref := <-i
+		if ignoreNextChars > 0 {
+			ignoreNextChars--
+		} else if ref.isReference {
+			ignoreNextChars = ref.size - 1
+			if len(getEncoding(ref.negativeOffset, ref.size)) < ref.size {
+				finalOutput = append(finalOutput, getEncoding(ref.negativeOffset, ref.size)...)
+			} else {
+				finalOutput = append(finalOutput, ref.value...)
+			}
+		} else {
+			finalOutput = append(finalOutput, ref.value...)
+		}
+	}
+
+	return finalOutput
+}
+
+func CompressorWorkerAsync(waitgroup *sync.WaitGroup, output chan<- Reference, searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) {
+	defer waitgroup.Done()
+
+	out := CompressorWorker(searchBuffer, scanBytes, nextBytes[1:], bar)
+
+	output <- out
+
+	bar.Increment()
+}
+
+func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) (Reference) {
+	index, found := FindReverseSlice(searchBuffer, scanBytes)
+
+	if found {
+		negativeOffset := len(searchBuffer) - index
+		if len(nextBytes) > 0 {
+			checkNextByte := CompressorWorker(searchBuffer, append(scanBytes, nextBytes[0]), nextBytes[1:], bar)
+			if checkNextByte.isReference {
+				return checkNextByte
+			} else {
+				return Reference{value: scanBytes, isReference: true, negativeOffset: negativeOffset, size: len(scanBytes)}
+			}
+		} else {
+			return Reference{value: scanBytes, isReference: true, negativeOffset: negativeOffset, size: len(scanBytes)}
+		}
+	} else {
+		return Reference{value: scanBytes}
+	}
+}
+
+func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {
 	fileContents = EncodeOpeningSymbols(fileContents)
 
 	var searchBuffer []byte
@@ -211,6 +299,9 @@ func FindReverseSlice(input []byte, val []byte) (int, bool) {
 	if len(val) == 0 {
 		return -1, false
 	}
+
+	index := bytes.Index(input, val)
+	return index, index != -1
 
 	nextToCheck := len(val) - 1
 

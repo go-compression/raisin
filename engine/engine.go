@@ -13,7 +13,7 @@ func CompressFile(fileString string, maxSearchBufferLength int) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("LZSS Compressing...\n")
-	var compressedContents = lzss.Compress(fileContents, true, maxSearchBufferLength)
+	var compressedContents = lzss.CompressFileSync(fileContents, true, maxSearchBufferLength)
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, compressedContents, 0644)
 
@@ -37,7 +37,7 @@ func BenchmarkFile(fileString string, maxSearchBufferLength int) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("LZSS Compressing...\n")
-	var compressedContents = lzss.Compress(fileContents, true, maxSearchBufferLength)
+	var compressedContents = lzss.CompressFileSync(fileContents, true, maxSearchBufferLength)
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, compressedContents, 0644)
 
