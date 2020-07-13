@@ -1,9 +1,11 @@
-package main
+package compressor
 
 import (
 	"container/heap"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"strconv"
 )
 
 type HuffmanTree interface {
@@ -63,25 +65,75 @@ func check(e error) {
 		panic(e)
 	}
 }
-func printCodes(tree HuffmanTree, prefix []byte) {
+func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]rune, []string) {
 	switch i := tree.(type) {
 	case HuffmanLeaf:
+		vals = append(vals, rune(i.value))
+		bin = append(bin, string(prefix))
 		fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
+		return vals, bin
 	case HuffmanNode:
 		prefix = append(prefix, '0')
-		printCodes(i.left, prefix)
+		vals, bin = printCodes(i.left, prefix, vals, bin)
 		prefix = prefix[:len(prefix)-1]
 
 		prefix = append(prefix, '1')
-		printCodes(i.right, prefix)
+		vals, bin = printCodes(i.right, prefix, vals, bin)
 		prefix = prefix[:len(prefix)-1]
 	}
+	return vals, bin
 }
-func buildResponse(contents string, tree HuffmanTree)
-{
-	var str strings.Builder
-	for char in contents:
-		str.WriteString(string())
+func indexOf(word rune, data []rune) int {
+	for k, v := range data {
+		if word == v {
+			return k
+		}
+	}
+	return -1
+}
+
+type bitString string
+
+func (b bitString) AsByteSlice() []byte {
+	var out []byte
+	var str string
+
+	for i := len(b); i > 0; i -= 8 {
+		if i-8 < 0 {
+			str = string(b[0:i])
+		} else {
+			str = string(b[i-8 : i])
+		}
+		v, err := strconv.ParseUint(str, 2, 8)
+		if err != nil {
+			panic(err)
+		}
+		out = append([]byte{byte(v)}, out...)
+	}
+	return out
+}
+
+func encode(tree HuffmanTree, input string) {
+
+	answer := ""
+	tempV := make([]rune, 0)
+	tempB := make([]string, 0)
+	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
+	fmt.Printf("%v\n", vals)
+	fmt.Printf("%v\n", bin)
+	for _, char := range input {
+		diff := len(string(bin[indexOf(char, vals)])) % 2
+		answer = answer + (bin[indexOf(char, vals)])
+		for i := 0; i < diff; i++ {
+			answer = answer + "0"
+		}
+	}
+	bits := bitString(answer)
+	final := bits.AsByteSlice()
+	permissions := 0664
+	err := ioutil.WriteFile("file.txt", final, os.FileMode(permissions))
+	check(err)
+
 }
 func main() {
 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
@@ -96,5 +148,5 @@ func main() {
 	exampleTree := buildTree(symFreqs)
 
 	fmt.Println("")
-	printCodes(exampleTree, []byte{})
+	encode(exampleTree, content)
 }
