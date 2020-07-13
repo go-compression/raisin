@@ -47,13 +47,11 @@ func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength in
 	}
 
 	waitgroup.Wait()
-	for _, channel := range output {
-		close(channel)
-	}
 
 	var finalOutput []byte
 	var ignoreNextChars int
 	for _, i := range output {
+		close(i)
 		ref := <-i
 		if ignoreNextChars > 0 {
 			ignoreNextChars--
@@ -100,6 +98,39 @@ func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, b
 	} else {
 		return Reference{value: scanBytes}
 	}
+}
+
+func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) ([]byte) {
+	fileContents = EncodeOpeningSymbols(fileContents)
+	var output []byte
+
+	bar := pb.New(len(fileContents))
+	bar.Set(pb.Bytes, true)
+	bar.Start()
+
+	var ignoreNextChars int
+	for i, fileByte := range fileContents {
+		windowStart := 0
+		if i > maxSearchBufferLength {
+			windowStart = len(fileContents[:i]) - maxSearchBufferLength
+		}
+		ref := CompressorWorker(fileContents[windowStart:i], []byte{fileByte}, fileContents[i:], bar)
+
+		if ignoreNextChars > 0 {
+			ignoreNextChars--
+		} else if (ref.isReference) {
+			ignoreNextChars = ref.size - 1
+			if len(getEncoding(ref.negativeOffset, ref.size)) < ref.size {
+				output = append(output, getEncoding(ref.negativeOffset, ref.size)...)
+			} else {
+				output = append(output, ref.value...)
+			}
+		} else {
+			output = append(output, ref.value...)
+		}
+		bar.Increment()
+	}
+	return output
 }
 
 func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {
@@ -296,40 +327,8 @@ func FindSequential(slice []byte, val byte) (int, bool) {
 }
 
 func FindReverseSlice(input []byte, val []byte) (int, bool) {
-	if len(val) == 0 {
-		return -1, false
-	}
-
 	index := bytes.Index(input, val)
 	return index, index != -1
-
-	nextToCheck := len(val) - 1
-
-	// Find
-    for i := len(input) - 1; i >= 0; i-- {
-		// if MinimumSizeOfReference < 0 && len(val) > 15 && len(strconv.Itoa(len(input) - i)) > len(val) {
-		// 	return -1, false
-		// }
-
-		item := input[i]
-		
-		if val[nextToCheck] != item {
-			nextToCheck = len(val) - 1
-		}
-
-		if val[nextToCheck] == item {
-			// Byte checked out
-			nextToCheck--
-		}
-
-		if nextToCheck < 0 {
-			return i, true
-		} else if i == 0 {
-			// We've reached the end of the original input but not found the value, so not found
-			return -1, false
-		}
-    }
-    return -1, false
 }
 
 
