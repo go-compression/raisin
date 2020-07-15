@@ -21,3 +21,4 @@ COMPRESSIONTESTFILE.txt
 
 # IDE
 .vscode/
+.DS_Store

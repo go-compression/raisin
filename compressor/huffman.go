@@ -1,4 +1,4 @@
-package compressor
+package main
 
 import (
 	"container/heap"
@@ -91,6 +91,14 @@ func indexOf(word rune, data []rune) int {
 	}
 	return -1
 }
+func indexOfString(word string, data []string) int {
+	for k, v := range data {
+		if word == v {
+			return k
+		}
+	}
+	return -1
+}
 
 type bitString string
 
@@ -119,10 +127,11 @@ func encode(tree HuffmanTree, input string) {
 	tempV := make([]rune, 0)
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
-	fmt.Printf("%v\n", vals)
-	fmt.Printf("%v\n", bin)
 	for _, char := range input {
-		diff := len(string(bin[indexOf(char, vals)])) % 2
+		diff := len(string(bin[indexOf(char, vals)])) % 8
+		if len(string(bin[indexOf(char, vals)])) < 8 {
+			diff = (8 - len(string(bin[indexOf(char, vals)])))
+		}
 		answer = answer + (bin[indexOf(char, vals)])
 		for i := 0; i < diff; i++ {
 			answer = answer + "0"
@@ -130,15 +139,46 @@ func encode(tree HuffmanTree, input string) {
 	}
 	bits := bitString(answer)
 	final := bits.AsByteSlice()
+	fmt.Println(final)
 	permissions := 0664
 	err := ioutil.WriteFile("file.txt", final, os.FileMode(permissions))
 	check(err)
+	decode(tree)
 
+}
+func decode(tree HuffmanTree) {
+	fileContents, err := ioutil.ReadFile("file.txt")
+	check(err)
+	byteArr := fileContents
+	content := make([]string, 0)
+	for _, n := range byteArr {
+		hold := fmt.Sprintf("%08b", n)
+		content = append(content, hold)
+	}
+	fmt.Println(content)
+	tempV := make([]rune, 0)
+	tempB := make([]string, 0)
+	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
+	for i, item := range bin {
+		new := item
+		diff := len(item) % 8
+		if len(item) < 8 {
+			diff = (8 - len(item))
+		}
+		for i := 0; i < diff; i++ {
+			new = new + "0"
+		}
+		bin[i] = new
+	}
+	for _, item := range content {
+		fmt.Print(string(vals[indexOfString(item, bin)]))
+	}
 }
 func main() {
 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 	check(err)
 	content := string(fileContents)
+	//fmt.Println(content)
 	symFreqs := make(map[rune]int)
 
 	for _, c := range content {
@@ -147,6 +187,7 @@ func main() {
 
 	exampleTree := buildTree(symFreqs)
 
-	fmt.Println("")
+	// fmt.Println("")
 	encode(exampleTree, content)
+	decode(exampleTree)
 }
