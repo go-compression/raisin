@@ -24,7 +24,7 @@ func buildMarkovChainMoveUp(moveUp int) MarkovChain {
 	return MarkovChain{Nodes: &[]MarkovChain{}, Occurences: 1, MoveUp: moveUp}
 }
 
-func LZMACompress(fileContents []byte, _ bool, _ int) []byte {
+func DMCCompress(fileContents []byte) []byte {
 	var nodes []MarkovChain
 	chain := MarkovChain{Nodes: &nodes}
 
@@ -65,10 +65,9 @@ func LZMACompress(fileContents []byte, _ bool, _ int) []byte {
 
 	bits := GetBitsFromChain(&chain, fileContents, &[]MarkovChain{})
 	fmt.Println(bits)
-	// return []byte(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(bits)), ","), "[]"))
-	// decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
-	// fmt.Println("Decoded:", string(decoded))
-	// return []byte("Hello")
+	decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
+	fmt.Println("Decoded:", string(decoded))
+	fmt.Println("Lossless markov:", string(decoded) == string(fileContents))
 	return []byte(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(bits)), ","), "[]"))
 }
 
@@ -130,14 +129,11 @@ func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovCha
 		if node.MoveUp != 0 {
 			moveUp := node.MoveUp
 			node = &stack[len(stack) - moveUp]
-			// if moveUp == 7 {
-				stack = stack[:len(stack) - moveUp - 1]
-			// } else {
-				// stack = stack[:len(stack) - moveUp]
-			// }
+			stack = stack[:len(stack) - moveUp]
 		}
-		fmt.Println(string(node.Value))
-		return append([]byte{node.Value}, GetOutputFromBits(bits, node, &stack)...)
+		nodeVal := node.Value
+		// fmt.Println(string(nodeVal))
+		return append([]byte{nodeVal}, GetOutputFromBits(bits, node, &stack)...)
 	} else {
 		path := bits[0]
 		if path == -1 || path == -2 { // End of stream integers
@@ -155,19 +151,20 @@ func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovCha
 				}
 				endingBytes[i] = node.Value
 			}
+			// fmt.Println(string(endingBytes))
 			return endingBytes
 		} else {
 			node = &(*node.Nodes)[path]
 			if node.MoveUp != 0 {
 				moveUp := node.MoveUp
 				node = &stack[len(stack) - moveUp]
-				stack = stack[:len(stack) - moveUp + 1]
+				stack = stack[:len(stack) - moveUp]
 			}
-			fmt.Println(string(node.Value))
-			return append([]byte{node.Value}, GetOutputFromBits(bits[1:], node, &stack)...)
+			nodeVal := node.Value
+			// fmt.Println(string(nodeVal))
+			return append([]byte{nodeVal}, GetOutputFromBits(bits[1:], node, &stack)...)
 		}
 	}
-	return []byte("idk")
 }
 
 func SortNodesByOccurences(chain *MarkovChain) {
@@ -237,7 +234,7 @@ func PrintMarkovChain(chain *MarkovChain, indentation int) {
 	}
 }
 
-func LZMADecompress(fileContents []byte, _ bool) []byte {
+func DMCDecompress(fileContents []byte) []byte {
 	return []byte("Hello!")
 }
 
