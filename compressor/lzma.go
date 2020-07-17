@@ -3,13 +3,17 @@ package compressor
 import (
 	"fmt"
 	"strings"
+	// "errors"
+	// "bitbucket.org/sheran_gunasekera/leb128"
+	// "encoding/binary"
+	"sort"
 )
 
 type MarkovChain struct {
-	Value byte
-	Nodes *[]MarkovChain
+	Value      byte
+	Nodes      *[]MarkovChain
 	Occurences int
-	MoveUp int
+	MoveUp     int
 }
 
 func buildMarkovChain(value byte) MarkovChain {
@@ -20,23 +24,24 @@ func buildMarkovChainMoveUp(moveUp int) MarkovChain {
 	return MarkovChain{Nodes: &[]MarkovChain{}, Occurences: 1, MoveUp: moveUp}
 }
 
-func LZMACompress(fileContents []byte, _ bool, _ int) ([]byte) {
+func LZMACompress(fileContents []byte, _ bool, _ int) []byte {
 	var nodes []MarkovChain
 	chain := MarkovChain{Nodes: &nodes}
 
 	stack := []MarkovChain{chain}
 	for _, fileByte := range fileContents {
+		print(string(fileByte))
 		valueUpStack := FindValueUpStack(fileByte, stack)
 		if valueUpStack != -1 {
-			moveUpIndex := GetIndexOfNodeWithMoveUp(len(stack) - valueUpStack, *stack[len(stack) - 1].Nodes)
+			moveUpIndex := GetIndexOfNodeWithMoveUp(len(stack)-valueUpStack, *stack[len(stack)-1].Nodes)
 			if moveUpIndex == -1 {
-				*stack[len(stack) - 1].Nodes = append(*stack[len(stack) - 1].Nodes, buildMarkovChainMoveUp(len(stack) - valueUpStack))
+				*stack[len(stack)-1].Nodes = append(*stack[len(stack)-1].Nodes, buildMarkovChainMoveUp(len(stack)-valueUpStack))
 			} else {
-				(*stack[len(stack) - 1].Nodes)[moveUpIndex].Occurences++
+				(*stack[len(stack)-1].Nodes)[moveUpIndex].Occurences++
 			}
 			stack = stack[:valueUpStack]
 		}
-		node := stack[len(stack) - 1] // Get latest node off the list
+		node := stack[len(stack)-1] // Get latest node off the list
 		index := GetIndexOfNodeWithValue(fileByte, *node.Nodes)
 		if index == -1 {
 			// Not found in node, build new one
@@ -53,45 +58,141 @@ func LZMACompress(fileContents []byte, _ bool, _ int) ([]byte) {
 			}
 		}
 	}
+	// fmt.Println(leb128.EncodeULeb128(uint32(256)))
+
+	SortNodesByOccurences(&chain)
 	PrintMarkovChain(&chain, 0)
-	// fmt.Println(GetBitsFromChain(&chain, fileContents))
-	return []byte("Hello!")
+
+	bits := GetBitsFromChain(&chain, fileContents, &[]MarkovChain{})
+	fmt.Println(bits)
+	// return []byte(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(bits)), ","), "[]"))
+	// decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
+	// fmt.Println("Decoded:", string(decoded))
+	// return []byte("Hello")
+	return []byte(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(bits)), ","), "[]"))
 }
 
-func GetBitsFromChain(node *MarkovChain, input []byte) ([]int) {
+func GetBitsFromChain(node *MarkovChain, input []byte, stack *[]MarkovChain) []int {
 	if len(input) > 0 {
+		newStack := append(*stack, *node)
 		val := input[0]
-		bits := 0
 		nodes := *node.Nodes
-		if len(nodes) == 1 {
-			bits = 0
-		} else if len(nodes) == 2 {
-			bits = 1
-		} else {
-			bits = 8
-		}
+
+		var transition int
+
 		index := GetIndexOfNodeWithValue(val, *node.Nodes)
 		var lookInNode *MarkovChain
 		if index == -1 {
-			expandChainMoveUps(node, stack)
+			childNodeMoveUps := make([]int, len(*node.Nodes))
+			for i, childNode := range *node.Nodes {
+				childNodeMoveUps[i] = childNode.MoveUp
+				if childNode.MoveUp > 0 {
+					if newStack[len(newStack)-childNode.MoveUp].Value == val {
+						lookInNode = &newStack[len(newStack)-childNode.MoveUp]
+						newStack = newStack[:len(newStack)-childNode.MoveUp+1]
+						transition = i
+						if len(*node.Nodes) == 1 {
+							transition = -1 // There's only 1 possible transition so we don't need to encode it
+						}
+						break
+					}
+				}
+			}
+			newStack = newStack[:len(newStack)-1]
 		} else {
 			lookInNode = &nodes[index]
+			transition = index
+			if len(nodes) == 1 {
+				transition = -1 // There's only 1 possible transition so we don't need to encode it
+			}
 		}
-		return append([]int{bits}, GetBitsFromChain(lookInNode, input[1:])...)
+
+		if transition == -1 {
+			bitsFromChain := GetBitsFromChain(lookInNode, input[1:], &newStack)
+			if len(bitsFromChain) > 1 && bitsFromChain[len(bitsFromChain) - 2] == -2 {
+				bitsFromChain[len(bitsFromChain) - 1]++
+			}
+			return bitsFromChain
+		}
+		bitsFromChain := GetBitsFromChain(lookInNode, input[1:], &newStack)
+		if len(bitsFromChain) > 1 && bitsFromChain[len(bitsFromChain) - 2] == -2 {
+			bitsFromChain[len(bitsFromChain) - 2] = -1
+		}
+		return append([]int{transition}, bitsFromChain...)
 	}
-	return []int{-1}
+	return []int{-2, 0} // -2 represents end of input traversal, 0 is incremented as the end of input traverses down nodes not represented
 }
 
-func expandChainMoveUps(node *MarkovChain, stack *[]MarkovChain) {
-	for _, node := range *node.Nodes {
+func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovChain) ([]byte) {
+	stack := append(*previousStack, *node)
+	if len(*node.Nodes) == 1 && bits[0] >= 0 {
+		node = &(*node.Nodes)[0]
 		if node.MoveUp != 0 {
-			*node.Nodes = (*stack)[len(*stack) - node.MoveUp:]
+			moveUp := node.MoveUp
+			node = &stack[len(stack) - moveUp]
+			// if moveUp == 7 {
+				stack = stack[:len(stack) - moveUp - 1]
+			// } else {
+				// stack = stack[:len(stack) - moveUp]
+			// }
+		}
+		fmt.Println(string(node.Value))
+		return append([]byte{node.Value}, GetOutputFromBits(bits, node, &stack)...)
+	} else {
+		path := bits[0]
+		if path == -1 || path == -2 { // End of stream integers
+			// TODO chop off ending integer if bits[1] == 0 during encoding (and handle it here during decoding)
+			transitions := bits[1] // Number of transitions to take last is represented as an int at the end
+			endingBytes := make([]byte, transitions)
+			for i := 0; i < transitions; i++ {
+				node = &(*node.Nodes)[0]
+				if node.MoveUp != 0 {
+					moveUp := node.MoveUp
+					node = &stack[len(stack) - moveUp]
+					stack = stack[:len(stack) - moveUp + 1]
+				} else {
+					stack = append(stack, *node)
+				}
+				endingBytes[i] = node.Value
+			}
+			return endingBytes
+		} else {
+			node = &(*node.Nodes)[path]
+			if node.MoveUp != 0 {
+				moveUp := node.MoveUp
+				node = &stack[len(stack) - moveUp]
+				stack = stack[:len(stack) - moveUp + 1]
+			}
+			fmt.Println(string(node.Value))
+			return append([]byte{node.Value}, GetOutputFromBits(bits[1:], node, &stack)...)
+		}
+	}
+	return []byte("idk")
+}
+
+func SortNodesByOccurences(chain *MarkovChain) {
+	sort.Slice(*chain.Nodes, func(i, j int) bool {
+		return (*chain.Nodes)[i].Occurences > (*chain.Nodes)[j].Occurences
+	})
+	for _, node := range *chain.Nodes {
+		if len(*node.Nodes) > 0 {
+			SortNodesByOccurences(&node)
+		}
+	}
+}
+
+func expandChainMoveUps(originNode *MarkovChain, stack *[]MarkovChain) {
+	for i, node := range *originNode.Nodes {
+		if node.MoveUp != 0 {
+			// *(*originNode.Nodes)[i].Nodes = (*stack)[len(*stack) - node.MoveUp:]
+			(*originNode.Nodes)[i] = (*stack)[len(*stack)-node.MoveUp]
+			// *originNode.Nodes = (*stack)[len(*stack) - node.MoveUp:]
 		}
 	}
 }
 
 // FindValueUpStack returns how far up the stack it should go to find the byte, len(stack) for not found
-func FindValueUpStack(lookFor byte, stack []MarkovChain) (int) {
+func FindValueUpStack(lookFor byte, stack []MarkovChain) int {
 	for i := len(stack) - 1; i >= 0; i-- {
 		if stack[i].Value == lookFor {
 			return i
@@ -100,7 +201,7 @@ func FindValueUpStack(lookFor byte, stack []MarkovChain) (int) {
 	return -1
 }
 
-func GetIndexOfNodeWithValue(lookFor byte, nodes []MarkovChain) (int) {
+func GetIndexOfNodeWithValue(lookFor byte, nodes []MarkovChain) int {
 	for i, node := range nodes {
 		if node.Value == lookFor {
 			return i
@@ -109,7 +210,7 @@ func GetIndexOfNodeWithValue(lookFor byte, nodes []MarkovChain) (int) {
 	return -1
 }
 
-func GetIndexOfNodeWithMoveUp(moveUp int, nodes []MarkovChain) (int) {
+func GetIndexOfNodeWithMoveUp(moveUp int, nodes []MarkovChain) int {
 	for i, node := range nodes {
 		if node.MoveUp == moveUp {
 			return i
@@ -119,25 +220,33 @@ func GetIndexOfNodeWithMoveUp(moveUp int, nodes []MarkovChain) (int) {
 }
 
 func PrintMarkovChain(chain *MarkovChain, indentation int) {
-	for _, node := range *chain.Nodes { 
-		fmt.Print(strings.Repeat("-", indentation), string([]byte{node.Value}), " Move up:", node.MoveUp, " O: ", node.Occurences, "\n")
-		
+	for _, node := range *chain.Nodes {
+		char := string([]byte{node.Value})
+		if char == " " {
+			char = "spc"
+		}
+		if node.MoveUp != 0 {
+			fmt.Print(strings.Repeat("--", indentation), "Up ", node.MoveUp, " O: ", node.Occurences, "\n")
+		} else {
+			fmt.Print(strings.Repeat("--", indentation), char, " O: ", node.Occurences, "\n")
+		}
+
 		if node.Nodes != nil {
-			PrintMarkovChain(&node, indentation + 1)
+			PrintMarkovChain(&node, indentation+1)
 		}
 	}
 }
 
-func LZMADecompress(fileContents []byte, _ bool) ([]byte) {
+func LZMADecompress(fileContents []byte, _ bool) []byte {
 	return []byte("Hello!")
 }
 
 func bitsFromBytes(bs []byte) []int {
-    r := make([]int, len(bs)*8)
-    for i, b := range bs {
-        for j := 0; j < 8; j++ {
-            r[i*8+j] = int(b >> uint(7-j) & 0x01)
-        }
-    }
-    return r
+	r := make([]int, len(bs)*8)
+	for i, b := range bs {
+		for j := 0; j < 8; j++ {
+			r[i*8+j] = int(b >> uint(7-j) & 0x01)
+		}
+	}
+	return r
 }

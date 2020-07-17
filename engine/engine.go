@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	lzss "github.com/mrfleap/custom-compression/compressor"
+	lzma "github.com/mrfleap/custom-compression/compressor"
 )
 
 func CompressFile(fileString string, maxSearchBufferLength int) {
@@ -36,13 +37,13 @@ func DecompressFile(fileString string) {
 func BenchmarkFile(fileString string, maxSearchBufferLength int) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
-	fmt.Printf("LZSS Compressing...\n")
-	var compressedContents = lzss.CompressFileSync(fileContents, true, maxSearchBufferLength)
+	fmt.Printf("LZMA Compressing...\n")
+	var compressedContents = lzma.LZMACompress(fileContents, true, maxSearchBufferLength)
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, compressedContents, 0644)
 
-	fmt.Printf("LZSS Decompressing...\n")
-	var decompressedContents = lzss.Decompress(compressedContents, true)
+	fmt.Printf("LZMA Decompressing...\n")
+	var decompressedContents = lzma.LZMADecompress(compressedContents, true)
 	var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
 	err = ioutil.WriteFile(decompressedFilePath, decompressedContents, 0644)
 	check(err)
