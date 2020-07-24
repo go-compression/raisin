@@ -5,8 +5,11 @@ import (
 	"strings"
 	// "errors"
 	// "bitbucket.org/sheran_gunasekera/leb128"
-	// "encoding/binary"
+	"encoding/binary"
+	"bytes"
 	"sort"
+	"unsafe"
+	"runtime"
 )
 
 type MarkovChain struct {
@@ -25,12 +28,14 @@ func buildMarkovChainMoveUp(moveUp int) MarkovChain {
 }
 
 func DMCCompress(fileContents []byte) []byte {
+	var m1, m2 runtime.MemStats
 	var nodes []MarkovChain
+	runtime.ReadMemStats(&m1)
 	chain := MarkovChain{Nodes: &nodes}
 
 	stack := []MarkovChain{chain}
 	for _, fileByte := range fileContents {
-		print(string(fileByte))
+		// print(string(fileByte))
 		valueUpStack := FindValueUpStack(fileByte, stack)
 		if valueUpStack != -1 {
 			moveUpIndex := GetIndexOfNodeWithMoveUp(len(stack)-valueUpStack, *stack[len(stack)-1].Nodes)
@@ -58,17 +63,36 @@ func DMCCompress(fileContents []byte) []byte {
 			}
 		}
 	}
-	// fmt.Println(leb128.EncodeULeb128(uint32(256)))
+	runtime.ReadMemStats(&m2)
+	memUsage(&m1, &m2)
 
 	SortNodesByOccurences(&chain)
 	PrintMarkovChain(&chain, 0)
+	fmt.Println("Total upward travels:", UpwardTravels(&chain))
+	fmt.Println("Compiling into bits")
 
 	bits := GetBitsFromChain(&chain, fileContents, &[]MarkovChain{})
-	fmt.Println(bits)
+	fmt.Println("Length of bits:", len(bits))
+
+	encodeBits := new(bytes.Buffer)
+	for _, num := range bits {
+		err := binary.Write(encodeBits, binary.LittleEndian, int8(num))
+		check(err)
+	}
+
+	// fmt.Println(bits)
 	decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
 	fmt.Println("Decoded:", string(decoded))
 	fmt.Println("Lossless markov:", string(decoded) == string(fileContents))
-	return []byte(strings.Trim(strings.Join(strings.Fields(fmt.Sprint(bits)), ","), "[]"))
+	fmt.Println("Bytes of chain:", unsafe.Sizeof(chain))
+
+	return encodeBits.Bytes()
+}
+
+func memUsage(m1, m2 *runtime.MemStats) {
+	fmt.Println("Alloc:", m2.Alloc-m1.Alloc,
+		"TotalAlloc:", m2.TotalAlloc-m1.TotalAlloc,
+		"HeapAlloc:", m2.HeapAlloc-m1.HeapAlloc)
 }
 
 func GetBitsFromChain(node *MarkovChain, input []byte, stack *[]MarkovChain) []int {
@@ -214,6 +238,17 @@ func GetIndexOfNodeWithMoveUp(moveUp int, nodes []MarkovChain) int {
 		}
 	}
 	return -1
+}
+
+func UpwardTravels(chain *MarkovChain) int {
+	var total int
+	for _, node := range *chain.Nodes {
+		if node.Nodes != nil {
+			total += UpwardTravels(&node)
+		}
+		total += node.MoveUp
+	}
+	return total
 }
 
 func PrintMarkovChain(chain *MarkovChain, indentation int) {

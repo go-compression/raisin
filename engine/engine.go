@@ -4,6 +4,7 @@ import (
 	"fmt"
 	dmc "github.com/mrfleap/custom-compression/compressor"
 	lzss "github.com/mrfleap/custom-compression/compressor"
+	mcc "github.com/mrfleap/custom-compression/compressor"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -11,7 +12,7 @@ import (
 	"strings"
 )
 
-var Engines = [...]string{"lzss", "dmc", "huffman"}
+var Engines = [...]string{"lzss", "dmc", "huffman", "mcc"}
 
 type CompressedFile struct {
 	engine                string
@@ -28,6 +29,8 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 			f.decompressed = lzss.Decompress(f.compressed, true)
 		case "dmc":
 			f.decompressed = dmc.DMCDecompress(f.compressed)
+		case "mcc":
+			f.decompressed = mcc.MCCDecompress(f.compressed)
 		case "huffman":
 			panic("Huffman is not implemented yet")
 		default:
@@ -58,6 +61,8 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 		compressed = lzss.Compress(content, true, f.maxSearchBufferLength)
 	case "dmc":
 		compressed = dmc.DMCCompress(content)
+	case "mcc":
+		compressed = mcc.MCCCompress(content)
 	case "huffman":
 		panic("Huffman is not implemented yet")
 	default:
