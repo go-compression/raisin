@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"strconv"
+	// huffman "github.com/icza/huffman"
 )
 
 type Token int
@@ -61,15 +62,6 @@ func (state *State) getParent(up int) *State {
 	return state
 }
 
-func (state *State) bitRepresentation() int {
-	for i, childState := range *state.parent.transitions {
-		if childState == state {
-			return i
-		}
-	}
-	return -1
-}
-
 func (state *State) tokState(tok Token) *State {
 	for _, childState := range *state.transitions {
 		if childState.isTok && childState.token == tok {
@@ -77,6 +69,22 @@ func (state *State) tokState(tok Token) *State {
 		}
 	}
 	return nil
+}
+
+
+func (state *State) bitRepresentation() int {
+	// leaves := make([]*huffman.Node, len(*state.parent.transitions))
+	// for i, childState := range *state.parent.transitions {
+	// 	leaves[i] = &huffman.Node{Value: huffman.ValueType(childState.symbol), Count: childState.freq}
+	// }
+	// root := huffman.Build(leaves)+
+	// fmt.Println(root.Right.Right.Code())
+	for i, childState := range *state.parent.transitions {
+		if childState == state {
+			return i
+		}
+	}
+	return -1
 }
 
 func (state *State) getStateFromRepresentation(index int) *State {
