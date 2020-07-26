@@ -1,4 +1,4 @@
-package compressor
+package main
 
 import (
 	"container/heap"
@@ -65,9 +65,10 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 		trees = append(trees, HuffmanLeaf{f, c})
 	}
 	heap.Init(&trees)
+	sort.Sort(trees)
 	new := trees
-	sort.Sort(sort.Reverse(new))
-	count := new[0].Freq()
+	sort.Sort(new)
+	count := len(symFreqs) * 2
 	prev := 0
 	var test treeHeap
 	for j := 0; j < len(new); j++ {
@@ -80,12 +81,11 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 				test = append(test, HuffmanLeaf{count, huff.value})
 			} else {
 				if huff.freq < prev {
-					count--
-					count--
+					count += 2
 					prev = huff.freq
 					test = append(test, HuffmanLeaf{count, huff.value})
 				} else {
-					count--
+					count += 1
 					prev = huff.freq
 					test = append(test, HuffmanLeaf{count, huff.value})
 				}
@@ -94,15 +94,15 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 
 		}
 	}
-	sort.Sort(trees)
 	prev = 0
-	for i := len(trees) - 1; i >= 0; i-- {
-		temp := trees[i]
+	sort.Sort(trees)
+	for i := 0; i < len(trees); i++ {
+		temp := new[i]
 
 		switch huff := temp.(type) {
 		case HuffmanLeaf:
 
-			if i == len(trees)-1 {
+			if i == 0 {
 				prev = huff.freq
 				if huff.value == 10 {
 					estring = estring + "\\n"
@@ -110,7 +110,7 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 					estring = estring + string(huff.value)
 				}
 			} else {
-				if huff.freq == prev-1 {
+				if huff.freq == prev+1 {
 					if huff.value == 10 {
 						estring = estring + "0" + "\\n"
 					} else {
@@ -128,13 +128,13 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 
 		}
 	}
-	for trees.Len() > 1 {
-		a := heap.Pop(&trees).(HuffmanTree)
-		b := heap.Pop(&trees).(HuffmanTree)
+	for test.Len() > 1 {
+		a := heap.Pop(&test).(HuffmanTree)
+		b := heap.Pop(&test).(HuffmanTree)
 
-		heap.Push(&trees, HuffmanNode{a.Freq() + b.Freq(), a, b})
+		heap.Push(&test, HuffmanNode{a.Freq() + b.Freq(), a, b})
 	}
-	return heap.Pop(&trees).(HuffmanTree)
+	return heap.Pop(&test).(HuffmanTree)
 }
 func rebuildTree(symFreqs map[rune]int) HuffmanTree {
 	var trees treeHeap
@@ -269,13 +269,12 @@ var decodedTree HuffmanTree
 var treeH treeHeap
 
 func decodeTree(tree string) HuffmanTree {
-	count := len(tree)
+	count := 1
 	symFreqs := make(map[rune]int)
 	j := 0
 	if rune(tree[j]) == 92 && rune(tree[j+1]) == 110 {
 		symFreqs[10] = count
-		j++
-		j++
+		j += 2
 	} else {
 		symFreqs[rune(tree[j])] = count
 		j = 1
@@ -283,16 +282,15 @@ func decodeTree(tree string) HuffmanTree {
 	for i := j; i < len(tree)-1; i++ {
 		if string(tree[i]) == "0" {
 			if rune(tree[i+1]) == 92 && rune(tree[i+2]) == 110 {
-				count--
+				count++
 				symFreqs[10] = count
 				i++
 			} else {
-				count--
+				count++
 				symFreqs[rune(tree[i+1])] = count
 			}
 		} else {
-			count--
-			count--
+			count += 2
 			if rune(tree[i+1]) == 92 && rune(tree[i+2]) == 110 {
 				symFreqs[10] = count
 				i++
