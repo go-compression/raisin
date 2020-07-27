@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"strings"
 	"strconv"
+	"sort"
+	"math"
 	// huffman "github.com/icza/huffman"
 )
 
 type Token int
 const (
 	Read Token = 0
-	Up Token = 1
-	Select Token = 2
+	// Up token has been replaced by dynamic order-of-two-based up tokens
+	// Up Token = 1 // TODO Research linear distances between markov chains
 )
 
 type State struct {
@@ -20,13 +22,13 @@ type State struct {
 	isTok bool
 	symbol byte
 	freq int
-	transitions *[]*State
+	transitions *[]*State // TODO Try to remove references here as interfaces should modify object with reference to it
 	parent *State
 }
 
 func (state *State) displayValue() string {
 	if state.isTok {
-		if state.token == Up {
+		if state.token == Token(1) {
 			return "up"
 		} else {
 			return "read"
@@ -71,14 +73,13 @@ func (state *State) tokState(tok Token) *State {
 	return nil
 }
 
+func (state *State) sortByFrequency() {
+	sort.Slice((*state.transitions), func(i, j int) bool {
+		return (*state.transitions)[i].freq > (*state.transitions)[j].freq
+	})
+} 
 
 func (state *State) bitRepresentation() int {
-	// leaves := make([]*huffman.Node, len(*state.parent.transitions))
-	// for i, childState := range *state.parent.transitions {
-	// 	leaves[i] = &huffman.Node{Value: huffman.ValueType(childState.symbol), Count: childState.freq}
-	// }
-	// root := huffman.Build(leaves)+
-	// fmt.Println(root.Right.Right.Code())
 	for i, childState := range *state.parent.transitions {
 		if childState == state {
 			return i
@@ -96,25 +97,50 @@ func (state *State) getStateFromRepresentation(index int) *State {
 	return nil
 }
 
-func createState(symbol byte, parent *State) *State {
-	var states []*State
-	state := State{symbol: symbol, parent: parent, freq: 1}
-	for _, tok := range []Token{Read, Up, Select} {
-		// TODO find a better way to count Token frequencies rather than just 100
-		states = append(states, &State{token: tok, isTok: true, parent: &state, freq: 100})
+const highest_order_for_up = 8 // 2^8 = 256
+
+func getTokens() []Token {
+	tokens := make([]Token, 0)
+	for i := 0; i <= 8; i++ {
+		magnitude := math.Pow(2, float64(i))
+		tokens = append(tokens, Token(magnitude))
 	}
+	return tokens
+}
+
+func generateStateTokens(state *State) []*State {
+	var states []*State
+	tokens := append([]Token{Read}, getTokens()...)
+	freq := 1000
+	for _, tok := range tokens {
+		// TODO find a better way to count Token frequencies rather than just 100
+		states = append(states, &State{token: tok, isTok: true, parent: state, freq: freq})
+		freq -= 10
+	}
+	return states
+}
+
+func createState(symbol byte, parent *State) *State {
+	// Create new state
+	state := State{symbol: symbol, parent: parent, freq: 1}
+
+	// Create tokens
+	states := generateStateTokens(&state)
 	state.transitions = &states
-	transitions := append(*(parent.transitions), & state)
+
+	// Add state to parent
+	transitions := append(*(parent.transitions), &state)
 	parent.transitions = &transitions
+
 	return &state
 }
 
 func createRoot() *State {
-	var states []*State
+	// Generate root
 	state := State{isRoot: true}
-	for _, tok := range []Token{Read, Up, Select} {
-		states = append(states, &State{token: tok, isTok: true, parent: &state, freq: 100})
-	}
+
+	// Create tokens
+	states := generateStateTokens(&state)
 	state.transitions = &states
 	return &state
 }
@@ -147,28 +173,62 @@ func encodeBytes(fileContents []byte) ([]int, []byte) {
 				state = newState
 			} else {
 				// A parent does have the state
+				// Save original state for moving up
+				origState := state
 				// Move up to the parent with the state
 				state = state.getParent(parentWithSymbol)
 				// Increase frequency
 				state.freq++
-				// Output token to represent moving up
-				for i := 0; i < parentWithSymbol + 1; i++ {
-					// Reason for parentWithSymbol + 1
-					// Always output an extra up token telling it to move up even if it's the direct parent
-					bitstream = append(bitstream, state.tokState(Up).bitRepresentation())
+				// Re-sort transitions by frequency
+				state.parent.sortByFrequency()
+
+				parentWithSymbol++
+
+				// We use this to track whether we've encoded a move up yet
+				encoded := false
+
+				// Try to encode tokens with larger magnitude up tokens
+				for i := highest_order_for_up; i >= 0; i-- {
+					// Calculate magnitude
+					magnitude := int(math.Pow(2, float64(i)))
+					// If the amount of times we're moving up is divisible by the magnitude
+					if parentWithSymbol - magnitude >= 0 {
+						// Calculate how many times it is divisible by
+						divisibleTimes := parentWithSymbol / magnitude
+						// For each time it is divisible by the magnitude
+						for j := 0; j < divisibleTimes; j++ {
+							// Output magnitude token
+							bitstream = append(bitstream, origState.tokState(Token(magnitude)).bitRepresentation())
+							// Remove magnitude from the amount of times to go up
+							parentWithSymbol -= magnitude
+							// Move up the amount of times represented by the magnitude
+							if encoded {
+								// We've already encoded a move up so just encode the magnitude
+								origState = origState.getParent(magnitude)
+							} else {
+								// We use -1 because the first "up" tells it to go into the current state, so ignore it
+								origState = origState.getParent(magnitude - 1)
+								// Remember we've already encoded a magnitude - 1 so don't re-encode it
+								encoded = true
+							}
+							
+						}
+					}
 				}
-				// Output select token at the end to tell the decoder to use this state
-				bitstream = append(bitstream, state.tokState(Select).bitRepresentation())
-				// Enter state
+				
+				// Output read token at the end to tell the decoder to use this state's symbol
+				bitstream = append(bitstream, state.tokState(Read).bitRepresentation())
 			}
 		} else {
 			// The state contains the symbol
 			// Enter the state with the symbol
 			state = stateWithSymbol
-			// Update the frequency
-			state.freq++
 			// Output the corresponding bit representation
 			bitstream = append(bitstream, state.bitRepresentation())
+			// Update the frequency
+			state.freq++
+			// Re-sort transitions by frequency
+			state.parent.sortByFrequency()
 		}
 
 	}
@@ -193,37 +253,40 @@ func decodeBytes(bitstream []int, literals []byte) []byte {
 
 		if childState.isTok {
 			if childState.token == Read {
-				// Read token
-				// Pop char from beginning of literal stream
-				symbol := literals[0]
-				literals = literals[1:]
-				// Output symbol too outstream
-				output = append(output, symbol)
-				// Create new state with symbol in parent state
-				newState := createState(symbol, childState.parent)
-				// Enter new state
-				state = newState
-			} else if childState.token == Up {
-				// Up token
-				// If we're not already in the process of moving up
-				if !movingUp {
-					// Remember we're moving up and don't enter the parent state
-					// because we're already in the "first" parent state
-					movingUp = true
+				if movingUp {
+					// Output token to outstream
+					output = append(output, state.symbol)
+					// Reset moving up status
+					movingUp = false
+					// Increase frequency of state
+					state.freq++
+					// Re-sort transitions by frequency
+					state.parent.sortByFrequency()
 				} else {
-					// Enter the parent state
-					state = state.parent
+					// Read token
+					// Pop char from beginning of literal stream
+					symbol := literals[0]
+					literals = literals[1:]
+					// Output symbol too outstream
+					output = append(output, symbol)
+					// Create new state with symbol in parent state
+					newState := createState(symbol, childState.parent)
+					// Enter new state
+					state = newState
+				}
+			} else {
+				moveUpTimes := int(childState.token)
+				if !movingUp {
+					movingUp = true
+					moveUpTimes--
+				}
+				for i := 0; i < moveUpTimes; i++ {
 					if state.parent == nil {
 						panic("Trying to go up past root node")
 					}
+					// Enter the parent state
+					state = state.parent
 				}
-			} else if childState.token == Select {
-				// Output token to outstream
-				output = append(output, state.symbol)
-				// Reset moving up status
-				movingUp = false
-			} else {
-				panic("Unknown token passed")
 			}
 		} else {
 			// State represents a literal
@@ -231,6 +294,10 @@ func decodeBytes(bitstream []int, literals []byte) []byte {
 			state = childState
 			// Output the literal
 			output = append(output, state.symbol)
+			// Update the frequency
+			state.freq++
+			// Re-sort transitions by frequency
+			state.parent.sortByFrequency()
 		}
 	}
 	return output
@@ -261,7 +328,16 @@ func decodeStreamAndLiterals(bytes []byte) ([]int, []byte) {
 
 func MCCCompress(fileContents []byte) []byte {
 	bitstream, literals := encodeBytes(fileContents)
+	fmt.Println("Character bytes:", len(literals))
+	fmt.Println("State bits:", len(bitstream), "bytes:", len(bitstream)/8)
 	fmt.Println("Rough estimate of bytes:", (len(bitstream)/8) + len(literals))
+
+	result := 0  
+	for _, v := range bitstream {  
+		result += v  
+	}  
+
+	fmt.Println("Sum:", result)
 	return encodeStreamAndLiterals(bitstream, literals)
 }
 
@@ -273,7 +349,7 @@ func MCCDecompress(fileContents []byte) []byte {
 
 func printTransitions(parent State, indentation int) {
 	for _, state := range *parent.transitions {
-		fmt.Print(strings.Repeat("-", indentation), state.displayValue(), "\n")
+		fmt.Print(strings.Repeat("-", indentation), state.displayValue(), "-", state.freq, "\n")
 
 		if state.transitions != nil {
 			printTransitions(*state, indentation + 1)
