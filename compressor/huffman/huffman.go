@@ -159,7 +159,7 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, answer string, i i
 		case HuffmanLeaf:
 			answer = answer + string(huff.value)
 			if i < max-1 {
-				findCodes(og, og, data, answer, i, max)
+				return findCodes(og, og, data, answer, i, max)
 			} else {
 				fmt.Println(answer)
 				file, err := os.Create("decompressed.txt")
@@ -373,7 +373,7 @@ func encode(tree HuffmanTree, input string) []byte {
 
 	return append([]byte(estring), append([]byte("\n"), test...)...)
 }
-func decode(fileContents []byte) {
+func decode(fileContents []byte) []byte {
 	file_content := string(fileContents)
 	lines := strings.Split(file_content, "\n")
 	tree := decodeTree(lines[0])
@@ -405,10 +405,7 @@ func decode(fileContents []byte) {
 	contentString = contentString[int(diff):]
 	answer := findCodes(tree, tree, contentString, "", 0, len(contentString))
 
-	file, err := os.Create("decompressed.txt")
-	check(err)
-	_, err = io.WriteString(file, answer)
-	check(err)
+	return []byte(answer)
 }
 
 func Compress(fileContents []byte) []byte {
@@ -433,8 +430,8 @@ func Compress(fileContents []byte) []byte {
 }
 
 func Decompress(fileContents []byte) []byte {
-	decode(fileContents)
-	return []byte("test")
+	decoded := decode(fileContents)
+	return decoded
 }
 
 func main() {
@@ -462,5 +459,10 @@ func main() {
 
 	fileContents, err2 := ioutil.ReadFile("huffman-compressed.bin")
 	check(err2)
-	decode(fileContents)
+	decoded := decode(fileContents)
+
+	file, err = os.Create("decompressed.txt")
+	check(err)
+	_, err = io.WriteString(file, string(decoded))
+	check(err)
 }
