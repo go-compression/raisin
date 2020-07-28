@@ -32,6 +32,10 @@ func (self HuffmanLeaf) Freq() int {
 func (self HuffmanNode) Freq() int {
 	return self.freq
 }
+func remove(s []int, i int) []int {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
 
 type treeHeap []HuffmanTree
 
@@ -56,26 +60,35 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 		Key   rune
 		Value int
 	}
-	var toSort []sorter
+	var keys []int
+	var values []int
 	for i, j := range symFreqs {
-		toSort = append(toSort, sorter{i, j})
+		keys = append(keys, int(i))
+		values = append(values, j)
 	}
-	sort.Slice(toSort, func(i, j int) bool {
-		return toSort[i].Value > toSort[j].Value
-	})
-	symFreqs2 := make(map[rune]int)
-	for _, item := range toSort {
-		symFreqs2[item.Key] = item.Value
+	sort.Ints(keys)
+	sort.Ints(values)
+	var temp1 []rune
+	var temp2 []int
+	//symFreqs2 := make(map[rune]int)
+	for _, value := range values {
+		for i, key := range keys {
+			if symFreqs[rune(key)] == value {
+				temp1 = append(temp1, rune(key))
+				temp2 = append(temp2, value)
+				keys = remove(keys, i)
+				break
+			}
+		}
 	}
-
 	//build tree
 	var trees treeHeap
-	for c, f := range symFreqs2 {
-		trees = append(trees, HuffmanLeaf{f, c})
+	for i := 0; i < len(symFreqs); i++ {
+		trees = append(trees, HuffmanLeaf{temp2[i], temp1[i]})
 	}
 	heap.Init(&trees)
 	//	estring = strconv.Itoa(len(symFreqs))
-	sort.Sort(trees)
+	//sort.Sort(trees)
 	for trees.Len() > 1 {
 		a := heap.Pop(&trees).(HuffmanTree)
 		b := heap.Pop(&trees).(HuffmanTree)
@@ -95,7 +108,7 @@ func rebuildTree(symFreqs map[rune]int) HuffmanTree {
 		toSort = append(toSort, sorter{i, j})
 	}
 	sort.Slice(toSort, func(i, j int) bool {
-		return toSort[i].Value > toSort[j].Value
+		return toSort[i].Value < toSort[j].Value
 	})
 	symFreqs2 := make(map[rune]int)
 	for _, item := range toSort {
@@ -108,7 +121,6 @@ func rebuildTree(symFreqs map[rune]int) HuffmanTree {
 	}
 
 	heap.Init(&trees)
-	sort.Sort(trees)
 	for trees.Len() > 1 {
 		a := heap.Pop(&trees).(HuffmanTree)
 		b := heap.Pop(&trees).(HuffmanTree)
@@ -331,7 +343,7 @@ func decodeTree(tree string) HuffmanTree {
 	// 	i++
 
 	// }
-	return rebuildTree(symFreqs)
+	return buildTree(symFreqs)
 }
 func encode(tree HuffmanTree, input string) {
 
