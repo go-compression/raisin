@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"sort"
 	"math"
-	// huffman "github.com/icza/huffman"
+	huffman "github.com/icza/huffman"
 )
 
 type Token int
@@ -79,13 +79,63 @@ func (state *State) sortByFrequency() {
 	})
 } 
 
-func (state *State) bitRepresentation() int {
+func (state *State) combinedValue() int {
+	if state.isTok {
+		return int(state.token)
+	} else {
+		return int(state.symbol) + int(math.Pow(2, float64(highest_order_for_up)))
+	}
+}
+
+func (state *State) bitRepresentation() (int, string) {
+	leaves := make([]*huffman.Node, len(*state.parent.transitions))
+	for i, childState := range *state.parent.transitions {
+		leaves[i] = &huffman.Node{Value: huffman.ValueType(childState.combinedValue()), Count: childState.freq + 1000}
+	}
+	root := huffman.Build(leaves)
+	// huffman.Print(root)
+	// fmt.Println(root.Right.Right.Code())
+	bits := getValueOf(root, huffman.ValueType(state.combinedValue()))
+	// fmt.Println(state.combinedValue(), "-", bits)
 	for i, childState := range *state.parent.transitions {
 		if childState == state {
-			return i
+			return i, bits
 		}
 	}
-	return -1
+	return -1, bits
+}
+
+func getValueOf(root *huffman.Node, value huffman.ValueType) string {
+	var traverse func(n *huffman.Node, code uint64, bits byte, lookFor huffman.ValueType) (bool, string)
+
+	traverse = func(n *huffman.Node, code uint64, bits byte, lookFor huffman.ValueType) (bool, string) {
+		if n.Left == nil {
+			// Leaf
+			if n.Value == lookFor {
+				// fmt.Printf("'%c': %0"+strconv.Itoa(int(bits))+"b\n", n.Value, code)
+				return true, fmt.Sprintf("%0"+strconv.Itoa(int(bits))+"b\n", code)
+			}
+			return false, ""
+		}
+		bits++
+		var found bool
+		var result string
+		found, result = traverse(n.Left, code<<1, bits, lookFor)
+		if found {
+			return found, result
+		}
+		found, result = traverse(n.Right, code<<1+1, bits, lookFor)
+		if found {
+			return found, result
+		}
+		return false, ""
+	}
+
+	found, result := traverse(root, 0, 0, value)
+	if !found {
+		panic("Not found result")
+	}
+	return result
 }
 
 func (state *State) getStateFromRepresentation(index int) *State {
@@ -112,10 +162,13 @@ func generateStateTokens(state *State) []*State {
 	var states []*State
 	tokens := append([]Token{Read}, getTokens()...)
 	freq := 1000
-	for _, tok := range tokens {
-		// TODO find a better way to count Token frequencies rather than just 100
+	for i, tok := range tokens {
+		// TODO find a better way to count Token frequencies rather than just literals
+		if i == 2 {
+			freq = 0
+		}
+		freq -= 100
 		states = append(states, &State{token: tok, isTok: true, parent: state, freq: freq})
-		freq -= 10
 	}
 	return states
 }
@@ -145,7 +198,8 @@ func createRoot() *State {
 	return &state
 }
 
-func encodeBytes(fileContents []byte) ([]int, []byte) {
+func encodeBytes(fileContents []byte) ([]int, []byte, int) {
+	bitsize := 0
 	bitstream := make([]int, 0)
 	literals := make([]byte, 0)
 
@@ -167,7 +221,9 @@ func encodeBytes(fileContents []byte) ([]int, []byte) {
 				// Create new state with symbol
 				newState := createState(fileByte, state)
 				// Output Read token
-				bitstream = append(bitstream, state.tokState(Read).bitRepresentation())
+				tokenState, bits := state.tokState(Read).bitRepresentation()
+				bitsize += len(bits)
+				bitstream = append(bitstream, tokenState)
 				literals = append(literals, fileByte)
 				// Enter new state
 				state = newState
@@ -198,7 +254,9 @@ func encodeBytes(fileContents []byte) ([]int, []byte) {
 						// For each time it is divisible by the magnitude
 						for j := 0; j < divisibleTimes; j++ {
 							// Output magnitude token
-							bitstream = append(bitstream, origState.tokState(Token(magnitude)).bitRepresentation())
+							tokenState, bits := origState.tokState(Token(magnitude)).bitRepresentation()
+							bitsize += len(bits)
+							bitstream = append(bitstream, tokenState)
 							// Remove magnitude from the amount of times to go up
 							parentWithSymbol -= magnitude
 							// Move up the amount of times represented by the magnitude
@@ -217,14 +275,18 @@ func encodeBytes(fileContents []byte) ([]int, []byte) {
 				}
 				
 				// Output read token at the end to tell the decoder to use this state's symbol
-				bitstream = append(bitstream, state.tokState(Read).bitRepresentation())
+				tokenState, bits := state.tokState(Read).bitRepresentation()
+				bitsize += len(bits)
+				bitstream = append(bitstream, tokenState)
 			}
 		} else {
 			// The state contains the symbol
 			// Enter the state with the symbol
 			state = stateWithSymbol
 			// Output the corresponding bit representation
-			bitstream = append(bitstream, state.bitRepresentation())
+			tokenState, bits := state.bitRepresentation()
+			bitsize += len(bits)
+			bitstream = append(bitstream, tokenState)
 			// Update the frequency
 			state.freq++
 			// Re-sort transitions by frequency
@@ -233,8 +295,10 @@ func encodeBytes(fileContents []byte) ([]int, []byte) {
 
 	}
 
+	fmt.Println("True encoded bitlength:", bitsize, "bytes:", bitsize/8)
+
 	// printTransitions(*root, 0)
-	return bitstream, literals
+	return bitstream, literals, bitsize
 }
 
 func decodeBytes(bitstream []int, literals []byte) []byte {
@@ -327,10 +391,13 @@ func decodeStreamAndLiterals(bytes []byte) ([]int, []byte) {
 }
 
 func MCCCompress(fileContents []byte) []byte {
-	bitstream, literals := encodeBytes(fileContents)
+	bitstream, literals, bitsize := encodeBytes(fileContents)
 	fmt.Println("Character bytes:", len(literals))
-	fmt.Println("State bits:", len(bitstream), "bytes:", len(bitstream)/8)
-	fmt.Println("Rough estimate of bytes:", (len(bitstream)/8) + len(literals))
+	fmt.Println("State bits:", bitsize, "bytes:", bitsize/8)
+	fmt.Println("True estimate of bytes:", (bitsize/8) + len(literals))
+	fmt.Println("-----------------------")
+	fmt.Println("Compression Ratio:", float32((bitsize/8) + len(literals)) / float32(len(fileContents)) * 100)
+	fmt.Println("-----------------------")
 
 	result := 0  
 	for _, v := range bitstream {  
