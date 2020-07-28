@@ -2,9 +2,9 @@ package algorithm
 
 import (
 	"fmt"
-	dmc "github.com/mrfleap/custom-compression/compressor"
-	lzss "github.com/mrfleap/custom-compression/compressor"
-	mcc "github.com/mrfleap/custom-compression/compressor"
+	lz "github.com/mrfleap/custom-compression/compressor/lz"
+	huffman "github.com/mrfleap/custom-compression/compressor/huffman"
+	mcc "github.com/mrfleap/custom-compression/compressor/mcc"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -26,15 +26,15 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 	if f.decompressed == nil {
 		switch f.engine {
 		case "lzss":
-			f.decompressed = lzss.Decompress(f.compressed, true)
+			f.decompressed = lz.Decompress(f.compressed, true)
 		case "dmc":
-			f.decompressed = dmc.DMCDecompress(f.compressed)
+			f.decompressed = mcc.DMCDecompress(f.compressed)
 		case "mcc":
-			f.decompressed = mcc.MCCDecompress(f.compressed)
+			f.decompressed = mcc.Decompress(f.compressed)
 		case "huffman":
-			panic("Huffman is not implemented yet")
+			f.decompressed = huffman.Decompress(f.compressed)
 		default:
-			f.decompressed = lzss.Decompress(f.compressed, true)
+			f.decompressed = lz.Decompress(f.compressed, true)
 		}
 		
 	}
@@ -58,15 +58,15 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	var compressed []byte
 	switch f.engine {
 	case "lzss":
-		compressed = lzss.Compress(content, true, f.maxSearchBufferLength)
+		compressed = lz.Compress(content, true, f.maxSearchBufferLength)
 	case "dmc":
-		compressed = dmc.DMCCompress(content)
+		compressed = mcc.DMCCompress(content)
 	case "mcc":
-		compressed = mcc.MCCCompress(content)
+		compressed = mcc.Compress(content)
 	case "huffman":
-		panic("Huffman is not implemented yet")
+		compressed = huffman.Compress(content)
 	default:
-		compressed = lzss.Compress(content, true, f.maxSearchBufferLength)
+		compressed = lz.Compress(content, true, f.maxSearchBufferLength)
 	}
 	
 

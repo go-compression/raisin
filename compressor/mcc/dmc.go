@@ -1,4 +1,4 @@
-package compressor
+package mcc
 
 import (
 	"fmt"
@@ -281,4 +281,10 @@ func bitsFromBytes(bs []byte) []int {
 		}
 	}
 	return r
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
 }

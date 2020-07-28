@@ -1,4 +1,4 @@
-package main
+package huffman
 
 import (
 	"container/heap"
@@ -345,7 +345,7 @@ func decodeTree(tree string) HuffmanTree {
 	// }
 	return buildTree(symFreqs)
 }
-func encode(tree HuffmanTree, input string) {
+func encode(tree HuffmanTree, input string) []byte {
 
 	answer := ""
 	tempV := make([]rune, 0)
@@ -371,17 +371,9 @@ func encode(tree HuffmanTree, input string) {
 	fmt.Println(bits)
 	test := append(first, final...)
 
-	file, err := os.Create("huffman-compressed.bin")
-	check(err)
-	file.WriteString(estring + "\n")
-	//file.WriteString(ostring + "\n")
-	file.Write(test)
-	decode()
-
+	return append([]byte(estring), append([]byte("\n"), test...)...)
 }
-func decode() {
-	fileContents, err := ioutil.ReadFile("huffman-compressed.bin")
-	check(err)
+func decode(fileContents []byte) {
 	file_content := string(fileContents)
 	lines := strings.Split(file_content, "\n")
 	tree := decodeTree(lines[0])
@@ -398,6 +390,7 @@ func decode() {
 	content := make([]string, 0)
 	contentString := ""
 	var diff int64
+	var err error
 	for i, n := range byteArr {
 		if i != 0 {
 			hold := fmt.Sprintf("%08b", n)
@@ -410,9 +403,40 @@ func decode() {
 		}
 	}
 	contentString = contentString[int(diff):]
-	findCodes(tree, tree, contentString, "", 0, len(contentString))
+	answer := findCodes(tree, tree, contentString, "", 0, len(contentString))
 
+	file, err := os.Create("decompressed.txt")
+	check(err)
+	_, err = io.WriteString(file, answer)
+	check(err)
 }
+
+func Compress(fileContents []byte) []byte {
+	content := string(fileContents)
+	symFreqs := make(map[rune]int)
+
+	for _, c := range content {
+		symFreqs[c]++
+	}
+	for key, val := range symFreqs {
+		if key != 10 {
+			estring = estring + strconv.Itoa(val) + "|" + string(key)
+		} else {
+			estring = estring + strconv.Itoa(val) + "|\\n"
+		}
+	}
+	exampleTree := buildTree(symFreqs)
+
+	out := encode(exampleTree, content)
+
+	return out
+}
+
+func Decompress(fileContents []byte) []byte {
+	decode(fileContents)
+	return []byte("test")
+}
+
 func main() {
 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 	check(err)
@@ -431,5 +455,12 @@ func main() {
 	}
 	exampleTree := buildTree(symFreqs)
 
-	encode(exampleTree, content)
+	out := encode(exampleTree, content)
+	file, err := os.Create("huffman-compressed.bin")
+	check(err)
+	file.Write(out)
+
+	fileContents, err2 := ioutil.ReadFile("huffman-compressed.bin")
+	check(err2)
+	decode(fileContents)
 }

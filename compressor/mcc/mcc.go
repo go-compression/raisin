@@ -1,4 +1,4 @@
-package compressor
+package mcc
 
 import (
 	"fmt"
@@ -390,7 +390,7 @@ func decodeStreamAndLiterals(bytes []byte) ([]int, []byte) {
 	return bits, literals
 }
 
-func MCCCompress(fileContents []byte) []byte {
+func Compress(fileContents []byte) []byte {
 	bitstream, literals, bitsize := encodeBytes(fileContents)
 	fmt.Println("Character bytes:", len(literals))
 	fmt.Println("State bits:", bitsize, "bytes:", bitsize/8)
@@ -408,7 +408,7 @@ func MCCCompress(fileContents []byte) []byte {
 	return encodeStreamAndLiterals(bitstream, literals)
 }
 
-func MCCDecompress(fileContents []byte) []byte {
+func Decompress(fileContents []byte) []byte {
 	bitstream, literals := decodeStreamAndLiterals(fileContents)
 	output := decodeBytes(bitstream, literals)
 	return output
