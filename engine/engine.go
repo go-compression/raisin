@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	ent "github.com/kzahedi/goent/discrete"
+	"math"
 )
 
 var Engines = [...]string{"lzss", "dmc", "huffman", "mcc"}
@@ -132,6 +134,18 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 	check(err)
 	fmt.Printf("Compressing...\n")
 
+	symbolFrequencies := make(map[byte]int)
+	for _, c := range []byte(fileContents) {
+		symbolFrequencies[c]++
+	}
+	total := len([]byte(fileContents))
+	freqs := make([]float64, len(symbolFrequencies))
+	i := 0
+	for _, freq := range symbolFrequencies {
+		freqs[i] = float64(freq) / float64(total)
+		i++
+	}
+
 	file := CompressedFile{maxSearchBufferLength: maxSearchBufferLength}
 	file.engine = engine
 	file.Write(fileContents)
@@ -168,4 +182,6 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 	}
 	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
 	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
+	fmt.Printf("Shannon entropy: %.2f\n", ent.Entropy(freqs, math.Log))
+	fmt.Printf("Average bits per symbol: %.2f\n", float32(len(file.compressed) * 8) / float32(len(fileContents)))
 }
