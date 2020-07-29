@@ -266,83 +266,6 @@ func decodeTree(tree string) HuffmanTree {
 		}
 	}
 	fmt.Print(symFreqs)
-	// total, _ := strconv.Atoi(tree)
-	// for i := 0; i < total; i++ {
-	// 	symFreqs[rune(1)] = 5 * i
-	// }
-	// newTree := rebuildTree(symFreqs)
-	// solved := false
-	// index := 0
-	// current := newTree
-	// for len(string2) >= 0 {
-	// 	if solved == false {
-	// 		if string(string2[index]) == "0" {
-	// 			switch test := current.(type) {
-	// 			case HuffmanNode:
-	// 				current = test.left
-	// 			}
-	// 		} else if string(string2[index]) == "1" {
-	// 			switch test := current.(type) {
-	// 			case HuffmanNode:
-	// 				current = test.right
-	// 			}
-	// 		}
-	// 		if string(string2[index+1]) == "3" {
-	// 			solved = true
-	// 			index++
-	// 		}
-	// 		index++
-	// 	}
-	// 	if solved == true {
-	// 		switch test := current.(type) {
-	// 		case HuffmanNode:
-	// 			test.right = HuffmanLeaf{1, rune(string2[index])}
-	// 		case HuffmanLeaf:
-	// 			test.freq = 1
-	// 			test.value = rune(string2[index])
-	// 		}
-	// 		solved = false
-	// 		index++
-	// 	}
-	// }
-	// index := 0
-	// var current HuffmanTree
-	// reached := false
-	// for len(string2) >= 0 {
-	// 	if string(string2[index]) == "0" && reached == false {
-	// 		current =
-	// 	}
-	// }
-	// j := 0
-	// if rune(tree[j]) == 92 && rune(tree[j+1]) == 110 {
-	// 	symFreqs[10] = count
-	// 	j += 2
-	// } else {
-	// 	symFreqs[rune(tree[j])] = count
-	// 	j = 1
-	// }
-	// for i := j; i < len(tree)-1; i++ {
-	// 	if string(tree[i]) == "0" {
-	// 		if rune(tree[i+1]) == 92 && rune(tree[i+2]) == 110 {
-	// 			count++
-	// 			symFreqs[10] = count
-	// 			i++
-	// 		} else {
-	// 			count++
-	// 			symFreqs[rune(tree[i+1])] = count
-	// 		}
-	// 	} else {
-	// 		count += 2
-	// 		if rune(tree[i+1]) == 92 && rune(tree[i+2]) == 110 {
-	// 			symFreqs[10] = count
-	// 			i++
-	// 		} else {
-	// 			symFreqs[rune(tree[i+1])] = count
-	// 		}
-	// 	}
-	// 	i++
-
-	// }
 	return buildTree(symFreqs)
 }
 func encode(tree HuffmanTree, input string) []byte {
@@ -371,22 +294,14 @@ func encode(tree HuffmanTree, input string) []byte {
 	fmt.Println(bits)
 	test := append(first, final...)
 
-	return append([]byte(estring), append([]byte("\n"), test...)...)
+	return append([]byte(estring), append([]byte("\\\n"), test...)...)
 }
 func decode(fileContents []byte) []byte {
 	file_content := string(fileContents)
-	lines := strings.Split(file_content, "\n")
+	lines := strings.Split(file_content, "\\\n")
 	tree := decodeTree(lines[0])
-	tempV := make([]rune, 0)
-	tempB := make([]string, 0)
-	_, bin := printCodes(tree, []byte{}, tempV, tempB)
-	fmt.Println(bin)
-	var real string
-	for i := 1; i < len(lines); i++ {
-		real = real + lines[i]
-	}
 
-	byteArr := []byte(real)
+	byteArr := []byte(strings.Join(strings.Split(string(fileContents), "\\\n")[1:], ""))
 	content := make([]string, 0)
 	contentString := ""
 	var diff int64
