@@ -217,7 +217,7 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 
 		for _, engineName := range Engines {
 			if engineName != "all" {
-				fmt.Println("Benchmarking", engine)
+				fmt.Println("Benchmarking", engineName)
 				result := BenchmarkFile(engineName, fileString, 4096)
 				results = append(results, result)
 			}
