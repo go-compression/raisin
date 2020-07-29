@@ -217,7 +217,8 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 
 		for _, engineName := range Engines {
 			if engineName != "all" {
-				result := BenchmarkFile(engineName, fileString, maxSearchBufferLength)
+				fmt.Println("Benchmarking", engine)
+				result := BenchmarkFile(engineName, fileString, 4096)
 				results = append(results, result)
 			}
 		}
@@ -228,7 +229,7 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 		for _, result := range results {
 			t.AppendRow([]interface{}{result.engine, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy)})
 		}
-		
+
 		t.AppendSeparator()
 		t.AppendRow(table.Row{"File", fileString})
 		
