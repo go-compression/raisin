@@ -203,7 +203,8 @@ type Result struct {
 	engine string `header:"engine"`
 	ratio float32 `header:"compression ratio"`
     bitsPerSymbol float32 `header:"bits per symbol"`
-    entropy  float64 `header:"entropy"`
+	entropy  float64 `header:"entropy"`
+	lossless bool `header:"lossless"`
 }
 
 
@@ -213,7 +214,7 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.SetStyle(table.StyleLight)
-		t.AppendHeader(table.Row{"engine", "compression ratio", "bits per symbol", "entropy"})
+		t.AppendHeader(table.Row{"engine", "compression ratio", "bits per symbol", "entropy", "lossless?"})
 
 		for _, engineName := range Engines {
 			if engineName != "all" {
@@ -227,7 +228,7 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 		})
 
 		for _, result := range results {
-			t.AppendRow([]interface{}{result.engine, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy)})
+			t.AppendRow([]interface{}{result.engine, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy), result.lossless})
 		}
 
 		t.AppendSeparator()
@@ -292,5 +293,5 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 	fmt.Printf("Shannon entropy: %.2f\n", entropy)
 	bps := float32(len(file.compressed) * 8) / float32(len(fileContents))
 	fmt.Printf("Average bits per symbol: %.2f\n", bps)
-	return Result{engine, percentageDiff, bps, entropy}
+	return Result{engine, percentageDiff, bps, entropy, lossless}
 }
