@@ -8,7 +8,7 @@ import (
 	"encoding/binary"
 	"bytes"
 	"sort"
-	"unsafe"
+	// "unsafe"
 	"runtime"
 )
 
@@ -81,7 +81,7 @@ func DMCCompress(fileContents []byte) []byte {
 	}
 
 	// fmt.Println(bits)
-	decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
+	// decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
 	// fmt.Println("Decoded:", string(decoded))
 	// fmt.Println("Lossless markov:", string(decoded) == string(fileContents))
 	// fmt.Println("Bytes of chain:", unsafe.Sizeof(chain))
