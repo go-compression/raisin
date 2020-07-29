@@ -140,7 +140,7 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 	case HuffmanLeaf:
 		vals = append(vals, rune(i.value))
 		bin = append(bin, string(prefix))
-		fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
+		//fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
 		return vals, bin
 	case HuffmanNode:
 		prefix = append(prefix, '0')
@@ -161,7 +161,7 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, answer string, i i
 			if i < max-1 {
 				return findCodes(og, og, data, answer, i, max)
 			} else {
-				fmt.Println(answer)
+				//fmt.Println(answer)
 				file, err := os.Create("decompressed.txt")
 				check(err)
 				_, err = io.WriteString(file, answer)
@@ -177,7 +177,7 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, answer string, i i
 			}
 		}
 	} else {
-		fmt.Println(answer)
+		//fmt.Println(answer)
 		file, err := os.Create("decompressed.txt")
 		check(err)
 		_, err = io.WriteString(file, answer)
@@ -265,7 +265,7 @@ func decodeTree(tree string) HuffmanTree {
 			i++
 		}
 	}
-	fmt.Print(symFreqs)
+	//fmt.Print(symFreqs)
 	return buildTree(symFreqs)
 }
 func encode(tree HuffmanTree, input string) []byte {
@@ -285,13 +285,13 @@ func encode(tree HuffmanTree, input string) []byte {
 			ostring = ostring + string(bin[i]) + "3\\n"
 		}
 	}
-	fmt.Println(len(answer))
+	//Println(len(answer))
 	diff := bitString(string(strconv.FormatInt(int64(8-len(answer)%8), 2)))
 	first := diff.AsByteSlice()
 	bits := bitString(answer)
 	final := bits.AsByteSlice()
-	fmt.Println(diff)
-	fmt.Println(bits)
+	//	fmt.Println(diff)
+	//	fmt.Println(bits)
 	test := append(first, final...)
 
 	return append([]byte(estring), append([]byte("\\\n"), test...)...)
