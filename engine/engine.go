@@ -17,9 +17,12 @@ import (
 	ent "github.com/kzahedi/goent/discrete"
 	"math"
 	"bytes"
+	"github.com/jedib0t/go-pretty/table"
+	"sort"
+	"os"
 )
 
-var Engines = [...]string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
+var Engines = [...]string{"all", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
 
 type CompressedFile struct {
 	engine                string
@@ -73,6 +76,8 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 			f.decompressed, err = ioutil.ReadAll(r)
 			check(err)
 			r.Close()
+		case "all":
+			panic("Cannot decompress with all formats")
 		default:
 			f.decompressed = lz.Decompress(f.compressed, true)
 		}
@@ -130,6 +135,8 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 		w.Write(content)
 		w.Close()
 		compressed = b.Bytes()
+	case "all":
+		panic("Cannot compress with all formats")
 	default:
 		compressed = lz.Compress(content, true, f.maxSearchBufferLength)
 	}
@@ -192,7 +199,42 @@ func DecompressFile(engine string, fileString string) []byte {
 	return stream
 }
 
-func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) {
+type Result struct {
+	engine string `header:"engine"`
+	ratio float32 `header:"compression ratio"`
+    bitsPerSymbol float32 `header:"bits per symbol"`
+    entropy  float64 `header:"entropy"`
+}
+
+
+func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) Result  {
+	if engine == "all" {
+		results := make([]Result, 0)
+		t := table.NewWriter()
+		t.SetOutputMirror(os.Stdout)
+		t.SetStyle(table.StyleLight)
+		t.AppendHeader(table.Row{"engine", "compression ratio", "bits per symbol", "entropy"})
+
+		for _, engineName := range Engines {
+			if engineName != "all" {
+				result := BenchmarkFile(engineName, fileString, maxSearchBufferLength)
+				results = append(results, result)
+			}
+		}
+		sort.Slice(results, func(i, j int) bool {
+			return results[j].ratio > results[i].ratio
+		})
+
+		for _, result := range results {
+			t.AppendRow([]interface{}{result.engine, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy)})
+		}
+		
+		t.AppendSeparator()
+		t.AppendRow(table.Row{"File", fileString})
+		
+		t.Render()
+		return Result{}
+	}
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("Compressing...\n")
@@ -245,6 +287,9 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 	}
 	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
 	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
-	fmt.Printf("Shannon entropy: %.2f\n", ent.Entropy(freqs, math.Log))
-	fmt.Printf("Average bits per symbol: %.2f\n", float32(len(file.compressed) * 8) / float32(len(fileContents)))
+	entropy := ent.Entropy(freqs, math.Log)
+	fmt.Printf("Shannon entropy: %.2f\n", entropy)
+	bps := float32(len(file.compressed) * 8) / float32(len(fileContents))
+	fmt.Printf("Average bits per symbol: %.2f\n", bps)
+	return Result{engine, percentageDiff, bps, entropy}
 }

@@ -7,6 +7,14 @@ before_install:
   - docker build . -t compressor
 
 script:
-  - docker run -it compressor ./main benchmark lzss rows.json
-  - docker run -it compressor ./main benchmark lzss boundaries.zip
-  - docker run -it compressor ./main benchmark lzss sales.pdf
+  - docker run -it compressor ./main benchmark all alice29.txt
+  - docker run -it compressor ./main benchmark all asyoulik.txt
+  - docker run -it compressor ./main benchmark all cp.html
+  - docker run -it compressor ./main benchmark all fields.c
+  - docker run -it compressor ./main benchmark all grammar.lsp
+  - docker run -it compressor ./main benchmark all kennedy.xls
+  - docker run -it compressor ./main benchmark all lcet10.txt
+  - docker run -it compressor ./main benchmark all plrabn12.txt
+  - docker run -it compressor ./main benchmark all ptt5
+  - docker run -it compressor ./main benchmark all sum
+  - docker run -it compressor ./main benchmark all xargs.1
