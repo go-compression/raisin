@@ -67,12 +67,12 @@ func DMCCompress(fileContents []byte) []byte {
 	memUsage(&m1, &m2)
 
 	SortNodesByOccurences(&chain)
-	PrintMarkovChain(&chain, 0)
-	fmt.Println("Total upward travels:", UpwardTravels(&chain))
-	fmt.Println("Compiling into bits")
+	// PrintMarkovChain(&chain, 0)
+	// fmt.Println("Total upward travels:", UpwardTravels(&chain))
+	// fmt.Println("Compiling into bits")
 
 	bits := GetBitsFromChain(&chain, fileContents, &[]MarkovChain{})
-	fmt.Println("Length of bits:", len(bits))
+	// fmt.Println("Length of bits:", len(bits))
 
 	encodeBits := new(bytes.Buffer)
 	for _, num := range bits {
@@ -82,9 +82,9 @@ func DMCCompress(fileContents []byte) []byte {
 
 	// fmt.Println(bits)
 	decoded := GetOutputFromBits(bits, &chain, &[]MarkovChain{})
-	fmt.Println("Decoded:", string(decoded))
-	fmt.Println("Lossless markov:", string(decoded) == string(fileContents))
-	fmt.Println("Bytes of chain:", unsafe.Sizeof(chain))
+	// fmt.Println("Decoded:", string(decoded))
+	// fmt.Println("Lossless markov:", string(decoded) == string(fileContents))
+	// fmt.Println("Bytes of chain:", unsafe.Sizeof(chain))
 
 	return encodeBits.Bytes()
 }
