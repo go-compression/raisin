@@ -2,6 +2,7 @@
 COMPRESSIONTESTFILE.txt
 *.compressed
 *.decompressed
+decompressed.txt
 
 # Binaries for programs and plugins
 *.exe
