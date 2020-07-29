@@ -5,6 +5,10 @@ import (
 	lz "github.com/mrfleap/custom-compression/compressor/lz"
 	huffman "github.com/mrfleap/custom-compression/compressor/huffman"
 	mcc "github.com/mrfleap/custom-compression/compressor/mcc"
+	flate "compress/flate"
+	gzip "compress/gzip"
+	lzw "compress/lzw"
+	zlib "compress/zlib"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -12,9 +16,10 @@ import (
 	"strings"
 	ent "github.com/kzahedi/goent/discrete"
 	"math"
+	"bytes"
 )
 
-var Engines = [...]string{"lzss", "dmc", "huffman", "mcc"}
+var Engines = [...]string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
 
 type CompressedFile struct {
 	engine                string
@@ -35,6 +40,39 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 			f.decompressed = mcc.Decompress(f.compressed)
 		case "huffman":
 			f.decompressed = huffman.Decompress(f.compressed)
+		case "zlib":
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := zlib.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
+		case "lzw":
+			var b bytes.Buffer
+			var err error
+			b.Write(f.compressed)
+			r := lzw.NewReader(&b, lzw.MSB, 8)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
+		case "flate":
+			var b bytes.Buffer
+			var err error
+			b.Write(f.compressed)
+			r := flate.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
+		case "gzip":
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := gzip.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		default:
 			f.decompressed = lz.Decompress(f.compressed, true)
 		}
@@ -67,6 +105,31 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 		compressed = mcc.Compress(content)
 	case "huffman":
 		compressed = huffman.Compress(content)
+	case "zlib":
+		var b bytes.Buffer
+		w := zlib.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
+	case "lzw":
+		var b bytes.Buffer
+		w := lzw.NewWriter(&b, lzw.MSB, 8)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
+	case "flate":
+		var b bytes.Buffer
+		w, err := flate.NewWriter(&b, 9)
+		check(err)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
+	case "gzip":
+		var b bytes.Buffer
+		w := gzip.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	default:
 		compressed = lz.Compress(content, true, f.maxSearchBufferLength)
 	}
