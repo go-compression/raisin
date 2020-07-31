@@ -80,7 +80,7 @@ func main() {
 			if *generateHTML {
 				err := ioutil.WriteFile("index.html", []byte(output), 0644)
 				check(err)
-				fmt.Println("Written table to index.html")
+				fmt.Println("Wrote table to index.html")
 			}
 		} else {
 			if len(files) > 0 {
