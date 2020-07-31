@@ -1,1 +1,824 @@
-Placeholder
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <title>Custom Compression Algorithm | custom-compression</title>
+    <meta name="generator" content="Jekyll v3.8.7" />
+    <meta property="og:title" content="Custom Compression Algorithm" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Custom Compression Algorithm (Name TBD) Made as a Summer Project" />
+    <meta property="og:description" content="Custom Compression Algorithm (Name TBD) Made as a Summer Project" />
+    <link rel="canonical" href="https://mrfleap.github.io/custom-compression/" />
+    <meta property="og:url" content="https://mrfleap.github.io/custom-compression/" />
+    <meta property="og:site_name" content="custom-compression" />
+    <script type="application/ld+json">
+        {
+            "description": "Custom Compression Algorithm (Name TBD) Made as a Summer Project",
+            "@type": "WebSite",
+            "headline": "Custom Compression Algorithm",
+            "url": "https://mrfleap.github.io/custom-compression/",
+            "name": "custom-compression",
+            "@context": "https://schema.org"
+        }
+    </script>
+    
+
+    <link rel="stylesheet" href="/custom-compression/assets/css/style.css">
+</head>
+
+<body>
+    <div class="container-lg px-3 my-5 markdown-body">
+
+        <h1><a href="https://mrfleap.github.io/custom-compression/">custom-compression</a></h1>
+
+
+        <h1 id="custom-compression-algorithm">Custom Compression Benchmark Results</h1>
+
+        <p><a href="https://travis-ci.com/mrfleap/custom-compression"><img
+                    src="https://travis-ci.com/mrfleap/custom-compression.svg?branch=master" alt="Build Status" /></a>
+        </p>
+
+        <p><a href="https://github.com/mrfleap/custom-compression">View GitHub repo</a></p>
+
+        <br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>129.34ms</td>
+    <td>35.67%</td>
+    <td>2.85</td>
+    <td>3.17</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>279.2ms</td>
+    <td>35.71%</td>
+    <td>2.86</td>
+    <td>3.17</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>162.2ms</td>
+    <td>35.72%</td>
+    <td>2.86</td>
+    <td>3.17</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>229.38ms</td>
+    <td>50.54%</td>
+    <td>4.04</td>
+    <td>3.17</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>1.60654s</td>
+    <td>92.22%</td>
+    <td>7.38</td>
+    <td>3.17</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>alice29.txt</td>
+    <td>Size</td>
+    <td>152.1 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>779.18ms</td>
+    <td>38.92%</td>
+    <td>3.11</td>
+    <td>3.33</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>501.63ms</td>
+    <td>38.94%</td>
+    <td>3.12</td>
+    <td>3.33</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>589.79ms</td>
+    <td>38.95%</td>
+    <td>3.12</td>
+    <td>3.33</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>238.9ms</td>
+    <td>53.80%</td>
+    <td>4.30</td>
+    <td>3.33</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>2.77807s</td>
+    <td>94.38%</td>
+    <td>7.55</td>
+    <td>3.33</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>asyoulik.txt</td>
+    <td>Size</td>
+    <td>125.2 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>489.74ms</td>
+    <td>32.11%</td>
+    <td>2.57</td>
+    <td>3.62</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>505.27ms</td>
+    <td>32.20%</td>
+    <td>2.58</td>
+    <td>3.62</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>667.65ms</td>
+    <td>32.25%</td>
+    <td>2.58</td>
+    <td>3.62</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>512.11ms</td>
+    <td>52.01%</td>
+    <td>4.16</td>
+    <td>3.62</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>2.69212s</td>
+    <td>73.04%</td>
+    <td>5.84</td>
+    <td>3.62</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>cp.html</td>
+    <td>Size</td>
+    <td>24.6 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>191.58ms</td>
+    <td>27.95%</td>
+    <td>2.24</td>
+    <td>3.47</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>141.99ms</td>
+    <td>28.02%</td>
+    <td>2.24</td>
+    <td>3.47</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>224.76ms</td>
+    <td>28.13%</td>
+    <td>2.25</td>
+    <td>3.47</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>138.13ms</td>
+    <td>44.51%</td>
+    <td>3.56</td>
+    <td>3.47</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>231.42ms</td>
+    <td>69.61%</td>
+    <td>5.57</td>
+    <td>3.47</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>fields.c</td>
+    <td>Size</td>
+    <td>11.2 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>7.73ms</td>
+    <td>32.55%</td>
+    <td>2.60</td>
+    <td>3.21</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>15.17ms</td>
+    <td>32.71%</td>
+    <td>2.62</td>
+    <td>3.21</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>10.52ms</td>
+    <td>33.03%</td>
+    <td>2.64</td>
+    <td>3.21</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>13.09ms</td>
+    <td>48.67%</td>
+    <td>3.89</td>
+    <td>3.21</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>69.07ms</td>
+    <td>73.23%</td>
+    <td>5.86</td>
+    <td>3.21</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>grammar.lsp</td>
+    <td>Size</td>
+    <td>3.7 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>6.77852s</td>
+    <td>20.15%</td>
+    <td>1.61</td>
+    <td>2.48</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>3.25689s</td>
+    <td>20.19%</td>
+    <td>1.62</td>
+    <td>2.48</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>2.96054s</td>
+    <td>20.20%</td>
+    <td>1.62</td>
+    <td>2.48</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>3.11521s</td>
+    <td>26.20%</td>
+    <td>2.10</td>
+    <td>2.48</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>11.49454s</td>
+    <td>88.12%</td>
+    <td>7.05</td>
+    <td>2.48</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>kennedy.xls</td>
+    <td>Size</td>
+    <td>1.0 MB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>1.51556s</td>
+    <td>33.88%</td>
+    <td>2.71</td>
+    <td>3.24</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>915.14ms</td>
+    <td>33.93%</td>
+    <td>2.71</td>
+    <td>3.24</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>1.50926s</td>
+    <td>33.93%</td>
+    <td>2.71</td>
+    <td>3.24</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>918.95ms</td>
+    <td>51.15%</td>
+    <td>4.09</td>
+    <td>3.24</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>5.68117s</td>
+    <td>89.88%</td>
+    <td>7.19</td>
+    <td>3.24</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>lcet10.txt</td>
+    <td>Size</td>
+    <td>426.8 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>2.75346s</td>
+    <td>40.26%</td>
+    <td>3.22</td>
+    <td>3.14</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>2.72302s</td>
+    <td>40.29%</td>
+    <td>3.22</td>
+    <td>3.14</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>2.31837s</td>
+    <td>40.30%</td>
+    <td>3.22</td>
+    <td>3.14</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>1.8755s</td>
+    <td>52.70%</td>
+    <td>4.22</td>
+    <td>3.14</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>8.38626s</td>
+    <td>98.46%</td>
+    <td>7.88</td>
+    <td>3.14</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>plrabn12.txt</td>
+    <td>Size</td>
+    <td>481.9 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>55.68877s</td>
+    <td>10.03%</td>
+    <td>0.80</td>
+    <td>0.84</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>ptt5</td>
+    <td>Size</td>
+    <td>513.2 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>22.87364s</td>
+    <td>34.68%</td>
+    <td>2.77</td>
+    <td>3.69</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>22.82296s</td>
+    <td>34.74%</td>
+    <td>2.78</td>
+    <td>3.69</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>12.03ms</td>
+    <td>34.77%</td>
+    <td>2.78</td>
+    <td>3.69</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>11.9ms</td>
+    <td>52.39%</td>
+    <td>4.19</td>
+    <td>3.69</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>58.23007s</td>
+    <td>78.91%</td>
+    <td>6.31</td>
+    <td>3.69</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>sum</td>
+    <td>Size</td>
+    <td>38.2 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table><br><table class="go-pretty-table">
+  <thead>
+  <tr>
+    <th>engine</th>
+    <th>time taken</th>
+    <th>compression ratio</th>
+    <th>bits per symbol</th>
+    <th>entropy</th>
+    <th>lossless</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>flate</td>
+    <td>6.64ms</td>
+    <td>40.81%</td>
+    <td>3.26</td>
+    <td>3.40</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>zlib</td>
+    <td>1.68ms</td>
+    <td>40.95%</td>
+    <td>3.28</td>
+    <td>3.40</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>2.9ms</td>
+    <td>41.23%</td>
+    <td>3.30</td>
+    <td>3.40</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
+    <td>1.34ms</td>
+    <td>55.31%</td>
+    <td>4.42</td>
+    <td>3.40</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzss</td>
+    <td>814.57ms</td>
+    <td>87.72%</td>
+    <td>7.02</td>
+    <td>3.40</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
+    <td>2.9643s</td>
+    <td>182.42%</td>
+    <td>14.59</td>
+    <td>3.40</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>File</td>
+    <td>xargs.1</td>
+    <td>Size</td>
+    <td>4.2 kB</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  </tbody>
+</table>
+
+        <br>
+
+        <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+            This site is open source. <a href="https://github.com/mrfleap/custom-compression">Improve this page</a>.
+        </div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js"
+        integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>
+        anchors.add();
+    </script>
+
+</body>
+
+</html>
