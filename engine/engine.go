@@ -21,10 +21,12 @@ import (
 	"sort"
 	"os"
 	"html/template"
+	"time"
+	"sync"
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
-var Suites = map[string][]string{"all": Engines[:], "suite": []string{"lzss", "flate", "gzip", "lzw", "zlib"}}
+var Suites = map[string][]string{"all": Engines[:], "suite": []string{"lzss", "huffman", "flate", "gzip", "lzw", "zlib"}}
 
 type CompressedFile struct {
 	engine                string
@@ -202,36 +204,72 @@ func DecompressFile(engine string, fileString string) []byte {
 }
 
 type Result struct {
-	engine string `header:"engine"`
-	ratio float32 `header:"compression ratio"`
-    bitsPerSymbol float32 `header:"bits per symbol"`
-	entropy  float64 `header:"entropy"`
-	lossless bool `header:"lossless"`
+	engine string
+	timeTaken string 
+	ratio float32
+    bitsPerSymbol float32
+	entropy  float64
+	lossless bool
+	failed bool
 }
 
 func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) string {
 	var html string
+	timeout := 1 * time.Minute
 
 	for _, fileString := range files {
 		results := make([]Result, 0)
+		failedResults := make([]Result, 0)
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.SetStyle(table.StyleLight)
-		t.AppendHeader(table.Row{"engine", "compression ratio", "bits per symbol", "entropy", "lossless?"})
+		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "bits per symbol", "entropy", "lossless", "finished"})
+
+		resultChans := make(map[string]chan Result)
+		var wg sync.WaitGroup
 
 		for _, engineName := range algorithms {
 			fmt.Println("Benchmarking", engineName)
-			result := BenchmarkFile(engineName, fileString, true)
-			results = append(results, result)
+
+			resultChannel := make(chan Result, 1)
+			resultChans[engineName] = resultChannel
+
+			wg.Add(1)
+			go AsyncBenchmarkFile(resultChannel, &wg, engineName, fileString, true)
 		}
+
+		waitTimeout(&wg, timeout)
+
+		for engineName, resultChan := range resultChans {
+			select {
+			case result := <-resultChan:
+				if result.failed {
+					failedResults = append(failedResults, result)
+				} else {
+					results = append(results, result)
+				}
+			default:
+				result := Result{}
+				result.engine = engineName
+				result.timeTaken = fmt.Sprintf(">%s", timeout)
+				result.lossless = false
+				result.failed = true
+				failedResults = append(failedResults, result)
+			}
+		}
+
 		sort.Slice(results, func(i, j int) bool {
 			return results[j].ratio > results[i].ratio
 		})
 
 		for _, result := range results {
-			t.AppendRow([]interface{}{result.engine, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy), result.lossless})
+			t.AppendRow([]interface{}{result.engine, result.timeTaken, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy), result.lossless})
 		}
 
+		t.AppendSeparator()
+		for _, result := range failedResults {
+			t.AppendRow([]interface{}{result.engine, result.timeTaken, "DNF", "DNF", "DNF", result.lossless})
+		}
 		t.AppendSeparator()
 		t.AppendRow(table.Row{"File", fileString})
 		
@@ -248,6 +286,30 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 	} else {
 		return ""
 	}
+}
+
+func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine string, fileString string, suite bool) {
+	defer wg.Done()
+
+	errorHandler := func() {
+		if recover() != nil {
+			fmt.Printf("%s errored during execution, continuing", engine)
+			result := Result{}
+			result.engine = engine
+			result.timeTaken = "failed"
+			result.lossless = false
+			result.failed = true
+			resultChannel <- result
+		}
+	}
+
+	defer errorHandler()
+	start := time.Now()
+	result := BenchmarkFile(engine, fileString, suite)
+	duration := time.Since(start)
+	result.timeTaken = fmt.Sprintf("%s", duration)
+
+	resultChannel <- result
 }
 
 func BenchmarkFile(engine string, fileString string, suite bool) Result  {
@@ -315,5 +377,5 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 		fmt.Printf("Shannon entropy: %.2f\n", entropy)
 		fmt.Printf("Average bits per symbol: %.2f\n", bps)
 	}
-	return Result{engine, percentageDiff, bps, entropy, lossless}
+	return Result{engine, "", percentageDiff, bps, entropy, lossless, false}
 }
