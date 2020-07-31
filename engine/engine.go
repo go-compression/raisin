@@ -315,7 +315,7 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine st
 	duration := time.Since(start)
 	result.timeTaken = fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
 
-	fmt.Printf("%s finished benchmarking", engine)
+	fmt.Printf("%s finished benchmarking\n", engine)
 
 	resultChannel <- result
 }
