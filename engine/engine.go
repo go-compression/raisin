@@ -217,13 +217,19 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 	var html string
 	timeout := 1 * time.Minute
 
-	for _, fileString := range files {
+	for i, fileString := range files {
+		fmt.Printf("Compressing file %d/%d - %s\n", i + 1, len(files), fileString)
 		results := make([]Result, 0)
 		failedResults := make([]Result, 0)
+
+		fileContents, err := ioutil.ReadFile(fileString)
+		check(err)
+		fileSize := int64(len(fileContents))
+
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.SetStyle(table.StyleLight)
-		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "bits per symbol", "entropy", "lossless", "finished"})
+		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "bits per symbol", "entropy", "lossless"})
 
 		resultChans := make(map[string]chan Result)
 		var wg sync.WaitGroup
@@ -271,7 +277,7 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 			t.AppendRow([]interface{}{result.engine, result.timeTaken, "DNF", "DNF", "DNF", result.lossless})
 		}
 		t.AppendSeparator()
-		t.AppendRow(table.Row{"File", fileString})
+		t.AppendRow(table.Row{"File", fileString, "Size", ByteCountSI(fileSize)})
 		
 		t.Render()
 		if generateHtml {
@@ -308,6 +314,8 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine st
 	result := BenchmarkFile(engine, fileString, suite)
 	duration := time.Since(start)
 	result.timeTaken = fmt.Sprintf("%s", duration)
+
+	fmt.Printf("%s finished benchmarking", engine)
 
 	resultChannel <- result
 }
