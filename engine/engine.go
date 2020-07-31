@@ -313,7 +313,7 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine st
 	start := time.Now()
 	result := BenchmarkFile(engine, fileString, suite)
 	duration := time.Since(start)
-	result.timeTaken = fmt.Sprintf("%s", duration)
+	result.timeTaken = fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
 
 	fmt.Printf("%s finished benchmarking", engine)
 
