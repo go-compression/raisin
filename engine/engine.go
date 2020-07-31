@@ -20,9 +20,11 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	"sort"
 	"os"
+	"html/template"
 )
 
-var Engines = [...]string{"all", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
+var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
+var Suites = map[string][]string{"all": Engines[:], "suite": []string{"lzss", "flate", "gzip", "lzw", "zlib"}}
 
 type CompressedFile struct {
 	engine                string
@@ -153,12 +155,12 @@ func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	return cf, err
 }
 
-func CompressFile(engine string, fileString string, maxSearchBufferLength int) {
+func CompressFile(engine string, fileString string) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("Compressing...\n")
 
-	file := CompressedFile{maxSearchBufferLength: maxSearchBufferLength}
+	file := CompressedFile{maxSearchBufferLength: 4096}
 	file.engine = engine
 	file.Write(fileContents)
 
@@ -207,21 +209,20 @@ type Result struct {
 	lossless bool `header:"lossless"`
 }
 
+func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) string {
+	var html string
 
-func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) Result  {
-	if engine == "all" {
+	for _, fileString := range files {
 		results := make([]Result, 0)
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.SetStyle(table.StyleLight)
 		t.AppendHeader(table.Row{"engine", "compression ratio", "bits per symbol", "entropy", "lossless?"})
 
-		for _, engineName := range Engines {
-			if engineName != "all" {
-				fmt.Println("Benchmarking", engineName)
-				result := BenchmarkFile(engineName, fileString, 4096)
-				results = append(results, result)
-			}
+		for _, engineName := range algorithms {
+			fmt.Println("Benchmarking", engineName)
+			result := BenchmarkFile(engineName, fileString, true)
+			results = append(results, result)
 		}
 		sort.Slice(results, func(i, j int) bool {
 			return results[j].ratio > results[i].ratio
@@ -235,8 +236,21 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 		t.AppendRow(table.Row{"File", fileString})
 		
 		t.Render()
-		return Result{}
+		if generateHtml {
+			html = html + "<br>" + t.RenderHTML()
+		}
 	}
+	if generateHtml {
+		tmpl := template.Must(template.ParseFiles("templates/benchmark.html"))
+		var b bytes.Buffer
+		tmpl.Execute(&b, struct{Tables template.HTML}{Tables: template.HTML(html)})
+		return b.String()
+	} else {
+		return ""
+	}
+}
+
+func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("Compressing...\n")
@@ -253,12 +267,14 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 		i++
 	}
 
-	file := CompressedFile{maxSearchBufferLength: maxSearchBufferLength}
+	file := CompressedFile{maxSearchBufferLength: 4096}
 	file.engine = engine
 	file.Write(fileContents)
 
-	var compressedFilePath = filepath.Base(fileString) + ".compressed"
-	err = ioutil.WriteFile(compressedFilePath, file.compressed, 0644)
+	if !suite {
+		var compressedFilePath = filepath.Base(fileString) + ".compressed"
+		err = ioutil.WriteFile(compressedFilePath, file.compressed, 0644)
+	}
 
 	fmt.Printf("Decompressing...\n")
 	stream := make([]byte, 0)
@@ -275,23 +291,29 @@ func BenchmarkFile(engine string, fileString string, maxSearchBufferLength int) 
 			break
 		}
 	}
-	var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
-	err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
-	check(err)
+	
+	if !suite {
+		var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
+		err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
+		check(err)
+	}
 
 	lossless := reflect.DeepEqual(fileContents, file.decompressed)
-	fmt.Printf("Lossless: %t\n", lossless)
-
-	fmt.Printf("Original bytes: %v\n", len(fileContents))
-	fmt.Printf("Compressed bytes: %v\n", len(file.compressed))
-	if !lossless {
-		fmt.Printf("Decompressed bytes: %v\n", len(file.decompressed))
-	}
 	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
-	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
 	entropy := ent.Entropy(freqs, math.Log)
-	fmt.Printf("Shannon entropy: %.2f\n", entropy)
 	bps := float32(len(file.compressed) * 8) / float32(len(fileContents))
-	fmt.Printf("Average bits per symbol: %.2f\n", bps)
+
+	if !suite {
+		fmt.Printf("Lossless: %t\n", lossless)
+
+		fmt.Printf("Original bytes: %v\n", len(fileContents))
+		fmt.Printf("Compressed bytes: %v\n", len(file.compressed))
+		if !lossless {
+			fmt.Printf("Decompressed bytes: %v\n", len(file.decompressed))
+		}
+		fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
+		fmt.Printf("Shannon entropy: %.2f\n", entropy)
+		fmt.Printf("Average bits per symbol: %.2f\n", bps)
+	}
 	return Result{engine, percentageDiff, bps, entropy, lossless}
 }
