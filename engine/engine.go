@@ -24,6 +24,7 @@ import (
 	"html/template"
 	"time"
 	"sync"
+	"strconv"
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
@@ -346,7 +347,10 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 	if generateHtml {
 		tmpl := template.Must(template.ParseFiles("templates/benchmark.html"))
 		var b bytes.Buffer
-		tmpl.Execute(&b, struct{Tables template.HTML}{Tables: template.HTML(html)})
+		tmpl.Execute(&b, struct{
+			Tables template.HTML
+			Created string
+		}{Tables: template.HTML(html), Created: strconv.FormatInt(time.Now().Unix(), 10)})
 		return b.String()
 	} else {
 		return ""

@@ -2,16 +2,18 @@ package mcc
 
 import (
 	"fmt"
-	"strings"
-	"strconv"
-	"sort"
-	"math"
+	huff "github.com/icza/huffman"
+	// huffman "github.com/mrfleap/custom-compression/compressor/huffman"
 	"io"
 	"io/ioutil"
-	huffman "github.com/icza/huffman"
+	"math"
+	"sort"
+	"strconv"
+	"strings"
 )
 
 type Token int
+
 const (
 	Read Token = 0
 	// Up token has been replaced by dynamic order-of-two-based up tokens
@@ -19,13 +21,13 @@ const (
 )
 
 type State struct {
-	isRoot bool
-	token Token
-	isTok bool
-	symbol byte
-	freq int
+	isRoot      bool
+	token       Token
+	isTok       bool
+	symbol      byte
+	freq        int
 	transitions *[]*State // TODO Try to remove references here as interfaces should modify object with reference to it
-	parent *State
+	parent      *State
 }
 
 func (state *State) displayValue() string {
@@ -79,7 +81,7 @@ func (state *State) sortByFrequency() {
 	sort.Slice((*state.transitions), func(i, j int) bool {
 		return (*state.transitions)[i].freq > (*state.transitions)[j].freq
 	})
-} 
+}
 
 func (state *State) combinedValue() int {
 	if state.isTok {
@@ -90,14 +92,21 @@ func (state *State) combinedValue() int {
 }
 
 func (state *State) bitRepresentation() (int, string) {
-	leaves := make([]*huffman.Node, len(*state.parent.transitions))
+	// symFreqs := make(map[rune]int)
+	// for _, c := range *state.parent.transitions {
+	// 	symFreqs[rune(c.combinedValue())] = c.freq + 1000
+	// }
+	// testTree := huffman.BuildTree(symFreqs)
+	// fmt.Println(testTree)
+	// fmt.Println(string(huffman.Encode(testTree, string(rune(state.combinedValue())))))
+	leaves := make([]*huff.Node, len(*state.parent.transitions))
 	for i, childState := range *state.parent.transitions {
-		leaves[i] = &huffman.Node{Value: huffman.ValueType(childState.combinedValue()), Count: childState.freq + 1000}
+		leaves[i] = &huff.Node{Value: huff.ValueType(childState.combinedValue()), Count: childState.freq + 1000}
 	}
-	root := huffman.Build(leaves)
+	root := huff.Build(leaves)
 	// huffman.Print(root)
 	// fmt.Println(root.Right.Right.Code())
-	bits := getValueOf(root, huffman.ValueType(state.combinedValue()))
+	bits := getValueOf(root, huff.ValueType(state.combinedValue()))
 	// fmt.Println(state.combinedValue(), "-", bits)
 	for i, childState := range *state.parent.transitions {
 		if childState == state {
@@ -107,15 +116,15 @@ func (state *State) bitRepresentation() (int, string) {
 	return -1, bits
 }
 
-func getValueOf(root *huffman.Node, value huffman.ValueType) string {
-	var traverse func(n *huffman.Node, code uint64, bits byte, lookFor huffman.ValueType) (bool, string)
+func getValueOf(root *huff.Node, value huff.ValueType) string {
+	var traverse func(n *huff.Node, code uint64, bits byte, lookFor huff.ValueType) (bool, string)
 
-	traverse = func(n *huffman.Node, code uint64, bits byte, lookFor huffman.ValueType) (bool, string) {
+	traverse = func(n *huff.Node, code uint64, bits byte, lookFor huff.ValueType) (bool, string) {
 		if n.Left == nil {
 			// Leaf
 			if n.Value == lookFor {
 				// fmt.Printf("'%c': %0"+strconv.Itoa(int(bits))+"b\n", n.Value, code)
-				return true, fmt.Sprintf("%0"+strconv.Itoa(int(bits))+"b\n", code)
+				return true, fmt.Sprintf("%0"+strconv.Itoa(int(bits))+"b", code)
 			}
 			return false, ""
 		}
@@ -202,6 +211,7 @@ func createRoot() *State {
 
 func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 	bitsize := 0
+	allbits := make([]string, 0)
 	bitstream := make([]int, 0)
 	literals := make([]byte, 0)
 
@@ -224,6 +234,7 @@ func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 				newState := createState(fileByte, state)
 				// Output Read token
 				tokenState, bits := state.tokState(Read).bitRepresentation()
+				allbits = append(allbits, bits)
 				bitsize += len(bits)
 				bitstream = append(bitstream, tokenState)
 				literals = append(literals, fileByte)
@@ -250,13 +261,14 @@ func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 					// Calculate magnitude
 					magnitude := int(math.Pow(2, float64(i)))
 					// If the amount of times we're moving up is divisible by the magnitude
-					if parentWithSymbol - magnitude >= 0 {
+					if parentWithSymbol-magnitude >= 0 {
 						// Calculate how many times it is divisible by
 						divisibleTimes := parentWithSymbol / magnitude
 						// For each time it is divisible by the magnitude
 						for j := 0; j < divisibleTimes; j++ {
 							// Output magnitude token
 							tokenState, bits := origState.tokState(Token(magnitude)).bitRepresentation()
+							allbits = append(allbits, bits)
 							bitsize += len(bits)
 							bitstream = append(bitstream, tokenState)
 							// Remove magnitude from the amount of times to go up
@@ -271,13 +283,14 @@ func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 								// Remember we've already encoded a magnitude - 1 so don't re-encode it
 								encoded = true
 							}
-							
+
 						}
 					}
 				}
-				
+
 				// Output read token at the end to tell the decoder to use this state's symbol
 				tokenState, bits := state.tokState(Read).bitRepresentation()
+				allbits = append(allbits, bits)
 				bitsize += len(bits)
 				bitstream = append(bitstream, tokenState)
 			}
@@ -287,6 +300,7 @@ func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 			state = stateWithSymbol
 			// Output the corresponding bit representation
 			tokenState, bits := state.bitRepresentation()
+			allbits = append(allbits, bits)
 			bitsize += len(bits)
 			bitstream = append(bitstream, tokenState)
 			// Update the frequency
@@ -298,6 +312,7 @@ func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 	}
 
 	fmt.Println("True encoded bitlength:", bitsize, "bytes:", bitsize/8)
+	fmt.Println("Bits: " + strings.Join(allbits, ""))
 
 	// printTransitions(*root, 0)
 	return bitstream, literals, bitsize
@@ -380,7 +395,7 @@ func decodeStreamAndLiterals(bytes []byte) ([]int, []byte) {
 	stringInput := string(bytes)
 	seperatorIndex := strings.IndexByte(stringInput, seperator)
 	bitstrings := strings.Split(stringInput[:seperatorIndex], ",")
-	literals := bytes[seperatorIndex + 1:]
+	literals := bytes[seperatorIndex+1:]
 	bits := make([]int, len(bitstrings))
 	for i, bitstring := range bitstrings {
 		num, err := strconv.Atoi(bitstring)
@@ -396,15 +411,15 @@ func Compress(fileContents []byte) []byte {
 	bitstream, literals, bitsize := encodeBytes(fileContents)
 	fmt.Println("Character bytes:", len(literals))
 	fmt.Println("State bits:", bitsize, "bytes:", bitsize/8)
-	fmt.Println("True estimate of bytes:", (bitsize/8) + len(literals))
+	fmt.Println("True estimate of bytes:", (bitsize/8)+len(literals))
 	fmt.Println("-----------------------")
-	fmt.Println("Compression Ratio:", float32((bitsize/8) + len(literals)) / float32(len(fileContents)) * 100)
+	fmt.Println("Compression Ratio:", float32((bitsize/8)+len(literals))/float32(len(fileContents))*100)
 	fmt.Println("-----------------------")
 
-	result := 0  
-	for _, v := range bitstream {  
-		result += v  
-	}  
+	result := 0
+	for _, v := range bitstream {
+		result += v
+	}
 
 	fmt.Println("Sum:", result)
 	return encodeStreamAndLiterals(bitstream, literals)
@@ -421,7 +436,7 @@ func printTransitions(parent State, indentation int) {
 		fmt.Print(strings.Repeat("-", indentation), state.displayValue(), "-", state.freq, "\n")
 
 		if state.transitions != nil {
-			printTransitions(*state, indentation + 1)
+			printTransitions(*state, indentation+1)
 		}
 	}
 }
@@ -448,7 +463,7 @@ func (writer *Writer) Close() error {
 
 type Reader struct {
 	r            io.Reader
-	compressed []byte
+	compressed   []byte
 	decompressed []byte
 	pos          int
 }
