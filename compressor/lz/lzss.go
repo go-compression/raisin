@@ -77,7 +77,7 @@ func NewReader(r io.Reader) (*Reader, error) {
 
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
-		r.decompressed = Decompress(content, true)
+		r.decompressed = Decompress(r.compressed, true)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])
 	if len(content) < bytesToWriteOut {
