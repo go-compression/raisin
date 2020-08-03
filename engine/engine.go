@@ -38,34 +38,40 @@ type CompressedFile struct {
 	maxSearchBufferLength int
 }
 
+// var Readers = map[string]io.Reader{
 var Readers = map[string]interface{}{
+	// "lzss": lz.NewReader(),
 	"lzss": lz.NewReader,
-	"dmc": dmc.NewReader,
-	"mcc": mcc.NewReader,
-	"huffman": huffman.NewReader,
-	"zlib": zlib.NewReader,
-	"flate": flate.NewReader,
-	"gzip": gzip.NewReader,
+	// "dmc": dmc.NewReader,
+	// "mcc": mcc.NewReader,
+	// "huffman": huffman.NewReader,
+	// "zlib": zlib.NewReader,
+	// "flate": flate.NewReader,
+	// "gzip": gzip.NewReader,
 	"lzw": lzw.NewReader,
 }
 
 func (f *CompressedFile) Read(content []byte) (int, error) {
 	if f.decompressed == nil {
 		newReader := Readers[f.engine]
-		var b bytes.Buffer
-		b.Write(f.compressed)
-		var r *io.Reader
+		// var b bytes.Buffer
+		// b.Write(f.compressed)
+		var r io.Reader
+		var b io.Reader
+		b = bytes.NewReader(f.compressed)
 		var err error
 		reflection := reflect.TypeOf(newReader)
 		if f.engine == "lzw" {
-			r = newReader.(func(io.Reader, lzw.Order, int) (*io.Reader))(&b, lzw.MSB, 8)
+			// LZW requires special parameters for lzw
+			r = newReader.(func(io.Reader, lzw.Order, int) (io.Reader))(b, lzw.MSB, 8)
 		} else if reflection.NumOut() == 2 {
-			r, err = newReader.(func(io.Reader) (*io.Reader, error))(&b)
+			r, err = newReader.(func(io.Reader) (io.Reader, error))(b)
 			check(err)
 		} else {
-			r = newReader.(func(io.Reader) (*io.Reader))(&b)
+			// Not all newReaders return an error
+			r = newReader.(func(io.Reader) (io.Reader))(b)
 		}
-		f.decompressed, err = ioutil.ReadAll(*r)
+		f.decompressed, err = ioutil.ReadAll(r)
 		check(err)
 		// r.Close()
 		// switch f.engine {

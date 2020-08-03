@@ -67,17 +67,15 @@ type Reader struct {
 	pos          int
 }
 
-func NewReader(r io.Reader) (*Reader, error) {
-	z := new(Reader)
-	z.r = r
-	var err error
-	z.compressed, err = ioutil.ReadAll(r)
-	return z, err
-}
+// func (r *Reader) Init(r *io.Reader) {
+
+// }
 
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
-		r.decompressed = Decompress(content, true)
+		var compressed []byte
+		compressed, err = ioutil.ReadAll(r)
+		r.decompressed = Decompress(compressed, true)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])
 	if len(content) < bytesToWriteOut {
@@ -92,6 +90,12 @@ func (r *Reader) Read(content []byte) (n int, err error) {
 		r.pos += len(content)
 	}
 	return bytesToWriteOut, err
+}
+
+func NewReader(r io.Reader) io.Reader {
+	z := new(Reader)
+	z.r = r
+	return z
 }
 
 func (r *Reader) Close() error {
