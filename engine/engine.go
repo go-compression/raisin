@@ -3,6 +3,7 @@ package algorithm
 import (
 	"fmt"
 	lz "github.com/mrfleap/custom-compression/compressor/lz"
+	arithmetic "github.com/mrfleap/custom-compression/compressor/arithmetic"
 	huffman "github.com/mrfleap/custom-compression/compressor/huffman"
 	mcc "github.com/mrfleap/custom-compression/compressor/mcc"
 	dmc "github.com/mrfleap/custom-compression/compressor/dmc"
@@ -27,7 +28,7 @@ import (
 	"strconv"
 )
 
-var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
+var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
 var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "huffman", "flate", "gzip", "lzw", "zlib", "mcc"}}
 
 type CompressedFile struct {
@@ -41,6 +42,14 @@ type CompressedFile struct {
 func (f *CompressedFile) Read(content []byte) (int, error) {
 	if f.decompressed == nil {
 		switch f.engine {
+		case "arithmetic":
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := arithmetic.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		case "lzss":
 			var b bytes.Buffer
 			b.Write(f.compressed)
@@ -138,6 +147,12 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 func (f *CompressedFile) Write(content []byte) (int, error) {
 	var compressed []byte
 	switch f.engine {
+	case "arithmetic":
+		var b bytes.Buffer
+		w := arithmetic.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	case "lzss":
 		var b bytes.Buffer
 		w := lz.NewWriter(&b)
