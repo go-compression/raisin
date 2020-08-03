@@ -55,7 +55,7 @@ func (th treeHeap) Swap(i, j int) { th[i], th[j] = th[j], th[i] }
 
 var estring string
 
-func buildTree(symFreqs map[rune]int) HuffmanTree {
+func BuildTree(symFreqs map[rune]int) HuffmanTree {
 	type sorter struct {
 		Key   rune
 		Value int
@@ -266,9 +266,9 @@ func decodeTree(tree string) HuffmanTree {
 		}
 	}
 	//fmt.Print(symFreqs)
-	return buildTree(symFreqs)
+	return BuildTree(symFreqs)
 }
-func encode(tree HuffmanTree, input string) []byte {
+func Encode(tree HuffmanTree, input string) []byte {
 
 	answer := ""
 	tempV := make([]rune, 0)
@@ -337,9 +337,9 @@ func Compress(fileContents []byte) []byte {
 			estring = estring + strconv.Itoa(val) + "|\\n"
 		}
 	}
-	exampleTree := buildTree(symFreqs)
+	exampleTree := BuildTree(symFreqs)
 
-	out := encode(exampleTree, content)
+	out := Encode(exampleTree, content)
 
 	return out
 }
@@ -365,9 +365,9 @@ func main() {
 			estring = estring + strconv.Itoa(val) + "|\\n"
 		}
 	}
-	exampleTree := buildTree(symFreqs)
+	exampleTree := BuildTree(symFreqs)
 
-	out := encode(exampleTree, content)
+	out := Encode(exampleTree, content)
 	file, err := os.Create("huffman-compressed.bin")
 	check(err)
 	file.Write(out)
@@ -381,8 +381,6 @@ func main() {
 	_, err = io.WriteString(file, string(decoded))
 	check(err)
 }
-
-
 
 type Writer struct {
 	w io.Writer
@@ -406,7 +404,7 @@ func (writer *Writer) Close() error {
 
 type Reader struct {
 	r            io.Reader
-	compressed []byte
+	compressed   []byte
 	decompressed []byte
 	pos          int
 }
