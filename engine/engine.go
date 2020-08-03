@@ -5,6 +5,7 @@ import (
 	lz "github.com/mrfleap/custom-compression/compressor/lz"
 	huffman "github.com/mrfleap/custom-compression/compressor/huffman"
 	mcc "github.com/mrfleap/custom-compression/compressor/mcc"
+	dmc "github.com/mrfleap/custom-compression/compressor/dmc"
 	flate "compress/flate"
 	gzip "compress/gzip"
 	lzw "compress/lzw"
@@ -26,7 +27,7 @@ import (
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}
-var Suites = map[string][]string{"all": Engines[:], "suite": []string{"lzss", "huffman", "flate", "gzip", "lzw", "zlib"}}
+var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "huffman", "flate", "gzip", "lzw", "zlib", "mcc"}}
 
 type CompressedFile struct {
 	engine                string
@@ -40,13 +41,37 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 	if f.decompressed == nil {
 		switch f.engine {
 		case "lzss":
-			f.decompressed = lz.Decompress(f.compressed, true)
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := lz.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		case "dmc":
-			f.decompressed = mcc.DMCDecompress(f.compressed)
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := dmc.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		case "mcc":
-			f.decompressed = mcc.Decompress(f.compressed)
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := mcc.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		case "huffman":
-			f.decompressed = huffman.Decompress(f.compressed)
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := huffman.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		case "zlib":
 			var b bytes.Buffer
 			b.Write(f.compressed)
@@ -83,7 +108,13 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 		case "all":
 			panic("Cannot decompress with all formats")
 		default:
-			f.decompressed = lz.Decompress(f.compressed, true)
+			var b bytes.Buffer
+			b.Write(f.compressed)
+			r, err := lz.NewReader(&b)
+			check(err)
+			f.decompressed, err = ioutil.ReadAll(r)
+			check(err)
+			r.Close()
 		}
 		
 	}
@@ -107,13 +138,29 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	var compressed []byte
 	switch f.engine {
 	case "lzss":
-		compressed = lz.Compress(content, true, f.maxSearchBufferLength)
+		var b bytes.Buffer
+		w := lz.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	case "dmc":
-		compressed = mcc.DMCCompress(content)
+		var b bytes.Buffer
+		w := dmc.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	case "mcc":
-		compressed = mcc.Compress(content)
+		var b bytes.Buffer
+		w := mcc.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	case "huffman":
-		compressed = huffman.Compress(content)
+		var b bytes.Buffer
+		w := huffman.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	case "zlib":
 		var b bytes.Buffer
 		w := zlib.NewWriter(&b)
@@ -142,7 +189,11 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	case "all":
 		panic("Cannot compress with all formats")
 	default:
-		compressed = lz.Compress(content, true, f.maxSearchBufferLength)
+		var b bytes.Buffer
+		w := lz.NewWriter(&b)
+		w.Write(content)
+		w.Close()
+		compressed = b.Bytes()
 	}
 	
 
@@ -265,7 +316,15 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 		}
 
 		sort.Slice(results, func(i, j int) bool {
-			return results[j].ratio > results[i].ratio
+			if results[j].lossless && results[i].lossless {
+				return results[j].ratio > results[i].ratio
+			} else if results[j].lossless && !results[i].lossless {
+				return false
+			} else if !results[j].lossless && results[i].lossless {
+				return true
+			} else {
+				return results[j].ratio > results[i].ratio
+			}
 		})
 
 		for _, result := range results {

@@ -6,6 +6,9 @@ import (
 	"sync"
 	"bytes"
 	pb "github.com/cheggaaa/pb/v3"
+	"io"
+	"fmt"
+	"io/ioutil"
 )
 
 const(
@@ -21,6 +24,78 @@ type Reference struct {
 	isReference bool
 	negativeOffset int
 	size int
+}
+
+type Writer struct {
+	windowSize int
+	useProgressBar bool
+	w io.Writer
+}
+
+const DefaultWindowSize = 4096
+
+func NewWriter(w io.Writer) *Writer {
+	z, _ := NewWriterLevel(w, DefaultWindowSize)
+	return z
+}
+
+func NewWriterLevel(w io.Writer, level int) (*Writer, error) {
+	if level < 0 {
+		return nil, fmt.Errorf("lzss: invalid compression level: %d", level)
+	}
+	z := new(Writer)
+	z.windowSize = level
+	z.useProgressBar = true
+	z.w = w
+	return z, nil
+}
+
+func (writer *Writer) Write(data []byte) (n int, err error) {
+	compressed := CompressFileSync(data, writer.useProgressBar, writer.windowSize)
+	writer.w.Write(compressed)
+	return len(compressed), nil
+}
+
+func (writer *Writer) Close() error {
+	return nil
+}
+
+type Reader struct {
+	r            io.Reader
+	compressed []byte
+	decompressed []byte
+	pos          int
+}
+
+func NewReader(r io.Reader) (*Reader, error) {
+	z := new(Reader)
+	z.r = r
+	var err error
+	z.compressed, err = ioutil.ReadAll(r)
+	return z, err
+}
+
+func (r *Reader) Read(content []byte) (n int, err error) {
+	if r.decompressed == nil {
+		r.decompressed = Decompress(content, true)
+	}
+	bytesToWriteOut := len(r.decompressed[r.pos:])
+	if len(content) < bytesToWriteOut {
+		bytesToWriteOut = len(content)
+	}
+	for i := 0; i < bytesToWriteOut; i++ {
+		content[i] = r.decompressed[r.pos:][i]
+	}
+	if len(r.decompressed[r.pos:]) <= len(content) {
+		err = io.EOF
+	} else {
+		r.pos += len(content)
+	}
+	return bytesToWriteOut, err
+}
+
+func (r *Reader) Close() error {
+	return nil
 }
 
 func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {

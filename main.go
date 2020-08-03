@@ -83,7 +83,7 @@ func main() {
 				fmt.Println("Wrote table to index.html")
 			}
 		} else {
-			if len(files) > 0 {
+			if len(files) > 1 {
 				errorMsg("Cannot benchmark more than one file without using multiple algorithms currently")
 			}
 			engine.BenchmarkFile(algorithm, files[0], false)

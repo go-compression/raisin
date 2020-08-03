@@ -381,3 +381,63 @@ func main() {
 	_, err = io.WriteString(file, string(decoded))
 	check(err)
 }
+
+
+
+type Writer struct {
+	w io.Writer
+}
+
+func NewWriter(w io.Writer) *Writer {
+	z := new(Writer)
+	z.w = w
+	return z
+}
+
+func (writer *Writer) Write(data []byte) (n int, err error) {
+	compressed := Compress(data)
+	writer.w.Write(compressed)
+	return len(compressed), nil
+}
+
+func (writer *Writer) Close() error {
+	return nil
+}
+
+type Reader struct {
+	r            io.Reader
+	compressed []byte
+	decompressed []byte
+	pos          int
+}
+
+func NewReader(r io.Reader) (*Reader, error) {
+	z := new(Reader)
+	z.r = r
+	var err error
+	z.compressed, err = ioutil.ReadAll(r)
+	return z, err
+}
+
+func (r *Reader) Read(content []byte) (n int, err error) {
+	if r.decompressed == nil {
+		r.decompressed = Decompress(r.compressed)
+	}
+	bytesToWriteOut := len(r.decompressed[r.pos:])
+	if len(content) < bytesToWriteOut {
+		bytesToWriteOut = len(content)
+	}
+	for i := 0; i < bytesToWriteOut; i++ {
+		content[i] = r.decompressed[r.pos:][i]
+	}
+	if len(r.decompressed[r.pos:]) <= len(content) {
+		err = io.EOF
+	} else {
+		r.pos += len(content)
+	}
+	return bytesToWriteOut, err
+}
+
+func (r *Reader) Close() error {
+	return nil
+}
