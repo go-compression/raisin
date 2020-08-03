@@ -312,7 +312,7 @@ func encodeBytes(fileContents []byte) ([]int, []byte, int) {
 	}
 
 	fmt.Println("True encoded bitlength:", bitsize, "bytes:", bitsize/8)
-	fmt.Println("Bits: " + strings.Join(allbits, ""))
+	// fmt.Println("Bits: " + strings.Join(allbits, ""))
 
 	// printTransitions(*root, 0)
 	return bitstream, literals, bitsize
