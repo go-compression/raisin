@@ -51,7 +51,7 @@ func NewWriterLevel(w io.Writer, level int) (*Writer, error) {
 }
 
 func (writer *Writer) Write(data []byte) (n int, err error) {
-	compressed := CompressFileSync(data, writer.useProgressBar, writer.windowSize)
+	compressed := Compress(data, writer.useProgressBar, writer.windowSize)
 	writer.w.Write(compressed)
 	return len(compressed), nil
 }
