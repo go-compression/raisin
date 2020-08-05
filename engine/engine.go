@@ -29,7 +29,7 @@ import (
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
-var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "huffman", "flate", "gzip", "lzw", "zlib", "mcc"}}
+var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}}
 
 type CompressedFile struct {
 	engine                string
