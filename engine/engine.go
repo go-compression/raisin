@@ -38,7 +38,6 @@ type CompressedFile struct {
 	maxSearchBufferLength int
 }
 
-// var Readers = map[string]io.Reader{
 var Readers = map[string]interface{}{
  	"lzss": lz.NewReader,
 	"dmc": dmc.NewReader,
@@ -53,8 +52,6 @@ var Readers = map[string]interface{}{
 func (f *CompressedFile) Read(content []byte) (int, error) {
 	if f.decompressed == nil {
 		newReader := Readers[f.engine]
-		// var b bytes.Buffer
-		// b.Write(f.compressed)
 		var r io.Reader
 		var b io.Reader
 		b = bytes.NewReader(f.compressed)
@@ -92,68 +89,40 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 	return bytesToWriteOut, err
 }
 
+var Writers = map[string]interface{}{
+ 	"lzss": lz.NewWriter,
+	"dmc": dmc.NewWriter,
+	"mcc": mcc.NewWriter,
+	"huffman": huffman.NewWriter,
+	"zlib": zlib.NewWriter,
+	"flate": flate.NewWriter,
+	"gzip": gzip.NewWriter,
+	"lzw": lzw.NewWriter,
+}
+
 func (f *CompressedFile) Write(content []byte) (int, error) {
 	var compressed []byte
+	newWriter := Writers[f.engine]
+	var b bytes.Buffer
+	var w io.WriteCloser
+	var err error
 	switch f.engine {
-	case "lzss":
-		var b bytes.Buffer
-		w := lz.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "dmc":
-		var b bytes.Buffer
-		w := dmc.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "mcc":
-		var b bytes.Buffer
-		w := mcc.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "huffman":
-		var b bytes.Buffer
-		w := huffman.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "zlib":
-		var b bytes.Buffer
-		w := zlib.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "lzw":
-		var b bytes.Buffer
-		w := lzw.NewWriter(&b, lzw.MSB, 8)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "flate":
-		var b bytes.Buffer
-		w, err := flate.NewWriter(&b, 9)
-		check(err)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "gzip":
-		var b bytes.Buffer
-		w := gzip.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "all":
-		panic("Cannot compress with all formats")
 	default:
-		var b bytes.Buffer
-		w := lz.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
+		w = newWriter.(func(io.Writer) io.WriteCloser)(&b)
+	case "zlib":
+		w = newWriter.(func(r io.Writer) (*zlib.Writer))(&b)
+	case "flate":
+		w, err = newWriter.(func(w io.Writer, level int) (*flate.Writer, error))(&b, 9)
+	case "gzip":
+		w = newWriter.(func(w io.Writer) *gzip.Writer)(&b)
+	case "lzw":
+		// LZW requires special parameters for lzw
+		w = newWriter.(func(w io.Writer, order lzw.Order, litWidth int) io.WriteCloser)(&b, lzw.MSB, 8)
 	}
-	
+	check(err)
+	w.Write(content)
+	w.Close()
+	compressed = b.Bytes()
 
 	f.compressed = append(f.compressed, compressed...)
 	return len(compressed), nil

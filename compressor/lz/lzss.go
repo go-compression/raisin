@@ -34,7 +34,7 @@ type Writer struct {
 
 const DefaultWindowSize = 4096
 
-func NewWriter(w io.Writer) *Writer {
+func NewWriter(w io.Writer) io.WriteCloser {
 	z, _ := NewWriterLevel(w, DefaultWindowSize)
 	return z
 }

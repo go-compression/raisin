@@ -296,7 +296,7 @@ type Writer struct {
 	w io.Writer
 }
 
-func NewWriter(w io.Writer) *Writer {
+func NewWriter(w io.Writer) io.WriteCloser {
 	z := new(Writer)
 	z.w = w
 	return z
