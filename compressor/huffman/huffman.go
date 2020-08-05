@@ -143,7 +143,7 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 	case HuffmanLeaf:
 		vals = append(vals, rune(i.value))
 		bin = append(bin, string(prefix))
-		fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
+		// fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
 		return vals, bin
 	case HuffmanNode:
 		prefix = append(prefix, '0')
@@ -281,7 +281,7 @@ func encode(tree HuffmanTree, input string) []byte {
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
 	for i := 0; i < len(input); i++ {
-		fmt.Println(string(rune(input[i])))
+		// fmt.Println(string(rune(input[i])))
 		if indexOf(rune(input[i]), vals) != -1 {
 			answer = answer + (bin[indexOf(rune(input[i]), vals)])
 		} else {
