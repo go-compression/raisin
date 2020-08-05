@@ -74,7 +74,7 @@
                 }
                 return Math.floor(seconds) + " seconds";
             }
-            var ts = "1596446228"
+            var ts = "1596653661"
             var date = new Date(ts * 1000);
             var result = timeSince(date)
             var p = document.getElementById("time-since");
@@ -87,70 +87,62 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>466.27ms</td>
+    <td>504.15ms</td>
     <td>35.67%</td>
-    <td>2.85</td>
+    <td>5.54</td>
     <td>3.17</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>260.75ms</td>
+    <td>505.05ms</td>
     <td>35.71%</td>
-    <td>2.86</td>
+    <td>5.54</td>
     <td>3.17</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>128.28ms</td>
+    <td>662ms</td>
     <td>35.72%</td>
-    <td>2.86</td>
+    <td>5.54</td>
     <td>3.17</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>312.68ms</td>
+    <td>473.84ms</td>
     <td>50.54%</td>
-    <td>4.04</td>
+    <td>5.51</td>
     <td>3.17</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>3.05991s</td>
+    <td>2.20697s</td>
     <td>92.22%</td>
-    <td>7.38</td>
+    <td>3.49</td>
     <td>3.17</td>
     <td>true</td>
   </tr>
   <tr>
     <td>mcc</td>
-    <td>19.78522s</td>
+    <td>18.16839s</td>
     <td>323.79%</td>
-    <td>25.90</td>
+    <td>2.07</td>
     <td>3.17</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>3.29353s</td>
-    <td>0.01%</td>
-    <td>0.00</td>
-    <td>3.17</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>huffman</td>
+    <td>dmc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -158,7 +150,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>dmc</td>
+    <td>huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -180,67 +172,59 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>747.07ms</td>
+    <td>267.03ms</td>
     <td>38.92%</td>
-    <td>3.11</td>
+    <td>5.54</td>
     <td>3.33</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>308.59ms</td>
+    <td>328.75ms</td>
     <td>38.94%</td>
-    <td>3.12</td>
+    <td>5.54</td>
     <td>3.33</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>724.17ms</td>
+    <td>331.67ms</td>
     <td>38.95%</td>
-    <td>3.12</td>
+    <td>5.54</td>
     <td>3.33</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>874.63ms</td>
+    <td>283.02ms</td>
     <td>53.80%</td>
-    <td>4.30</td>
+    <td>5.51</td>
     <td>3.33</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>2.15169s</td>
+    <td>2.25935s</td>
     <td>94.38%</td>
-    <td>7.55</td>
+    <td>3.48</td>
     <td>3.33</td>
     <td>true</td>
   </tr>
   <tr>
     <td>mcc</td>
-    <td>16.59547s</td>
+    <td>16.34573s</td>
     <td>330.76%</td>
-    <td>26.46</td>
+    <td>2.16</td>
     <td>3.33</td>
     <td>true</td>
-  </tr>
-  <tr>
-    <td>arithmetic</td>
-    <td>2.38566s</td>
-    <td>0.01%</td>
-    <td>0.00</td>
-    <td>3.33</td>
-    <td>false</td>
   </tr>
   <tr>
     <td>huffman</td>
@@ -273,73 +257,65 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>40.99ms</td>
+    <td>42.31ms</td>
     <td>32.11%</td>
-    <td>2.57</td>
+    <td>5.52</td>
     <td>3.62</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>21.77ms</td>
+    <td>214.75ms</td>
     <td>32.20%</td>
-    <td>2.58</td>
+    <td>5.52</td>
     <td>3.62</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>416.98ms</td>
+    <td>53.9ms</td>
     <td>32.25%</td>
-    <td>2.58</td>
+    <td>5.52</td>
     <td>3.62</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>122.99ms</td>
+    <td>211.7ms</td>
     <td>52.01%</td>
-    <td>4.16</td>
+    <td>5.49</td>
     <td>3.62</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>609.4ms</td>
+    <td>483.38ms</td>
     <td>73.04%</td>
-    <td>5.84</td>
+    <td>3.82</td>
     <td>3.62</td>
     <td>true</td>
   </tr>
   <tr>
     <td>mcc</td>
-    <td>3.26584s</td>
+    <td>6.7246s</td>
     <td>313.82%</td>
-    <td>25.11</td>
+    <td>2.07</td>
     <td>3.62</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>613.02ms</td>
-    <td>0.03%</td>
-    <td>0.00</td>
-    <td>3.62</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>dmc</td>
-    <td>5.45314s</td>
+    <td>8.46245s</td>
     <td>61.99%</td>
-    <td>4.96</td>
+    <td>1.61</td>
     <td>3.62</td>
     <td>false</td>
   </tr>
@@ -366,73 +342,65 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>141.76ms</td>
+    <td>26.18ms</td>
     <td>27.95%</td>
-    <td>2.24</td>
+    <td>5.50</td>
     <td>3.47</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>30.07ms</td>
+    <td>199.87ms</td>
     <td>28.02%</td>
-    <td>2.24</td>
+    <td>5.50</td>
     <td>3.47</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>148.16ms</td>
+    <td>168.57ms</td>
     <td>28.13%</td>
-    <td>2.25</td>
+    <td>5.50</td>
     <td>3.47</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>154.33ms</td>
+    <td>82.37ms</td>
     <td>44.51%</td>
-    <td>3.56</td>
+    <td>5.49</td>
     <td>3.47</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>363.92ms</td>
+    <td>422.46ms</td>
     <td>69.61%</td>
-    <td>5.57</td>
+    <td>3.67</td>
     <td>3.47</td>
     <td>true</td>
   </tr>
   <tr>
     <td>mcc</td>
-    <td>1.76348s</td>
+    <td>1.89844s</td>
     <td>323.96%</td>
-    <td>25.92</td>
+    <td>1.98</td>
     <td>3.47</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>266.84ms</td>
-    <td>0.07%</td>
-    <td>0.01</td>
-    <td>3.47</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>dmc</td>
-    <td>1.13925s</td>
+    <td>1.00401s</td>
     <td>62.33%</td>
-    <td>4.99</td>
+    <td>1.80</td>
     <td>3.47</td>
     <td>false</td>
   </tr>
@@ -459,73 +427,65 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>49.12ms</td>
+    <td>6.97ms</td>
     <td>32.55%</td>
-    <td>2.60</td>
+    <td>5.41</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>22.3ms</td>
+    <td>17.1ms</td>
     <td>32.71%</td>
-    <td>2.62</td>
+    <td>5.41</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>57.72ms</td>
+    <td>72.67ms</td>
     <td>33.03%</td>
-    <td>2.64</td>
+    <td>5.41</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>50.98ms</td>
+    <td>33.96ms</td>
     <td>48.67%</td>
-    <td>3.89</td>
+    <td>5.44</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>191.68ms</td>
+    <td>233.12ms</td>
     <td>73.23%</td>
-    <td>5.86</td>
+    <td>3.56</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
     <td>mcc</td>
-    <td>735.96ms</td>
+    <td>743.83ms</td>
     <td>319.89%</td>
-    <td>25.59</td>
+    <td>1.88</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>56.14ms</td>
-    <td>0.21%</td>
-    <td>0.02</td>
-    <td>3.21</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>dmc</td>
-    <td>228.27ms</td>
+    <td>88.73ms</td>
     <td>63.91%</td>
-    <td>5.11</td>
+    <td>1.90</td>
     <td>3.21</td>
     <td>false</td>
   </tr>
@@ -552,63 +512,55 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>9.49388s</td>
+    <td>8.17877s</td>
     <td>20.15%</td>
-    <td>1.61</td>
+    <td>5.18</td>
     <td>2.48</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>3.02286s</td>
+    <td>2.47188s</td>
     <td>20.19%</td>
-    <td>1.62</td>
+    <td>5.18</td>
     <td>2.48</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>3.30146s</td>
+    <td>2.77033s</td>
     <td>20.20%</td>
-    <td>1.62</td>
+    <td>5.18</td>
     <td>2.48</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>3.03983s</td>
+    <td>3.11531s</td>
     <td>26.20%</td>
-    <td>2.10</td>
+    <td>5.53</td>
     <td>2.48</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>19.31928s</td>
+    <td>16.50497s</td>
     <td>88.12%</td>
-    <td>7.05</td>
+    <td>3.17</td>
     <td>2.48</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>52.39278s</td>
-    <td>0.00%</td>
-    <td>0.00</td>
-    <td>2.48</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>huffman</td>
-    <td>failed</td>
+    <td>mcc</td>
+    <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -623,7 +575,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>mcc</td>
+    <td>huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -645,62 +597,54 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>1.56493s</td>
+    <td>5.08407s</td>
     <td>33.88%</td>
-    <td>2.71</td>
+    <td>5.54</td>
     <td>3.24</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>1.55545s</td>
+    <td>4.65713s</td>
     <td>33.93%</td>
-    <td>2.71</td>
+    <td>5.54</td>
     <td>3.24</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>1.41853s</td>
+    <td>4.95673s</td>
     <td>33.93%</td>
-    <td>2.71</td>
+    <td>5.54</td>
     <td>3.24</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>1.05437s</td>
+    <td>4.01248s</td>
     <td>51.15%</td>
-    <td>4.09</td>
+    <td>5.51</td>
     <td>3.24</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>9.66738s</td>
+    <td>17.00431s</td>
     <td>89.88%</td>
-    <td>7.19</td>
+    <td>3.53</td>
     <td>3.24</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>10.91403s</td>
-    <td>0.00%</td>
-    <td>0.00</td>
-    <td>3.24</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>mcc</td>
+    <td>dmc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -716,7 +660,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>dmc</td>
+    <td>mcc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -738,67 +682,51 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>1.64179s</td>
+    <td>2.22957s</td>
     <td>40.26%</td>
-    <td>3.22</td>
+    <td>5.54</td>
     <td>3.14</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>2.08462s</td>
+    <td>2.41492s</td>
     <td>40.29%</td>
-    <td>3.22</td>
+    <td>5.54</td>
     <td>3.14</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>2.01893s</td>
+    <td>2.37036s</td>
     <td>40.30%</td>
-    <td>3.22</td>
+    <td>5.54</td>
     <td>3.14</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>1.52724s</td>
+    <td>3.03265s</td>
     <td>52.70%</td>
-    <td>4.22</td>
+    <td>5.51</td>
     <td>3.14</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>12.52678s</td>
+    <td>12.35943s</td>
     <td>98.46%</td>
-    <td>7.88</td>
+    <td>3.31</td>
     <td>3.14</td>
     <td>true</td>
-  </tr>
-  <tr>
-    <td>arithmetic</td>
-    <td>14.38874s</td>
-    <td>0.00%</td>
-    <td>0.00</td>
-    <td>3.14</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>huffman</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
   </tr>
   <tr>
     <td>mcc</td>
@@ -810,6 +738,14 @@
   </tr>
   <tr>
     <td>dmc</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -831,22 +767,30 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
-    <td>mcc</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>flate</td>
+    <td>58.83445s</td>
+    <td>10.03%</td>
+    <td>5.52</td>
+    <td>0.84</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>gzip</td>
+    <td>57.01647s</td>
+    <td>10.71%</td>
+    <td>5.52</td>
+    <td>0.84</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>lzw</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -854,7 +798,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
+    <td>zlib</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -886,23 +830,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>gzip</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>lzw</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>zlib</td>
+    <td>mcc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -924,49 +852,49 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>18.66ms</td>
+    <td>15.99ms</td>
     <td>34.68%</td>
-    <td>2.77</td>
+    <td>5.52</td>
     <td>3.69</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>13.17ms</td>
+    <td>11.85ms</td>
     <td>34.74%</td>
-    <td>2.78</td>
+    <td>5.52</td>
     <td>3.69</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>1.78012s</td>
+    <td>11.27ms</td>
     <td>34.77%</td>
-    <td>2.78</td>
+    <td>5.52</td>
     <td>3.69</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>11.28ms</td>
+    <td>10.61ms</td>
     <td>52.39%</td>
-    <td>4.19</td>
+    <td>5.46</td>
     <td>3.69</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>12.80978s</td>
+    <td>8.4505s</td>
     <td>78.91%</td>
-    <td>6.31</td>
+    <td>3.93</td>
     <td>3.69</td>
     <td>true</td>
   </tr>
@@ -980,14 +908,6 @@
   </tr>
   <tr>
     <td>huffman</td>
-    <td>failed</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>mcc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -995,7 +915,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
+    <td>mcc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -1017,82 +937,74 @@
     <th>engine</th>
     <th>time taken</th>
     <th>compression ratio</th>
-    <th>bits per symbol</th>
-    <th>entropy</th>
+    <th>actual entropy</th>
+    <th>theoretical entropy</th>
     <th>lossless</th>
   </tr>
   </thead>
   <tbody>
   <tr>
     <td>flate</td>
-    <td>3.65ms</td>
+    <td>3.36ms</td>
     <td>40.81%</td>
-    <td>3.26</td>
+    <td>5.46</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
     <td>zlib</td>
-    <td>2.6ms</td>
+    <td>3.16ms</td>
     <td>40.95%</td>
-    <td>3.28</td>
+    <td>5.46</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
     <td>gzip</td>
-    <td>2.66ms</td>
+    <td>3.28ms</td>
     <td>41.23%</td>
-    <td>3.30</td>
+    <td>5.45</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzw</td>
-    <td>2.27ms</td>
+    <td>2.05ms</td>
     <td>55.31%</td>
-    <td>4.42</td>
+    <td>5.45</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>635.85ms</td>
+    <td>9.93641s</td>
     <td>87.72%</td>
-    <td>7.02</td>
+    <td>3.66</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
     <td>mcc</td>
-    <td>6.62662s</td>
+    <td>26.38242s</td>
     <td>334.33%</td>
-    <td>26.75</td>
+    <td>2.14</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>arithmetic</td>
-    <td>626.57ms</td>
-    <td>0.19%</td>
-    <td>0.02</td>
-    <td>3.40</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>dmc</td>
-    <td>839.01ms</td>
+    <td>19.58659s</td>
     <td>48.97%</td>
-    <td>3.92</td>
+    <td>1.82</td>
     <td>3.40</td>
     <td>false</td>
   </tr>
   <tr>
     <td>huffman</td>
-    <td>3.65858s</td>
-    <td>182.42%</td>
-    <td>14.59</td>
-    <td>3.40</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
     <td>false</td>
   </tr>
   <tr>

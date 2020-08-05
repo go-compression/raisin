@@ -29,7 +29,7 @@ import (
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
-var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "huffman", "flate", "gzip", "lzw", "zlib", "mcc"}}
+var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}}
 
 type CompressedFile struct {
 	engine                string
@@ -39,94 +39,41 @@ type CompressedFile struct {
 	maxSearchBufferLength int
 }
 
+var Readers = map[string]interface{}{
+ 	"lzss": lz.NewReader,
+	"dmc": dmc.NewReader,
+	"mcc": mcc.NewReader,
+	"huffman": huffman.NewReader,
+	"arithmetic": arithmetic.NewReader,
+	"zlib": zlib.NewReader,
+	"flate": flate.NewReader,
+	"gzip": gzip.NewReader,
+	"lzw": lzw.NewReader,
+}
+
 func (f *CompressedFile) Read(content []byte) (int, error) {
 	if f.decompressed == nil {
+		newReader := Readers[f.engine]
+		var r io.Reader
+		var b io.Reader
+		b = bytes.NewReader(f.compressed)
+		var err error
 		switch f.engine {
-		case "arithmetic":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := arithmetic.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "lzss":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := lz.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "dmc":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := dmc.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "mcc":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := mcc.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "huffman":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := huffman.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "zlib":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := zlib.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "lzw":
-			var b bytes.Buffer
-			var err error
-			b.Write(f.compressed)
-			r := lzw.NewReader(&b, lzw.MSB, 8)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "flate":
-			var b bytes.Buffer
-			var err error
-			b.Write(f.compressed)
-			r := flate.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "gzip":
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := gzip.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
-		case "all":
-			panic("Cannot decompress with all formats")
 		default:
-			var b bytes.Buffer
-			b.Write(f.compressed)
-			r, err := lz.NewReader(&b)
-			check(err)
-			f.decompressed, err = ioutil.ReadAll(r)
-			check(err)
-			r.Close()
+			r = newReader.(func(io.Reader) io.Reader)(b)
+		case "zlib":
+			r, err = newReader.(func(r io.Reader) (io.ReadCloser, error))(b)
+		case "flate":
+			r = newReader.(func(r io.Reader) io.ReadCloser)(b)
+		case "gzip":
+			r, err = newReader.(func(r io.Reader) (*gzip.Reader, error))(b)
+		case "lzw":
+			// LZW requires special parameters for lzw
+			r = newReader.(func(io.Reader, lzw.Order, int) (io.ReadCloser))(b, lzw.MSB, 8)
 		}
-		
+		check(err)
+		f.decompressed, err = ioutil.ReadAll(r)
+		check(err)		
 	}
 	bytesToWriteOut := len(f.decompressed[f.pos:])
 	if len(content) < bytesToWriteOut {
@@ -144,74 +91,41 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 	return bytesToWriteOut, err
 }
 
+var Writers = map[string]interface{}{
+ 	"lzss": lz.NewWriter,
+	"dmc": dmc.NewWriter,
+	"mcc": mcc.NewWriter,
+	"huffman": huffman.NewWriter,
+	"arithmetic": arithmetic.NewWriter,
+	"zlib": zlib.NewWriter,
+	"flate": flate.NewWriter,
+	"gzip": gzip.NewWriter,
+	"lzw": lzw.NewWriter,
+}
+
 func (f *CompressedFile) Write(content []byte) (int, error) {
 	var compressed []byte
+	newWriter := Writers[f.engine]
+	var b bytes.Buffer
+	var w io.WriteCloser
+	var err error
 	switch f.engine {
-	case "arithmetic":
-		var b bytes.Buffer
-		w := arithmetic.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "lzss":
-		var b bytes.Buffer
-		w := lz.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "dmc":
-		var b bytes.Buffer
-		w := dmc.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "mcc":
-		var b bytes.Buffer
-		w := mcc.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "huffman":
-		var b bytes.Buffer
-		w := huffman.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "zlib":
-		var b bytes.Buffer
-		w := zlib.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "lzw":
-		var b bytes.Buffer
-		w := lzw.NewWriter(&b, lzw.MSB, 8)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "flate":
-		var b bytes.Buffer
-		w, err := flate.NewWriter(&b, 9)
-		check(err)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "gzip":
-		var b bytes.Buffer
-		w := gzip.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
-	case "all":
-		panic("Cannot compress with all formats")
 	default:
-		var b bytes.Buffer
-		w := lz.NewWriter(&b)
-		w.Write(content)
-		w.Close()
-		compressed = b.Bytes()
+		w = newWriter.(func(io.Writer) io.WriteCloser)(&b)
+	case "zlib":
+		w = newWriter.(func(r io.Writer) (*zlib.Writer))(&b)
+	case "flate":
+		w, err = newWriter.(func(w io.Writer, level int) (*flate.Writer, error))(&b, 9)
+	case "gzip":
+		w = newWriter.(func(w io.Writer) *gzip.Writer)(&b)
+	case "lzw":
+		// LZW requires special parameters for lzw
+		w = newWriter.(func(w io.Writer, order lzw.Order, litWidth int) io.WriteCloser)(&b, lzw.MSB, 8)
 	}
-	
+	check(err)
+	w.Write(content)
+	w.Close()
+	compressed = b.Bytes()
 
 	f.compressed = append(f.compressed, compressed...)
 	return len(compressed), nil
@@ -274,7 +188,7 @@ type Result struct {
 	engine string
 	timeTaken string 
 	ratio float32
-    bitsPerSymbol float32
+    actualEntropy float32
 	entropy  float64
 	lossless bool
 	failed bool
@@ -296,7 +210,7 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.SetStyle(table.StyleLight)
-		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "bits per symbol", "entropy", "lossless"})
+		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "actual entropy", "theoretical entropy", "lossless"})
 
 		resultChans := make(map[string]chan Result)
 		var wg sync.WaitGroup
@@ -344,7 +258,7 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 		})
 
 		for _, result := range results {
-			t.AppendRow([]interface{}{result.engine, result.timeTaken, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy), result.lossless})
+			t.AppendRow([]interface{}{result.engine, result.timeTaken, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.actualEntropy), fmt.Sprintf("%.2f", result.entropy), result.lossless})
 		}
 
 		t.AppendSeparator()
@@ -449,7 +363,19 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 	lossless := reflect.DeepEqual(fileContents, file.decompressed)
 	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
 	entropy := ent.Entropy(freqs, math.Log)
-	bps := float32(len(file.compressed) * 8) / float32(len(fileContents))
+
+	symbolFrequencies = make(map[byte]int)
+	for _, c := range []byte(file.compressed) {
+		symbolFrequencies[c]++
+	}
+	total = len([]byte(file.compressed))
+	freqs = make([]float64, len(symbolFrequencies))
+	i = 0
+	for _, freq := range symbolFrequencies {
+		freqs[i] = float64(freq) / float64(total)
+		i++
+	}
+	actualEntropy := float32(ent.Entropy(freqs, math.Log))
 
 	if !suite {
 		fmt.Printf("Lossless: %t\n", lossless)
@@ -460,8 +386,8 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 			fmt.Printf("Decompressed bytes: %v\n", len(file.decompressed))
 		}
 		fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
-		fmt.Printf("Shannon entropy: %.2f\n", entropy)
-		fmt.Printf("Average bits per symbol: %.2f\n", bps)
+		fmt.Printf("Original Shannon entropy: %.2f\n", entropy)
+		fmt.Printf("Compressed Shannon entropy: %.2f\n", actualEntropy)
 	}
-	return Result{engine, "", percentageDiff, bps, entropy, lossless, false}
+	return Result{engine, "", percentageDiff, actualEntropy, entropy, lossless, false}
 }
