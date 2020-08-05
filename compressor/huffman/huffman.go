@@ -1,4 +1,4 @@
-package huffman
+package main
 
 import (
 	"container/heap"
@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/profile"
 )
 
 type HuffmanTree interface {
@@ -56,6 +58,7 @@ func (th treeHeap) Swap(i, j int) { th[i], th[j] = th[j], th[i] }
 var estring string
 
 func buildTree(symFreqs map[rune]int) HuffmanTree {
+	fmt.Println("building tree")
 	type sorter struct {
 		Key   rune
 		Value int
@@ -140,7 +143,7 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 	case HuffmanLeaf:
 		vals = append(vals, rune(i.value))
 		bin = append(bin, string(prefix))
-		//fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
+		fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
 		return vals, bin
 	case HuffmanNode:
 		prefix = append(prefix, '0')
@@ -153,32 +156,34 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 	}
 	return vals, bin
 }
-func findCodes(tree HuffmanTree, og HuffmanTree, data string, answer string, i int, max int) string {
+
+var answer string
+
+func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) string {
 	if i <= max {
 		switch huff := tree.(type) {
 		case HuffmanLeaf:
 			answer = answer + string(huff.value)
-			if i < max-1 {
-				return findCodes(og, og, data, answer, i, max)
+			if i < max {
+				findCodes(og, og, data, i, max)
 			} else {
 				//fmt.Println(answer)
-				file, err := os.Create("decompressed.txt")
+				file, err := os.Create("decompressed2.txt")
 				check(err)
 				_, err = io.WriteString(file, answer)
 				check(err)
 
-				return answer
 			}
 		case HuffmanNode:
 			if string(data[i]) == "0" {
-				answer = findCodes(huff.left, og, string(data), answer, i+1, max)
+				findCodes(huff.left, og, string(data), i+1, max)
 			} else if string(data[i]) == "1" {
-				answer = findCodes(huff.right, og, string(data), answer, i+1, max)
+				findCodes(huff.right, og, string(data), i+1, max)
 			}
 		}
 	} else {
 		//fmt.Println(answer)
-		file, err := os.Create("decompressed.txt")
+		file, err := os.Create("decompressed2.txt")
 		check(err)
 		_, err = io.WriteString(file, answer)
 		check(err)
@@ -187,6 +192,7 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, answer string, i i
 	}
 	return answer
 }
+
 func indexOf(word rune, data []rune) int {
 	for k, v := range data {
 		if word == v {
@@ -269,13 +275,18 @@ func decodeTree(tree string) HuffmanTree {
 	return buildTree(symFreqs)
 }
 func encode(tree HuffmanTree, input string) []byte {
-
+	fmt.Println("encoding")
 	answer := ""
 	tempV := make([]rune, 0)
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
 	for i := 0; i < len(input); i++ {
-		answer = answer + (bin[indexOf(rune(input[i]), vals)])
+		fmt.Println(string(rune(input[i])))
+		if indexOf(rune(input[i]), vals) != -1 {
+			answer = answer + (bin[indexOf(rune(input[i]), vals)])
+		} else {
+			answer = answer + (bin[len(bin)-1])
+		}
 	}
 
 	for i := 0; i < len(vals); i++ {
@@ -291,12 +302,13 @@ func encode(tree HuffmanTree, input string) []byte {
 	bits := bitString(answer)
 	final := bits.AsByteSlice()
 	//	fmt.Println(diff)
-	//	fmt.Println(bits)
+	fmt.Println(bits)
 	test := append(first, final...)
 
 	return append([]byte(estring), append([]byte("\\\n"), test...)...)
 }
 func decode(fileContents []byte) []byte {
+	fmt.Println("decoding")
 	file_content := string(fileContents)
 	lines := strings.Split(file_content, "\\\n")
 	tree := decodeTree(lines[0])
@@ -317,9 +329,10 @@ func decode(fileContents []byte) []byte {
 			check(err)
 		}
 	}
+	fmt.Println(int(diff))
 	contentString = contentString[int(diff):]
-	answer := findCodes(tree, tree, contentString, "", 0, len(contentString))
-
+	fmt.Println(contentString)
+	answer := findCodes(tree, tree, contentString, 0, len(contentString))
 	return []byte(answer)
 }
 
@@ -350,6 +363,7 @@ func Decompress(fileContents []byte) []byte {
 }
 
 func main() {
+	defer profile.Start().Stop()
 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 	check(err)
 	content := string(fileContents)
@@ -376,8 +390,9 @@ func main() {
 	check(err2)
 	decoded := decode(fileContents)
 
-	file, err = os.Create("decompressed.txt")
+	file, err = os.Create("decompressed2.txt")
 	check(err)
 	_, err = io.WriteString(file, string(decoded))
 	check(err)
+
 }
