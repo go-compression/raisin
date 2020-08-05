@@ -1,4 +1,4 @@
-package main
+package huffman
 
 import (
 	"container/heap"
@@ -448,6 +448,4 @@ func (r *Reader) Read(content []byte) (n int, err error) {
 		r.pos += len(content)
 	}
 	return bytesToWriteOut, err
-}
-
 }
