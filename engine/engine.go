@@ -40,14 +40,13 @@ type CompressedFile struct {
 
 // var Readers = map[string]io.Reader{
 var Readers = map[string]interface{}{
-	// "lzss": lz.NewReader(),
-	"lzss": lz.NewReader,
-	// "dmc": dmc.NewReader,
-	// "mcc": mcc.NewReader,
-	// "huffman": huffman.NewReader,
-	// "zlib": zlib.NewReader,
-	// "flate": flate.NewReader,
-	// "gzip": gzip.NewReader,
+ 	"lzss": lz.NewReader,
+	"dmc": dmc.NewReader,
+	"mcc": mcc.NewReader,
+	"huffman": huffman.NewReader,
+	"zlib": zlib.NewReader,
+	"flate": flate.NewReader,
+	"gzip": gzip.NewReader,
 	"lzw": lzw.NewReader,
 }
 
@@ -60,98 +59,22 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 		var b io.Reader
 		b = bytes.NewReader(f.compressed)
 		var err error
-		reflection := reflect.TypeOf(newReader)
-		if f.engine == "lzw" {
+		switch f.engine {
+		default:
+			r = newReader.(func(io.Reader) io.Reader)(b)
+		case "zlib":
+			r, err = newReader.(func(r io.Reader) (io.ReadCloser, error))(b)
+		case "flate":
+			r = newReader.(func(r io.Reader) io.ReadCloser)(b)
+		case "gzip":
+			r, err = newReader.(func(r io.Reader) (*gzip.Reader, error))(b)
+		case "lzw":
 			// LZW requires special parameters for lzw
-			r = newReader.(func(io.Reader, lzw.Order, int) (io.Reader))(b, lzw.MSB, 8)
-		} else if reflection.NumOut() == 2 {
-			r, err = newReader.(func(io.Reader) (io.Reader, error))(b)
-			check(err)
-		} else {
-			// Not all newReaders return an error
-			r = newReader.(func(io.Reader) (io.Reader))(b)
+			r = newReader.(func(io.Reader, lzw.Order, int) (io.ReadCloser))(b, lzw.MSB, 8)
 		}
-		f.decompressed, err = ioutil.ReadAll(r)
 		check(err)
-		// r.Close()
-		// switch f.engine {
-		// case "lzss":
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := lz.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "dmc":
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := dmc.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "mcc":
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := mcc.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "huffman":
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := huffman.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "zlib":
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := zlib.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "lzw":
-		// 	var b bytes.Buffer
-		// 	var err error
-		// 	b.Write(f.compressed)
-		// 	r := lzw.NewReader(&b, lzw.MSB, 8)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "flate":
-		// 	var b bytes.Buffer
-		// 	var err error
-		// 	b.Write(f.compressed)
-		// 	r := flate.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "gzip":
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := gzip.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// case "all":
-		// 	panic("Cannot decompress with all formats")
-		// default:
-		// 	var b bytes.Buffer
-		// 	b.Write(f.compressed)
-		// 	r, err := lz.NewReader(&b)
-		// 	check(err)
-		// 	f.decompressed, err = ioutil.ReadAll(r)
-		// 	check(err)
-		// 	r.Close()
-		// }
-		
+		f.decompressed, err = ioutil.ReadAll(r)
+		check(err)		
 	}
 	bytesToWriteOut := len(f.decompressed[f.pos:])
 	if len(content) < bytesToWriteOut {

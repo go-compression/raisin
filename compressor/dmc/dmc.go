@@ -319,16 +319,16 @@ type Reader struct {
 	pos          int
 }
 
-func NewReader(r io.Reader) (*Reader, error) {
+func NewReader(r io.Reader) io.Reader {
 	z := new(Reader)
 	z.r = r
-	var err error
-	z.compressed, err = ioutil.ReadAll(r)
-	return z, err
+	return z
 }
 
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
+		r.compressed, err = ioutil.ReadAll(r.r)
+		if err != nil { return 0, err }
 		r.decompressed = Decompress(r.compressed)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])
