@@ -274,7 +274,7 @@ type Result struct {
 	engine string
 	timeTaken string 
 	ratio float32
-    bitsPerSymbol float32
+    actualEntropy float32
 	entropy  float64
 	lossless bool
 	failed bool
@@ -296,7 +296,7 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.SetStyle(table.StyleLight)
-		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "bits per symbol", "entropy", "lossless"})
+		t.AppendHeader(table.Row{"engine", "time taken", "compression ratio", "actual entropy", "theoretical entropy", "lossless"})
 
 		resultChans := make(map[string]chan Result)
 		var wg sync.WaitGroup
@@ -344,7 +344,7 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 		})
 
 		for _, result := range results {
-			t.AppendRow([]interface{}{result.engine, result.timeTaken, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.bitsPerSymbol), fmt.Sprintf("%.2f", result.entropy), result.lossless})
+			t.AppendRow([]interface{}{result.engine, result.timeTaken, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.actualEntropy), fmt.Sprintf("%.2f", result.entropy), result.lossless})
 		}
 
 		t.AppendSeparator()
@@ -449,7 +449,19 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 	lossless := reflect.DeepEqual(fileContents, file.decompressed)
 	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
 	entropy := ent.Entropy(freqs, math.Log)
-	bps := float32(len(file.compressed) * 8) / float32(len(fileContents))
+
+	symbolFrequencies = make(map[byte]int)
+	for _, c := range []byte(file.compressed) {
+		symbolFrequencies[c]++
+	}
+	total = len([]byte(file.compressed))
+	freqs = make([]float64, len(symbolFrequencies))
+	i = 0
+	for _, freq := range symbolFrequencies {
+		freqs[i] = float64(freq) / float64(total)
+		i++
+	}
+	actualEntropy := float32(ent.Entropy(freqs, math.Log))
 
 	if !suite {
 		fmt.Printf("Lossless: %t\n", lossless)
@@ -460,8 +472,8 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 			fmt.Printf("Decompressed bytes: %v\n", len(file.decompressed))
 		}
 		fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
-		fmt.Printf("Shannon entropy: %.2f\n", entropy)
-		fmt.Printf("Average bits per symbol: %.2f\n", bps)
+		fmt.Printf("Original Shannon entropy: %.2f\n", entropy)
+		fmt.Printf("Compressed Shannon entropy: %.2f\n", actualEntropy)
 	}
-	return Result{engine, "", percentageDiff, bps, entropy, lossless, false}
+	return Result{engine, "", percentageDiff, actualEntropy, entropy, lossless, false}
 }
