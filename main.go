@@ -60,7 +60,8 @@ func main() {
 		if algorithm == "default" { algorithm = "lzss" }
 		engine.DecompressFile(algorithm, file)
 	case "benchmark":
-		benchmarkCmd.Parse(os.Args[2:])
+		posAfterCommand := getPosAfterCommand("benchmark", os.Args)
+		benchmarkCmd.Parse(os.Args[posAfterCommand:])
 
 		if file == "help" {
 			fmt.Fprintf(os.Stderr, "Flags:\n")
@@ -83,7 +84,7 @@ func main() {
 				fmt.Println("Wrote table to index.html")
 			}
 		} else {
-			if len(files) > 0 {
+			if len(files) > 1 {
 				errorMsg("Cannot benchmark more than one file without using multiple algorithms currently")
 			}
 			engine.BenchmarkFile(algorithm, files[0], false)
@@ -94,6 +95,13 @@ func main() {
 			"please provide a valid command, " +
 			"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
 	}
+}
+
+func getPosAfterCommand(command string, args []string) int {
+	for i, s := range args {
+		if s == command { return i + 1 }
+	}
+	return -1
 }
 
 func errorMsg(msg string) {
