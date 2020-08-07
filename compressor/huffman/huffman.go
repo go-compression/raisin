@@ -1,4 +1,4 @@
-package huffman
+package main
 
 import (
 	"container/heap"
@@ -290,12 +290,14 @@ func encode(tree HuffmanTree, input string) []byte {
 	}
 
 	//Println(len(answer))
+
 	diff := bitString(string(strconv.FormatInt(int64(8-len(answer.String())%8), 2)))
+	if diff == "1000" {
+		diff = bitString("0")
+	}
 	first := diff.AsByteSlice()
 	bits := bitString(answer.String())
 	final := bits.AsByteSlice()
-	//	//fmt.Println(diff)
-	////fmt.Println(bits)
 	test := append(first, final...)
 
 	return append([]byte(estring.String()), append([]byte("\\\n"), test...)...)
@@ -322,9 +324,6 @@ func decode(fileContents []byte) []byte {
 			check(err)
 		}
 	}
-	//fmt.Println(int(diff))
-
-	////fmt.Println(contentString)
 	answer := findCodes(tree, tree, contentString.String()[int(diff):], 0, len(contentString.String()[int(diff):]))
 	return []byte(answer)
 }
