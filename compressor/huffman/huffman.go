@@ -9,8 +9,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
-	"github.com/pkg/profile"
 )
 
 type HuffmanTree interface {
@@ -55,10 +53,10 @@ func (th *treeHeap) Pop() (popped interface{}) {
 }
 func (th treeHeap) Swap(i, j int) { th[i], th[j] = th[j], th[i] }
 
-var estring string
+var estring strings.Builder
 
 func buildTree(symFreqs map[rune]int) HuffmanTree {
-	fmt.Println("building tree")
+	//fmt.Println("building tree")
 	type sorter struct {
 		Key   rune
 		Value int
@@ -143,7 +141,7 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 	case HuffmanLeaf:
 		vals = append(vals, rune(i.value))
 		bin = append(bin, string(prefix))
-		// fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
+		//fmt.Printf("%c\t%d\t%s\n", i.value, i.freq, string(prefix))
 		return vals, bin
 	case HuffmanNode:
 		prefix = append(prefix, '0')
@@ -157,22 +155,23 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 	return vals, bin
 }
 
-var answer string
+var answer strings.Builder
 
 func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) string {
+	if  i > 900000 { panic("Max reursion depth") }
 	if i <= max {
 		switch huff := tree.(type) {
 		case HuffmanLeaf:
-			answer = answer + string(huff.value)
+			fmt.Fprintf(&answer, "%s", string(huff.value))
 			if i < max {
 				findCodes(og, og, data, i, max)
 			} else {
-				//fmt.Println(answer)
-				file, err := os.Create("decompressed2.txt")
-				check(err)
-				_, err = io.WriteString(file, answer)
-				check(err)
-
+				////fmt.Println(answer)
+				// file, err := os.Create("decompressed2.txt")
+				// check(err)
+				// _, err = io.WriteString(file, answer.String())
+				// check(err)
+				// fmt.Println(answer.String())
 			}
 		case HuffmanNode:
 			if string(data[i]) == "0" {
@@ -182,15 +181,15 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) st
 			}
 		}
 	} else {
-		//fmt.Println(answer)
+		////fmt.Println(answer)
 		file, err := os.Create("decompressed2.txt")
 		check(err)
-		_, err = io.WriteString(file, answer)
+		_, err = io.WriteString(file, answer.String())
 		check(err)
 
-		return answer
+		return answer.String()
 	}
-	return answer
+	return answer.String()
 }
 
 func indexOf(word rune, data []rune) int {
@@ -231,19 +230,19 @@ func (b bitString) AsByteSlice() []byte {
 	return out
 }
 
-var ostring string
+var ostring strings.Builder
 
 func encodeTree(tree HuffmanTree) {
 	switch huff := tree.(type) {
 	case HuffmanLeaf:
-		ostring = ostring + "1"
+		fmt.Fprintf(&ostring, "1")
 		if huff.value != 10 {
-			ostring = ostring + string(huff.value)
+			fmt.Fprintf(&ostring, "%s", string(huff.value))
 		} else {
-			ostring = ostring + "\\n"
+			fmt.Fprintf(&ostring, "\\n")
 		}
 	case HuffmanNode:
-		ostring = ostring + "0"
+		fmt.Fprintf(&ostring, "0")
 		encodeTree(huff.right)
 		encodeTree(huff.left)
 	}
@@ -254,14 +253,14 @@ var treeH treeHeap
 
 func decodeTree(tree string) HuffmanTree {
 	symFreqs := make(map[rune]int)
-	temp := ""
+	var temp strings.Builder
 	var freq int
 	for i := 0; i < len(tree); i++ {
 		if string(tree[i]) != "|" {
-			temp = temp + string(tree[i])
+			fmt.Fprintf(&temp, "%s", string(tree[i]))
 		} else {
-			freq, _ = strconv.Atoi(temp)
-			temp = ""
+			freq, _ = strconv.Atoi(temp.String())
+			temp.Reset()
 			if string(tree[i+1]) == "\\" && string(tree[i+2]) == "n" {
 				symFreqs[10] = freq
 				i++
@@ -275,64 +274,56 @@ func decodeTree(tree string) HuffmanTree {
 	return buildTree(symFreqs)
 }
 func encode(tree HuffmanTree, input string) []byte {
-	fmt.Println("encoding")
-	answer := ""
+	//fmt.Println("encoding")
+	var answer strings.Builder
 	tempV := make([]rune, 0)
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
 	for i := 0; i < len(input); i++ {
-		// fmt.Println(string(rune(input[i])))
+		////fmt.Println(string(rune(input[i])))
 		if indexOf(rune(input[i]), vals) != -1 {
-			answer = answer + (bin[indexOf(rune(input[i]), vals)])
+			fmt.Fprintf(&answer, "%s", bin[indexOf(rune(input[i]), vals)])
 		} else {
-			answer = answer + (bin[len(bin)-1])
+			fmt.Fprintf(&answer, "%s", bin[0])
 		}
 	}
 
-	for i := 0; i < len(vals); i++ {
-		if vals[i] != 10 {
-			ostring = ostring + string(bin[i]) + "3" + string(vals[i])
-		} else {
-			ostring = ostring + string(bin[i]) + "3\\n"
-		}
-	}
 	//Println(len(answer))
-	diff := bitString(string(strconv.FormatInt(int64(8-len(answer)%8), 2)))
+
+	diff := bitString(string(strconv.FormatInt(int64(8-len(answer.String())%8), 2)))
+	if diff == "1000" {
+		diff = bitString("0")
+	}
 	first := diff.AsByteSlice()
-	bits := bitString(answer)
+	bits := bitString(answer.String())
 	final := bits.AsByteSlice()
-	//	fmt.Println(diff)
-	fmt.Println(bits)
 	test := append(first, final...)
 
-	return append([]byte(estring), append([]byte("\\\n"), test...)...)
+	return append([]byte(estring.String()), append([]byte("\\\n"), test...)...)
 }
 func decode(fileContents []byte) []byte {
-	fmt.Println("decoding")
+	//fmt.Println("decoding")
 	file_content := string(fileContents)
 	lines := strings.Split(file_content, "\\\n")
 	tree := decodeTree(lines[0])
 
 	byteArr := []byte(strings.Join(strings.Split(string(fileContents), "\\\n")[1:], ""))
 	content := make([]string, 0)
-	contentString := ""
+	var contentString strings.Builder
 	var diff int64
 	var err error
 	for i, n := range byteArr {
 		if i != 0 {
 			hold := fmt.Sprintf("%08b", n)
 			content = append(content, hold)
-			contentString = contentString + hold
+			fmt.Fprintf(&contentString, "%s", hold)
 		} else {
 			hold := fmt.Sprintf("%08b", n)
 			diff, err = strconv.ParseInt(hold, 2, 64)
 			check(err)
 		}
 	}
-	fmt.Println(int(diff))
-	contentString = contentString[int(diff):]
-	fmt.Println(contentString)
-	answer := findCodes(tree, tree, contentString, 0, len(contentString))
+	answer := findCodes(tree, tree, contentString.String()[int(diff):], 0, len(contentString.String()[int(diff):]))
 	return []byte(answer)
 }
 
@@ -345,9 +336,9 @@ func Compress(fileContents []byte) []byte {
 	}
 	for key, val := range symFreqs {
 		if key != 10 {
-			estring = estring + strconv.Itoa(val) + "|" + string(key)
+			fmt.Fprintf(&estring, "%s|%s", strconv.Itoa(val), string(key))
 		} else {
-			estring = estring + strconv.Itoa(val) + "|\\n"
+			fmt.Fprintf(&estring, "%s|\\n", strconv.Itoa(val))
 		}
 	}
 	exampleTree := buildTree(symFreqs)
@@ -363,7 +354,7 @@ func Decompress(fileContents []byte) []byte {
 }
 
 func main() {
-	defer profile.Start().Stop()
+	//defer profile.Start().Stop()
 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 	check(err)
 	content := string(fileContents)
@@ -374,9 +365,9 @@ func main() {
 	}
 	for key, val := range symFreqs {
 		if key != 10 {
-			estring = estring + strconv.Itoa(val) + "|" + string(key)
+			fmt.Fprintf(&estring, "%s|%s", strconv.Itoa(val), string(key))
 		} else {
-			estring = estring + strconv.Itoa(val) + "|\\n"
+			fmt.Fprintf(&estring, "%s|\\n", strconv.Itoa(val))
 		}
 	}
 	exampleTree := buildTree(symFreqs)
@@ -432,7 +423,9 @@ func NewReader(r io.Reader) io.Reader {
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
 		r.compressed, err = ioutil.ReadAll(r.r)
-		if err != nil { return 0, err }
+		if err != nil {
+			return 0, err
+		}
 		r.decompressed = Decompress(r.compressed)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])

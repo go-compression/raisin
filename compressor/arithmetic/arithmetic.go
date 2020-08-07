@@ -1,6 +1,7 @@
 package arithmetic
 
 import (
+	"math/big"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -15,9 +16,9 @@ func Compress(input []byte) []byte {
 	for _, c := range input {
 		symFreqs[c]++
 	}
-	symFreqsWhole := make(map[byte]float64, len(symFreqs))
+	symFreqsWhole := make(map[byte]*big.Float, len(symFreqs))
 	for c, freq := range symFreqs {
-		symFreqsWhole[c] = float64(freq) / float64(total)
+		symFreqsWhole[c] = new(big.Float).Quo(big.NewFloat(float64(freq)), big.NewFloat(float64(total)))
 	}
 	// symFreqsWhole = map[byte]float64{'3': 0.4, '2': 0.5, '1': 0.05, '0': 0.05}
 	keys := make(sortBytes, 0)
@@ -37,53 +38,69 @@ func Compress(input []byte) []byte {
 	return []byte("compress")
 }
 
-func getRootBinaryPosition(targetTop float64, targetBot float64) string {
-	return getBinaryPosition(targetTop, targetBot, 1, 0)
-}
 
-func getBinaryPosition(targetTop float64, targetBot float64, top float64, bot float64) string {
-	if targetTop > top && targetBot <= bot {
-		return ""
-	}
-	diff := top - bot
-	targetHalfway := targetTop - ((targetTop - targetBot) / 2)
-	halfwayPoint := top - (diff / 2)
-	if halfwayPoint < targetHalfway {
-		// Target range is above halfway point
-		return "1" + getBinaryPosition(targetTop, targetBot, top, halfwayPoint)
-	} else {
-		// Target range is below halfway point
-		return "0" + getBinaryPosition(targetTop, targetBot, halfwayPoint, bot)
-	}
-}
-
-func encode(keys []byte, freqs map[byte]float64, input []byte) (top float64, bottom float64) {
+func encode(keys []byte, freqs map[byte]*big.Float, input []byte) (top *big.Float, bottom *big.Float) {
 	if len(input) == 0 {
-		return -1, -1
+		return nil, nil
 	}
+
+	bottom, top = big.NewFloat(0), big.NewFloat(0)
 
 	// Pop first byte off the input
 	encodeByte := input[0]
 	input = input[1:]
 
 	sec := getSection(keys, freqs, encodeByte)
-	nextTop, nextBottom := encode(keys, freqs, input)
-	size := nextTop - nextBottom
 	for i := 0; i < sec; i++ {
-		bottom += freqs[keys[i]]
+		bottom.Add(bottom, freqs[keys[i]])
 	}
-	// fmt.Println("before", bottom, "-", bottom + freqs[keys[sec]], string(encodeByte))
-	if nextBottom != -1 { bottom = bottom + (freqs[keys[sec]] * nextBottom)}
-	if nextTop != -1 {
-		top = bottom + (freqs[keys[sec]] * size)
-	} else {
-		top = bottom + freqs[keys[sec]]
+	top.Add(bottom, freqs[keys[sec]])
+	// fmt.Println("before", bottom, "-", top, string(encodeByte))
+	
+	// fmt.Println(getRootBinaryPosition(top, bottom))
+
+	nextTop, nextBottom := encode(keys, freqs, input)
+	// fmt.Println("next after", nextBottom, "-", nextTop)
+	size := big.NewFloat(0)
+	if nextBottom != nil && nextTop != nil { size.Sub(nextTop, nextBottom) }
+	if nextBottom != nil { bottom.Add(bottom, big.NewFloat(0).Mul(freqs[keys[sec]], nextBottom))}
+	if nextTop != nil {
+		top.Add(bottom, big.NewFloat(0).Mul(freqs[keys[sec]], size))
 	}
 	
 	return top, bottom
 }
 
-func getSection(keys []byte, freqs map[byte]float64, input byte) int {
+func getRootBinaryPosition(targetTop *big.Float, targetBot *big.Float) string {
+	return getBinaryPosition(targetTop, targetBot, big.NewFloat(1), big.NewFloat(0))
+}
+
+func getBinaryPosition(targetTop *big.Float, targetBot *big.Float, top *big.Float, bot *big.Float) string {
+	if targetTop.Cmp(top) >= 0 && targetBot.Cmp(bot) <= 0 {
+		return ""
+	}
+	// fmt.Println("Current", bot, top, "Target", targetBot, targetTop)
+	// fmt.Println("%d %d", targetTop.Cmp(top), targetBot.Cmp(bot))
+	diff := big.NewFloat(0).Sub(top, bot)
+	// fmt.Printf("%4g-%4g %4g-%4g\n", top, bot, targetTop, targetBot)
+	targetDiff := big.NewFloat(0).Sub(targetTop, targetBot)
+	targetHalf := big.NewFloat(0).Quo(targetDiff, big.NewFloat(2))
+	targetHalfway := big.NewFloat(0).Sub(targetTop, targetHalf)
+	halfwayPoint := big.NewFloat(0).Sub(top, big.NewFloat(0).Quo(diff, big.NewFloat(2)))
+	// fmt.Printf("%4g vs. %4g\n", halfwayPoint, targetHalfway)
+	if halfwayPoint.Cmp(targetHalfway) == -1 {
+		// Target range is above halfway point
+		// fmt.Println("Above")
+		return "1" + getBinaryPosition(targetTop, targetBot, top, halfwayPoint)
+	} else {
+		// Target range is below halfway point
+		// fmt.Println("Below")
+		return "0" + getBinaryPosition(targetTop, targetBot, halfwayPoint, bot)
+	}
+}
+
+
+func getSection(keys []byte, freqs map[byte]*big.Float, input byte) int {
 	for i, key := range keys {
 		if key == input {
 			return i
