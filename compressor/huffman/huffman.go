@@ -158,6 +158,7 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 var answer strings.Builder
 
 func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) string {
+	if  i > 900000 { panic("Max reursion depth") }
 	if i <= max {
 		switch huff := tree.(type) {
 		case HuffmanLeaf:

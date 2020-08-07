@@ -290,8 +290,9 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine st
 	defer wg.Done()
 
 	errorHandler := func() {
-		if recover() != nil {
-			fmt.Printf("%s errored during execution, continuing", engine)
+		if r := recover(); r != nil {
+			fmt.Printf("%s errored during execution, continuing\n", engine)
+			fmt.Println("Err:", r)
 			result := Result{}
 			result.engine = engine
 			result.timeTaken = "failed"
