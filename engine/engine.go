@@ -342,6 +342,8 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 		err = ioutil.WriteFile(compressedFilePath, file.compressed, 0644)
 	}
 
+	if engine == "huffman" { fmt.Println(file.compressed) }
+
 	fmt.Printf("Decompressing...\n")
 	stream := make([]byte, 0)
 	out := make([]byte, 512)

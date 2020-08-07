@@ -158,7 +158,7 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 var answer strings.Builder
 
 func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) string {
-	if  i > 900000 { panic("Max reursion depth") }
+	if  i > 900000 { panic("Max recursion depth") }
 	if i <= max {
 		switch huff := tree.(type) {
 		case HuffmanLeaf:
@@ -182,10 +182,10 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) st
 		}
 	} else {
 		////fmt.Println(answer)
-		file, err := os.Create("decompressed2.txt")
-		check(err)
-		_, err = io.WriteString(file, answer.String())
-		check(err)
+		// file, err := os.Create("decompressed2.txt")
+		// check(err)
+		// _, err = io.WriteString(file, answer.String())
+		// check(err)
 
 		return answer.String()
 	}
@@ -328,6 +328,13 @@ func decode(fileContents []byte) []byte {
 }
 
 func Compress(fileContents []byte) []byte {
+	estring.Reset()
+	ostring.Reset()
+	answer.Reset()
+	newTree := new(HuffmanTree)
+	decodedTree = *newTree
+	newHeap := new(treeHeap)
+	treeH = *newHeap
 	content := string(fileContents)
 	symFreqs := make(map[rune]int)
 
