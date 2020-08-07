@@ -26,6 +26,7 @@ import (
 	"time"
 	"sync"
 	"strconv"
+	"runtime/debug"
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
@@ -293,6 +294,8 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine st
 		if r := recover(); r != nil {
 			fmt.Printf("%s errored during execution, continuing\n", engine)
 			fmt.Println("Err:", r)
+			fmt.Println(string(debug.Stack()))
+			fmt.Println("Continuing")
 			result := Result{}
 			result.engine = engine
 			result.timeTaken = "failed"
