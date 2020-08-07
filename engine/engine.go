@@ -161,7 +161,7 @@ func DecompressFile(engine string, fileString string) []byte {
 	compressedFile, err := GetCompressedFileFromPath(fileString)
 	compressedFile.engine = engine
 	check(err)
-	fmt.Printf("LZSS Decompressing...\n")
+	fmt.Printf("Decompressing...\n")
 
 	stream := make([]byte, 0)
 	out := make([]byte, 512)
