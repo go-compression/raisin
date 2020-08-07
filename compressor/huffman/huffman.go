@@ -9,8 +9,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
-	"github.com/pkg/profile"
 )
 
 type HuffmanTree interface {
@@ -355,7 +353,7 @@ func Decompress(fileContents []byte) []byte {
 }
 
 func main() {
-	defer profile.Start().Stop()
+	//defer profile.Start().Stop()
 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 	check(err)
 	content := string(fileContents)
