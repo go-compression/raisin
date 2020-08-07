@@ -168,7 +168,7 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) st
 				findCodes(og, og, data, i, max)
 			} else {
 				////fmt.Println(answer)
-				// file, err := os.Create("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/decompressed2.txt")
+				// file, err := os.Create("decompressed2.txt")
 				// check(err)
 				// _, err = io.WriteString(file, answer.String())
 				// check(err)
@@ -183,7 +183,7 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) st
 		}
 	} else {
 		////fmt.Println(answer)
-		file, err := os.Create("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/decompressed2.txt")
+		file, err := os.Create("decompressed2.txt")
 		check(err)
 		_, err = io.WriteString(file, answer.String())
 		check(err)
@@ -356,7 +356,7 @@ func Decompress(fileContents []byte) []byte {
 
 func main() {
 	defer profile.Start().Stop()
-	fileContents, err := ioutil.ReadFile("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/huffman-input.txt")
+	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 	check(err)
 	content := string(fileContents)
 	symFreqs := make(map[rune]int)
@@ -374,15 +374,15 @@ func main() {
 	exampleTree := buildTree(symFreqs)
 
 	out := encode(exampleTree, content)
-	file, err := os.Create("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/huffman-compressed.bin")
+	file, err := os.Create("huffman-compressed.bin")
 	check(err)
 	file.Write(out)
 
-	fileContents, err2 := ioutil.ReadFile("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/huffman-compressed.bin")
+	fileContents, err2 := ioutil.ReadFile("huffman-compressed.bin")
 	check(err2)
 	decoded := decode(fileContents)
 
-	file, err = os.Create("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/decompressed2.txt")
+	file, err = os.Create("decompressed2.txt")
 	check(err)
 	_, err = io.WriteString(file, string(decoded))
 	check(err)
