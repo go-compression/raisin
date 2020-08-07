@@ -1,7 +1,6 @@
 package arithmetic
 
 import (
-	"math/big"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,11 +15,11 @@ func Compress(input []byte) []byte {
 	for _, c := range input {
 		symFreqs[c]++
 	}
-	symFreqsWhole := make(map[byte]*big.Float, len(symFreqs))
+	symFreqsWhole := make(map[byte]float64, len(symFreqs))
 	for c, freq := range symFreqs {
-		symFreqsWhole[c] = new(big.Float).Quo(big.NewFloat(float64(freq)), big.NewFloat(float64(total)))
+		symFreqsWhole[c] = float64(freq) / float64(total)
 	}
-	// symFreqsWhole = map[byte]float64{'3': 0.4, '2': 0.5, '1': 0.05, '0': 0.05}
+	// symFreqsWhole = map[byte]float64{'0': 0.05, '1': 0.05, '2': 0.5, '3': 0.4}
 	keys := make(sortBytes, 0)
 	for k, _ := range symFreqsWhole {
 		keys = append(keys, k)
@@ -31,20 +30,137 @@ func Compress(input []byte) []byte {
 		fmt.Printf("%s - %f\n", string(keys[i]), symFreqsWhole[keys[i]])
 	}
 	fmt.Printf("-------------\n")
-	top, bot := encode(keys, symFreqsWhole, input)
+	// bits, top, bot := encodeLoop(true, keys, symFreqsWhole, input)
+	// fmt.Println(bot, "-", top, string(input))
+	// binaryLocation := bits + getRootBinaryPosition(top, bot)
+	// fmt.Println(binaryLocation)
+
+	// bot, top = bitsToRange(binaryLocation)
+	// fmt.Println(bot, "-", top, string(binaryLocation))
+
+	_, top, bot := encodeLoop(false, keys, symFreqsWhole, input)
 	fmt.Println(bot, "-", top, string(input))
 	binaryLocation := getRootBinaryPosition(top, bot)
 	fmt.Println(binaryLocation)
+
+	output := string(bitsToBytes(binaryLocation, keys, symFreqsWhole))
+	fmt.Println(output)
+
 	return []byte("compress")
 }
 
+func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) (string, float64, float64) {
+	var encodeByte byte
+	var bits string
+	top, bottom := float64(1), float64(0)
 
-func encode(keys []byte, freqs map[byte]*big.Float, input []byte) (top *big.Float, bottom *big.Float) {
-	if len(input) == 0 {
-		return nil, nil
+	freqsPassed := float64(1)
+
+	for i := 0; i < len(input); i++ {
+		encodeByte = input[i]
+
+		var byteTop, byteBot float64
+
+		sec := getSection(keys, freqs, encodeByte)
+		for i := 0; i < sec; i++ {
+			byteBot += freqs[keys[i]]
+		}
+		byteTop = byteBot + freqs[keys[sec]]
+		// fmt.Println(byteBot, "-", byteTop, string(encodeByte))
+		
+		size := freqsPassed * (byteTop - byteBot)
+		
+		bottom = bottom + (freqsPassed * byteBot)
+		top = bottom + size
+
+		freqsPassed *= freqs[keys[sec]]
+
+		if finite {
+			if bottom > 0.5 {
+				bits += "1"
+				bottom /= 2
+				freqsPassed *= 2
+			} else if top <= 0.5 {
+				bits += "0"
+				top *= 2
+				freqsPassed *= 2
+			}
+		}
 	}
 
-	bottom, top = big.NewFloat(0), big.NewFloat(0)
+	return bits, top, bottom
+}
+
+func bitsToBytes(bits string, keys []byte, freqs map[byte]float64) []byte {
+	var output []byte
+	top, bot := float64(1), float64(0)
+
+	for i := 0; i < len(bits); i++ {
+		bit := bits[i]
+
+		midpoint := bot + ((top - bot) / 2 )
+
+		if bit == '1' {
+			// Top half
+			bot = midpoint
+		} else {
+			// Bottom half
+			top = midpoint
+		}
+		
+		var newBits []byte
+		newBits, top, bot = getBitsFromRange(top, bot, keys, freqs)
+		output = append(output, newBits...)
+	}
+	return output
+}
+
+func getBitsFromRange(top float64, bot float64, keys []byte, freqs map[byte]float64) ([]byte, float64, float64) {
+	var bits []byte
+
+	freqBot := float64(0)
+	for _, c := range keys {
+		freq := freqs[c]
+		freqTop := freqBot + freq
+		if freqBot <= bot && (freqTop + freqBot) > top {
+			bits = append(bits, c)
+			top /= freq
+			bot /= freq
+			var newBits []byte
+			newBits, top, bot = getBitsFromRange(top, bot, keys, freqs)
+			bits = append(bits, newBits...)
+		}
+		freqBot += freq
+	}
+
+	return bits, top, bot
+}
+
+func bitsToRange(bits string) (float64, float64) {
+	bot, top := float64(0), float64(1)
+
+	for i := 0; i < len(bits); i++ {
+		bit := bits[i]
+
+		midpoint := bot + ((top - bot) / 2 )
+
+		if bit == '1' {
+			// Top half
+			bot = midpoint
+		} else {
+			// Bottom half
+			top = midpoint
+		}
+	}
+
+	return bot, top
+}
+
+
+func encode(keys []byte, freqs map[byte]float64, input []byte) (top float64, bottom float64) {
+	if len(input) == 0 {
+		return -1, -1
+	}
 
 	// Pop first byte off the input
 	encodeByte := input[0]
@@ -52,55 +168,56 @@ func encode(keys []byte, freqs map[byte]*big.Float, input []byte) (top *big.Floa
 
 	sec := getSection(keys, freqs, encodeByte)
 	for i := 0; i < sec; i++ {
-		bottom.Add(bottom, freqs[keys[i]])
+		bottom += freqs[keys[i]]
 	}
-	top.Add(bottom, freqs[keys[sec]])
-	// fmt.Println("before", bottom, "-", top, string(encodeByte))
+	top = bottom + freqs[keys[sec]]
+	fmt.Println("before", bottom, "-", top, string(encodeByte))
 	
 	// fmt.Println(getRootBinaryPosition(top, bottom))
 
+	half := ((top - bottom) / 2)
+	middle := bottom + half
+
+	if middle > 0.5 {
+		fmt.Println("1")
+		bottom = bottom - (top - bottom)
+	} else {
+		fmt.Println("0")
+		top = top + (top - bottom)
+	}
+
 	nextTop, nextBottom := encode(keys, freqs, input)
-	// fmt.Println("next after", nextBottom, "-", nextTop)
-	size := big.NewFloat(0)
-	if nextBottom != nil && nextTop != nil { size.Sub(nextTop, nextBottom) }
-	if nextBottom != nil { bottom.Add(bottom, big.NewFloat(0).Mul(freqs[keys[sec]], nextBottom))}
-	if nextTop != nil {
-		top.Add(bottom, big.NewFloat(0).Mul(freqs[keys[sec]], size))
+	size := nextTop - nextBottom
+	if nextBottom != -1 { bottom = bottom + (freqs[keys[sec]] * nextBottom)}
+	if nextTop != -1 {
+		top = bottom + (freqs[keys[sec]] * size)
 	}
 	
 	return top, bottom
 }
 
-func getRootBinaryPosition(targetTop *big.Float, targetBot *big.Float) string {
-	return getBinaryPosition(targetTop, targetBot, big.NewFloat(1), big.NewFloat(0))
+func getRootBinaryPosition(targetTop float64, targetBot float64) string {
+	return getBinaryPosition(targetTop, targetBot, 1, 0)
 }
 
-func getBinaryPosition(targetTop *big.Float, targetBot *big.Float, top *big.Float, bot *big.Float) string {
-	if targetTop.Cmp(top) >= 0 && targetBot.Cmp(bot) <= 0 {
+func getBinaryPosition(targetTop float64, targetBot float64, top float64, bot float64) string {
+	if targetTop > top && targetBot <= bot {
 		return ""
 	}
-	// fmt.Println("Current", bot, top, "Target", targetBot, targetTop)
-	// fmt.Println("%d %d", targetTop.Cmp(top), targetBot.Cmp(bot))
-	diff := big.NewFloat(0).Sub(top, bot)
-	// fmt.Printf("%4g-%4g %4g-%4g\n", top, bot, targetTop, targetBot)
-	targetDiff := big.NewFloat(0).Sub(targetTop, targetBot)
-	targetHalf := big.NewFloat(0).Quo(targetDiff, big.NewFloat(2))
-	targetHalfway := big.NewFloat(0).Sub(targetTop, targetHalf)
-	halfwayPoint := big.NewFloat(0).Sub(top, big.NewFloat(0).Quo(diff, big.NewFloat(2)))
-	// fmt.Printf("%4g vs. %4g\n", halfwayPoint, targetHalfway)
-	if halfwayPoint.Cmp(targetHalfway) == -1 {
+	diff := top - bot
+	targetHalfway := targetTop - ((targetTop - targetBot) / 2)
+	halfwayPoint := top - (diff / 2)
+	if halfwayPoint < targetHalfway {
 		// Target range is above halfway point
-		// fmt.Println("Above")
 		return "1" + getBinaryPosition(targetTop, targetBot, top, halfwayPoint)
 	} else {
 		// Target range is below halfway point
-		// fmt.Println("Below")
 		return "0" + getBinaryPosition(targetTop, targetBot, halfwayPoint, bot)
 	}
 }
 
 
-func getSection(keys []byte, freqs map[byte]*big.Float, input byte) int {
+func getSection(keys []byte, freqs map[byte]float64, input byte) int {
 	for i, key := range keys {
 		if key == input {
 			return i
