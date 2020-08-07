@@ -168,11 +168,11 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) st
 				findCodes(og, og, data, i, max)
 			} else {
 				////fmt.Println(answer)
-				file, err := os.Create("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/decompressed2.txt")
-				check(err)
-				_, err = io.WriteString(file, answer.String())
-				check(err)
-
+				// file, err := os.Create("/Users/arnavchawla/Documents/custom/src/github.com/mrfleap/custom-compression/compressor/huffman/decompressed2.txt")
+				// check(err)
+				// _, err = io.WriteString(file, answer.String())
+				// check(err)
+				// fmt.Println(answer.String())
 			}
 		case HuffmanNode:
 			if string(data[i]) == "0" {
