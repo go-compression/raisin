@@ -314,21 +314,22 @@ func decode(fileContents []byte) []byte {
 		}
 	}
 
-	tempV := make([]rune, 0)
-	tempB := make([]string, 0)
-	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
+	// tempV := make([]rune, 0)
+	// tempB := make([]string, 0)
+	// vals, bin := printCodes(tree, []byte{}, tempV, tempB)
 
-	var answerBuilder strings.Builder
-	var bitSequence string
-	for _, bit := range contentString.String()[int(diff):] {
-		bitSequence += string(bit)
-		if i := indexOfString(bitSequence, bin); i != -1 {
-			fmt.Fprintf(&answerBuilder, "%s", string(vals[i]))
-			bitSequence = ""
-		}
-	}
-	// answer := findCodes(tree, tree, contentString.String()[int(diff):], 0, len(contentString.String()[int(diff):]))
-	return []byte(answerBuilder.String())
+	// var answerBuilder strings.Builder
+	// var bitSequence string
+	// for _, bit := range contentString.String()[int(diff):] {
+	// 	bitSequence += string(bit)
+	// 	if i := indexOfString(bitSequence, bin); i != -1 {
+	// 		fmt.Fprintf(&answerBuilder, "%s", string(vals[i]))
+	// 		bitSequence = ""
+	// 	}
+	// }
+	answer := findCodes(tree, tree, contentString.String()[int(diff):], 0, len(contentString.String()[int(diff):]))
+	// return []byte(answerBuilder.String())
+	return []byte(answer)
 }
 
 func Compress(fileContents []byte) []byte {
