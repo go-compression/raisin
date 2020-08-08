@@ -30,21 +30,22 @@ func Compress(input []byte) []byte {
 		fmt.Printf("%s - %f\n", string(keys[i]), symFreqsWhole[keys[i]])
 	}
 	fmt.Printf("-------------\n")
-	// bits, top, bot := encodeLoop(true, keys, symFreqsWhole, input)
-	// fmt.Println(bot, "-", top, string(input))
-	// binaryLocation := bits + getRootBinaryPosition(top, bot)
+	bits, top, bot := encodeLoop(true, keys, symFreqsWhole, input)
+	fmt.Println(bot, "-", top, string(input))
+	binaryLocation := bits + getRootBinaryPosition(top, bot)
+	fmt.Println(binaryLocation) 
+
+	bot, top = bitsToRange(binaryLocation)
+	fmt.Println("Result", bot, "-", top, string(binaryLocation))
+
+	_, shouldBeTop, shouldBeBot := encodeLoop(false, keys, symFreqsWhole, input)
+	fmt.Println("Should be", shouldBeBot, "-", shouldBeTop, string(input))
+	fmt.Println("Within range:", (shouldBeBot <= bot && shouldBeTop > top))
+	// binaryLocation := getRootBinaryPosition(top, bot)
 	// fmt.Println(binaryLocation)
 
-	// bot, top = bitsToRange(binaryLocation)
-	// fmt.Println(bot, "-", top, string(binaryLocation))
-
-	_, top, bot := encodeLoop(false, keys, symFreqsWhole, input)
-	fmt.Println(bot, "-", top, string(input))
-	binaryLocation := getRootBinaryPosition(top, bot)
-	fmt.Println(binaryLocation)
-
-	output := string(bitsToBytes(binaryLocation, keys, symFreqsWhole))
-	fmt.Println(output)
+	// output := string(bitsToBytes(binaryLocation, keys, symFreqsWhole))
+	// fmt.Println(output)
 
 	return []byte("compress")
 }
@@ -52,6 +53,7 @@ func Compress(input []byte) []byte {
 func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) (string, float64, float64) {
 	var encodeByte byte
 	var bits string
+	var precedingBot, precedingTop string
 	top, bottom := float64(1), float64(0)
 
 	freqsPassed := float64(1)
@@ -66,7 +68,7 @@ func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) 
 			byteBot += freqs[keys[i]]
 		}
 		byteTop = byteBot + freqs[keys[sec]]
-		// fmt.Println(byteBot, "-", byteTop, string(encodeByte))
+		if finite { fmt.Println(byteBot, "-", byteTop, string(encodeByte)) }
 		
 		size := freqsPassed * (byteTop - byteBot)
 		
@@ -76,15 +78,31 @@ func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) 
 		freqsPassed *= freqs[keys[sec]]
 
 		if finite {
-			if bottom > 0.5 {
-				bits += "1"
-				bottom /= 2
+			fmt.Println(bottom, "-", top)
+			if bottom >= 0.5 {
+				bits += precedingTop + "1"
+				fmt.Println("Diff", top - bottom)
+				top = (top - 0.5) * 2
+				bottom = (bottom - 0.5) * 2
 				freqsPassed *= 2
-			} else if top <= 0.5 {
-				bits += "0"
+				fmt.Println(precedingTop + "1", "Scaled to", bottom, top)
+				fmt.Println("Diff", top - bottom)
+				precedingTop, precedingBot = "", ""
+			} else if top < 0.5 {
+				bits += precedingBot + "0"
 				top *= 2
+				bottom *= 2
 				freqsPassed *= 2
+				fmt.Println(precedingBot + "0", "Scaled to", bottom, top)
+				precedingTop, precedingBot = "", ""
+			} else if (bottom >= 0.25 && bottom < 0.5) && (top < 0.75 && top > 0.5) {
+				top = (top - 0.25) * 2
+				bottom = (bottom - 0.25) * 2
+				fmt.Println("-", "Scaled to", bottom, top)
+				precedingTop = "1"
+				precedingBot = "0"
 			}
+			fmt.Println()
 		}
 	}
 
@@ -123,7 +141,7 @@ func getBitsFromRange(top float64, bot float64, keys []byte, freqs map[byte]floa
 		freq := freqs[c]
 		freqTop := freqBot + freq
 		if freqBot <= bot && (freqTop + freqBot) > top {
-			bits = append(bits, c)
+			bits = append(bits, c) 
 			top /= freq
 			bot /= freq
 			var newBits []byte
