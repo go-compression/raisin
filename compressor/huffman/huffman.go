@@ -164,30 +164,17 @@ func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) st
 		case HuffmanLeaf:
 			fmt.Fprintf(&answer, "%s", string(huff.value))
 			if i < max {
-				findCodes(og, og, data, i, max)
+				return findCodes(og, og, data, i, max)
 			} else {
-				////fmt.Println(answer)
-				// file, err := os.Create("decompressed2.txt")
-				// check(err)
-				// _, err = io.WriteString(file, answer.String())
-				// check(err)
-				// fmt.Println(answer.String())
+				return answer.String()
 			}
 		case HuffmanNode:
 			if string(data[i]) == "0" {
-				findCodes(huff.left, og, string(data), i+1, max)
+				return findCodes(huff.left, og, string(data), i+1, max)
 			} else if string(data[i]) == "1" {
-				findCodes(huff.right, og, string(data), i+1, max)
+				return findCodes(huff.right, og, string(data), i+1, max)
 			}
 		}
-	} else {
-		////fmt.Println(answer)
-		// file, err := os.Create("decompressed2.txt")
-		// check(err)
-		// _, err = io.WriteString(file, answer.String())
-		// check(err)
-
-		return answer.String()
 	}
 	return answer.String()
 }
@@ -279,13 +266,14 @@ func encode(tree HuffmanTree, input string) []byte {
 	tempV := make([]rune, 0)
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
+	finished := ""
 	for i := 0; i < len(input); i++ {
-		////fmt.Println(string(rune(input[i])))
 		if indexOf(rune(input[i]), vals) != -1 {
 			fmt.Fprintf(&answer, "%s", bin[indexOf(rune(input[i]), vals)])
 		} else {
 			fmt.Fprintf(&answer, "%s", bin[0])
 		}
+		finished += string(input[i])
 	}
 
 	//Println(len(answer))
@@ -301,13 +289,15 @@ func encode(tree HuffmanTree, input string) []byte {
 
 	return append([]byte(estring.String()), append([]byte("\\\n"), test...)...)
 }
+
+
 func decode(fileContents []byte) []byte {
 	//fmt.Println("decoding")
 	file_content := string(fileContents)
-	lines := strings.Split(file_content, "\\\n")
-	tree := decodeTree(lines[0])
+	sections := strings.SplitN(file_content, "\\\n", 2)
+	tree := decodeTree(sections[0])
 
-	byteArr := []byte(strings.Join(strings.Split(string(fileContents), "\\\n")[1:], ""))
+	byteArr := []byte(sections[1])
 	content := make([]string, 0)
 	var contentString strings.Builder
 	var diff int64
@@ -323,8 +313,22 @@ func decode(fileContents []byte) []byte {
 			check(err)
 		}
 	}
-	answer := findCodes(tree, tree, contentString.String()[int(diff):], 0, len(contentString.String()[int(diff):]))
-	return []byte(answer)
+
+	tempV := make([]rune, 0)
+	tempB := make([]string, 0)
+	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
+
+	var answerBuilder strings.Builder
+	var bitSequence string
+	for _, bit := range contentString.String()[int(diff):] {
+		bitSequence += string(bit)
+		if i := indexOfString(bitSequence, bin); i != -1 {
+			fmt.Fprintf(&answerBuilder, "%s", string(vals[i]))
+			bitSequence = ""
+		}
+	}
+	// answer := findCodes(tree, tree, contentString.String()[int(diff):], 0, len(contentString.String()[int(diff):]))
+	return []byte(answerBuilder.String())
 }
 
 func Compress(fileContents []byte) []byte {
