@@ -53,7 +53,7 @@ func Compress(input []byte) []byte {
 func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) (string, float64, float64) {
 	var encodeByte byte
 	var bits string
-	var precedingBot, precedingTop string
+	var pending int
 	top, bottom := float64(1), float64(0)
 
 	freqsPassed := float64(1)
@@ -80,33 +80,49 @@ func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) 
 		if finite {
 			fmt.Println(bottom, "-", top)
 			if bottom >= 0.5 {
-				bits += precedingTop + "1"
+				bits += "1" + pendingBits(pending, "1")
 				fmt.Println("Diff", top - bottom)
 				top = (top - 0.5) * 2
 				bottom = (bottom - 0.5) * 2
 				freqsPassed *= 2
-				fmt.Println(precedingTop + "1", "Scaled to", bottom, top)
+				fmt.Println("1" + pendingBits(pending, "1"), "Scaled to", bottom, top)
 				fmt.Println("Diff", top - bottom)
-				precedingTop, precedingBot = "", ""
+				pending = 0
 			} else if top < 0.5 {
-				bits += precedingBot + "0"
+				bits += "0" + pendingBits(pending, "0")
 				top *= 2
 				bottom *= 2
 				freqsPassed *= 2
-				fmt.Println(precedingBot + "0", "Scaled to", bottom, top)
-				precedingTop, precedingBot = "", ""
-			} else if (bottom >= 0.25 && bottom < 0.5) && (top < 0.75 && top > 0.5) {
-				top = (top - 0.25) * 2
+				fmt.Println("1" + pendingBits(pending, "0"), "Scaled to", bottom, top)
+				pending = 0
+			} else if (bottom >= 0.25 && bottom < 0.5) && (top <= 0.75 && top > 0.5) {
+				top = (top - 0.25) * 2 
 				bottom = (bottom - 0.25) * 2
+				freqsPassed *= 2
 				fmt.Println("-", "Scaled to", bottom, top)
-				precedingTop = "1"
-				precedingBot = "0"
+				pending++
 			}
 			fmt.Println()
 		}
 	}
 
 	return bits, top, bottom
+}
+
+func pendingBits(pendingBits int, bit string) (additionalBits string) {
+	switch bit {
+	case "0":
+		for i := 0; i < pendingBits; i++ {
+			additionalBits += "1"
+		}
+	case "1":
+		for i := 0; i < pendingBits; i++ {
+			additionalBits += "0"
+		}
+	default:
+		panic("Invalid bit")
+	}
+	return
 }
 
 func bitsToBytes(bits string, keys []byte, freqs map[byte]float64) []byte {
