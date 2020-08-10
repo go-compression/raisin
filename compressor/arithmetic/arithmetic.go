@@ -82,7 +82,7 @@ func Decompress(input []byte) []byte {
 	output := decode(keys, freqs, bits)
 	fmt.Println(string(output))
 	
-	return []byte("decompress")
+	return output
 }
 
 const (
@@ -90,7 +90,7 @@ const (
 	ONE_FOURTH = 0x4000
 	ONE_HALF = 2 * ONE_FOURTH
 	THREE_FOURTHS = 3 * ONE_FOURTH
-	CODE_VALUE_BITS = 4
+	CODE_VALUE_BITS = 16
 )
 
 
@@ -106,9 +106,9 @@ func decode(keys []byte, freqs map[byte]float64, bits bitString) []byte {
 
 	fmt.Println(strconv.FormatUint(uint64(value), 2), len(strconv.FormatUint(uint64(value), 2)))
 
-	for i := 0; i < len(bits); i++ {
-		difference := (high - low) + 1
-		scaled_value := ((value - low + 1) * 16 - 1) / difference
+	for i := 0; i < 8; i++ {
+		difference := high - low + 1
+		scaled_value := ((value - low + 1) * 257 - 1) / difference
 
 		char, upper, lower, denom := getChar(keys, freqs, scaled_value)
 		output = append(output, char)
@@ -138,6 +138,7 @@ func decode(keys []byte, freqs map[byte]float64, bits bitString) []byte {
 			var next_bit_val uint32
 			if next_bit == '1' {next_bit_val = 1}
 			value += next_bit_val
+			fmt.Println(strconv.FormatUint(uint64(value), 2), len(strconv.FormatUint(uint64(value), 2)))
 		}
 	}
 	return output
@@ -150,14 +151,16 @@ func encode(keys []byte, freqs map[byte]float64, input []byte) bitString {
 
 	var high, low uint32
 	high = MAX_CODE
+	model := newModel()
 
 	for i := 0; i < len(input); i++ {
 		encodeByte = input[i]
 
 		difference := (high - low) + 1
-		lower, upper, denom := getProbability(keys, freqs, encodeByte)
-		high = low + (difference * upper)/denom
-		low = low + (difference * lower)/denom
+		// lower, upper, denom := getProbability(keys, freqs, encodeByte)
+		lower, upper, count := model.getProbability(encodeByte)
+		high = low + (difference * upper / count) - 1
+		low = low + (difference * lower / count)
 		for {
 			if high < ONE_HALF {
 				// Lower half
@@ -328,7 +331,35 @@ func bitsToRange(bits string) (float64, float64) {
 const denom = uint32(100)
 const denomFloat = float64(denom)
 
+type Model struct {
+	cumulative_frequencies []int
+}
+
+func newModel() *Model {
+	model := Model{make([]int, 258)}
+	for i := 0; i < 258; i++ {
+		model.cumulative_frequencies[i] = i;
+	}
+	return &model
+}
+
+func (model *Model) update(input byte) {
+	c := int(input)
+	for i := c + 1 ; i < 258 ; i++ {
+		model.cumulative_frequencies[i]++;
+	}
+}
+
+func (model *Model) getProbability(input byte) (uint32, uint32, uint32) {
+	c := int(input)
+	lower, upper, count := model.cumulative_frequencies[c], model.cumulative_frequencies[c+1], model.cumulative_frequencies[257]
+    model.update(input);
+    return uint32(lower), uint32(upper), uint32(count)
+}
+
 func getProbability(keys []byte, freqs map[byte]float64, input byte) (uint32, uint32, uint32) {
+	return uint32(input), uint32(input) + 1, 257
+
 	var byteTop, byteBot float64
 
 	sec := getSection(keys, freqs, input)
@@ -341,21 +372,23 @@ func getProbability(keys []byte, freqs map[byte]float64, input byte) (uint32, ui
 }
 
 func getCount() uint32 {
-	return 4
+	return 257
 }
 
 func getChar(keys []byte, freqs map[byte]float64, scaled_value uint32) (byte, uint32, uint32, uint32) {
-	var byteTop, byteBot float64
+	return byte(int(scaled_value)), scaled_value + 1, scaled_value, 257
+	// var byteTop, byteBot float64
 
-	for i := 0; i < len(keys); i++ {
-		byteTop = byteBot + freqs[keys[i]]
+	// for i := 0; i < len(keys); i++ {
+	// 	byteTop = byteBot + freqs[keys[i]]
 
-		lower, upper := uint32(math.Round(byteBot*denomFloat)), uint32(math.Round(byteTop*denomFloat))
-		if upper > scaled_value && scaled_value >= lower {
-			return keys[i], upper, lower, denom
-		}
-		byteBot += freqs[keys[i]]
-	}
+	// 	lower, upper := uint32(math.Round(byteBot*denomFloat)), uint32(math.Round(byteTop*denomFloat))
+	// 	if upper > scaled_value && scaled_value >= lower {
+	// 		// return keys[i], upper, lower, denom
+	// 		return keys[i], upper, uint32(10), denom
+	// 	}
+	// 	byteBot += freqs[keys[i]]
+	// }
 
 	panic("Couldn't find char")
 }
