@@ -5,7 +5,6 @@ import (
 	"io"
 	"io/ioutil"
 	"sort"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -57,16 +56,27 @@ func (b bitString) AsByteSlice() []byte {
 }
 
 func Compress(input []byte) []byte {
-	// freqs := buildFreqTable(input)
-	freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
+	freqs := buildFreqTable(input)
+	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
 	keys := buildKeys(freqs)
 	printFreqs(freqs, keys)
 	
-	bits := encode(keys, freqs, input)
-	fmt.Println(bits, len(bits))
-	bits = bits.pack()
+	// bits := encode(keys, freqs, input)
+	// fmt.Println(bits, len(bits))
+	// bits = bits.pack()
+	bits, top, bot := encode(true, keys, freqs, input)
+	fmt.Println(bot, "-", top, string(input))
+	binaryLocation := bits + getRootBinaryPosition(top, bot)
+	fmt.Println(binaryLocation) 
 
-	return bits.AsByteSlice()
+	bot, top = bitsToRange(binaryLocation)
+	fmt.Println("Result", bot, "-", top, string(binaryLocation))
+
+	_, shouldBeTop, shouldBeBot := encode(false, keys, freqs, input)
+	fmt.Println("Should be", shouldBeBot, "-", shouldBeTop, string(input))
+	fmt.Println("Within range:", (shouldBeBot <= bot && shouldBeTop > top))
+
+	return bitString(binaryLocation).pack().AsByteSlice()
 }
 
 func Decompress(input []byte) []byte {
@@ -85,110 +95,47 @@ func Decompress(input []byte) []byte {
 	return output
 }
 
-const (
-	MAX_CODE = 0xffff
-	ONE_FOURTH = 0x4000
-	ONE_HALF = 2 * ONE_FOURTH
-	THREE_FOURTHS = 3 * ONE_FOURTH
-	CODE_VALUE_BITS = 16
-)
-
-
 func decode(keys []byte, freqs map[byte]float64, bits bitString) []byte {
+	bot, top := float64(0), float64(1)
 	var output []byte
-	var high, low, value uint32
-	high = MAX_CODE
 
-	val, err := strconv.ParseInt(string(bits)[:CODE_VALUE_BITS], 2, 16)
-	if err != nil { panic(err) }
-	value = uint32(val)
-	bits = bits[CODE_VALUE_BITS:]
+	for i := 0; i < len(bits); i++ {
+		bit := bits[i]
 
-	fmt.Println(strconv.FormatUint(uint64(value), 2), len(strconv.FormatUint(uint64(value), 2)))
+		// Enter half based on bit
+		midpoint := bot + ((top - bot) / 2 )
+		if bit == '1' {
+			// Top half
+			bot = midpoint
+		} else {
+			// Bottom half
+			top = midpoint
+		}
 
-	for i := 0; i < 8; i++ {
-		difference := high - low + 1
-		scaled_value := ((value - low + 1) * 257 - 1) / difference
+		// fmt.Println(bot, "-", top)
 
-		char, upper, lower, denom := getChar(keys, freqs, scaled_value)
-		output = append(output, char)
-		
-		high = low + (difference*upper)/denom - 1
-		low = low + (difference*lower)/denom
-		for {
-			if high < ONE_HALF {
-				//do nothing, bit is a zero
-			} else if low >= ONE_HALF {
-				value -= ONE_HALF;  //subtract one half from all three code values
-				low -= ONE_HALF;
-				high -= ONE_HALF;
-			} else if low >= ONE_FOURTH && high < THREE_FOURTHS {
-				value -= ONE_FOURTH;
-				low -= ONE_FOURTH;
-				high -= ONE_FOURTH;
-			} else {
+		// Look for char that falls in range
+		var byteTop, byteBot float64
+		for i := 0; i < len(keys); i++ {
+			char := keys[i]
+			freq := freqs[char]
+			byteTop = byteBot + freq
+			if byteBot <= bot && byteTop > top {
+				// Found char, scale up
+				fmt.Println(char)
+				output = append(output, char)
+				top *= 2
+				bot *= 2
 				break
 			}
-			low <<= 1;
-			high <<= 1;
-			high++;
-			value <<= 1;
-			next_bit := bits[0]
-			bits = bits[1:]
-			var next_bit_val uint32
-			if next_bit == '1' {next_bit_val = 1}
-			value += next_bit_val
-			fmt.Println(strconv.FormatUint(uint64(value), 2), len(strconv.FormatUint(uint64(value), 2)))
+			byteBot += freq
 		}
 	}
 	return output
 }
 
-func encode(keys []byte, freqs map[byte]float64, input []byte) bitString {
-	var encodeByte byte
-	var bits string
-	var pendingBits int
 
-	var high, low uint32
-	high = MAX_CODE
-	model := newModel()
-
-	for i := 0; i < len(input); i++ {
-		encodeByte = input[i]
-
-		difference := (high - low) + 1
-		// lower, upper, denom := getProbability(keys, freqs, encodeByte)
-		lower, upper, count := model.getProbability(encodeByte)
-		high = low + (difference * upper / count) - 1
-		low = low + (difference * lower / count)
-		for {
-			if high < ONE_HALF {
-				// Lower half
-				bits += "0" + getBitsPending(pendingBits, "0")
-				pendingBits = 0
-			} else if low >= ONE_HALF {
-				// Upper half
-				bits += "1" + getBitsPending(pendingBits, "0")
-				pendingBits = 0
-				// fmt.Println(strconv.FormatUint(uint64(high), 2))
-			} else if (low >= ONE_FOURTH && high < THREE_FOURTHS) {
-				pendingBits++
-				low -= ONE_FOURTH; 
-          		high -= ONE_FOURTH 
-			} else {
-				break
-			}
-			high <<= 1
-			high++
-			low <<= 1
-			high &= MAX_CODE
-			low &= MAX_CODE
-		}
-	}
-	return bitString(bits)
-}
-
-func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) (string, float64, float64) {
+func encode(finite bool, keys []byte, freqs map[byte]float64, input []byte) (string, float64, float64) {
 	var encodeByte byte
 	var bits string
 	var pending int
@@ -206,7 +153,6 @@ func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) 
 			byteBot += freqs[keys[i]]
 		}
 		byteTop = byteBot + freqs[keys[sec]]
-		if finite { fmt.Println(byteBot, "-", byteTop, string(encodeByte)) }
 		
 		size := freqsPassed * (byteTop - byteBot)
 		
@@ -215,32 +161,31 @@ func encodeLoop(finite bool, keys []byte, freqs map[byte]float64, input []byte) 
 
 		freqsPassed *= freqs[keys[sec]]
 
-		if finite {
-			fmt.Println(bottom, "-", top)
+		for finite {
 			if bottom >= 0.5 {
 				bits += "1" + getBitsPending(pending, "1")
-				fmt.Println("Diff", top - bottom)
 				top = (top - 0.5) * 2
 				bottom = (bottom - 0.5) * 2
 				freqsPassed *= 2
-				fmt.Println("1" + getBitsPending(pending, "1"), "Scaled to", bottom, top)
-				fmt.Println("Diff", top - bottom)
+				// fmt.Println("1" + getBitsPending(pending, "1"), "Scaled to", bottom, top)
 				pending = 0
 			} else if top < 0.5 {
 				bits += "0" + getBitsPending(pending, "0")
 				top *= 2
 				bottom *= 2
 				freqsPassed *= 2
-				fmt.Println("1" + getBitsPending(pending, "0"), "Scaled to", bottom, top)
+				// fmt.Println("1" + getBitsPending(pending, "0"), "Scaled to", bottom, top)
 				pending = 0
 			} else if (bottom >= 0.25 && bottom < 0.5) && (top <= 0.75 && top > 0.5) {
 				top = (top - 0.25) * 2 
 				bottom = (bottom - 0.25) * 2
 				freqsPassed *= 2
-				fmt.Println("-", "Scaled to", bottom, top)
+				// fmt.Println("-", "Scaled to", bottom, top)
 				pending++
+			} else {
+				break
 			}
-			fmt.Println()
+			// fmt.Println()
 		}
 	}
 
@@ -263,51 +208,6 @@ func getBitsPending(pendingBits int, bit string) (additionalBits string) {
 	return
 }
 
-func bitsToBytes(bits string, keys []byte, freqs map[byte]float64) []byte {
-	var output []byte
-	top, bot := float64(1), float64(0)
-
-	for i := 0; i < len(bits); i++ {
-		bit := bits[i]
-
-		midpoint := bot + ((top - bot) / 2 )
-
-		if bit == '1' {
-			// Top half
-			bot = midpoint
-		} else {
-			// Bottom half
-			top = midpoint
-		}
-		
-		var newBits []byte
-		newBits, top, bot = getBitsFromRange(top, bot, keys, freqs)
-		output = append(output, newBits...)
-	}
-	return output
-}
-
-func getBitsFromRange(top float64, bot float64, keys []byte, freqs map[byte]float64) ([]byte, float64, float64) {
-	var bits []byte
-
-	freqBot := float64(0)
-	for _, c := range keys {
-		freq := freqs[c]
-		freqTop := freqBot + freq
-		if freqBot <= bot && (freqTop + freqBot) > top {
-			bits = append(bits, c) 
-			top /= freq
-			bot /= freq
-			var newBits []byte
-			newBits, top, bot = getBitsFromRange(top, bot, keys, freqs)
-			bits = append(bits, newBits...)
-		}
-		freqBot += freq
-	}
-
-	return bits, top, bot
-}
-
 func bitsToRange(bits string) (float64, float64) {
 	bot, top := float64(0), float64(1)
 
@@ -328,70 +228,6 @@ func bitsToRange(bits string) (float64, float64) {
 	return bot, top
 }
 
-const denom = uint32(100)
-const denomFloat = float64(denom)
-
-type Model struct {
-	cumulative_frequencies []int
-}
-
-func newModel() *Model {
-	model := Model{make([]int, 258)}
-	for i := 0; i < 258; i++ {
-		model.cumulative_frequencies[i] = i;
-	}
-	return &model
-}
-
-func (model *Model) update(input byte) {
-	c := int(input)
-	for i := c + 1 ; i < 258 ; i++ {
-		model.cumulative_frequencies[i]++;
-	}
-}
-
-func (model *Model) getProbability(input byte) (uint32, uint32, uint32) {
-	c := int(input)
-	lower, upper, count := model.cumulative_frequencies[c], model.cumulative_frequencies[c+1], model.cumulative_frequencies[257]
-    model.update(input);
-    return uint32(lower), uint32(upper), uint32(count)
-}
-
-func getProbability(keys []byte, freqs map[byte]float64, input byte) (uint32, uint32, uint32) {
-	return uint32(input), uint32(input) + 1, 257
-
-	var byteTop, byteBot float64
-
-	sec := getSection(keys, freqs, input)
-	for i := 0; i < sec; i++ {
-		byteBot += freqs[keys[i]]
-	}
-	byteTop = byteBot + freqs[keys[sec]]
-
-	return uint32(math.Round(byteBot*denomFloat)), uint32(math.Round(byteTop*denomFloat)), denom
-}
-
-func getCount() uint32 {
-	return 257
-}
-
-func getChar(keys []byte, freqs map[byte]float64, scaled_value uint32) (byte, uint32, uint32, uint32) {
-	return byte(int(scaled_value)), scaled_value + 1, scaled_value, 257
-	// var byteTop, byteBot float64
-
-	// for i := 0; i < len(keys); i++ {
-	// 	byteTop = byteBot + freqs[keys[i]]
-
-	// 	lower, upper := uint32(math.Round(byteBot*denomFloat)), uint32(math.Round(byteTop*denomFloat))
-	// 	if upper > scaled_value && scaled_value >= lower {
-	// 		// return keys[i], upper, lower, denom
-	// 		return keys[i], upper, uint32(10), denom
-	// 	}
-	// 	byteBot += freqs[keys[i]]
-	// }
-
-	panic("Couldn't find char")
-}
 
 func buildFreqTable(input []byte) map[byte]float64 {
 	symFreqs := make(map[byte]int)
