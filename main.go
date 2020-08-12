@@ -7,6 +7,7 @@ import (
 	"os"
 	"io/ioutil"
 	engine "github.com/mrfleap/custom-compression/engine"
+	// "github.com/pkg/profile" // Profiling package
 )
 
 // https://github.com/spf13/cobra#getting-started
@@ -16,6 +17,9 @@ var Commands = [...]string{"compress", "decompress", "benchmark", "help"}
 var algorithm string
 
 func main() {
+	// Profiling statement here V
+	// defer profile.Start().Stop()
+	// ^
 	flag.StringVar(&algorithm, "algorithm", "default", 
 		fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 	
