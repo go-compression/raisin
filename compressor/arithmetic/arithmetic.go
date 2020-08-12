@@ -94,6 +94,7 @@ const (
 	ONE_HALF = 2 * ONE_FOURTH
 	THREE_FOURTHS = 3 * ONE_FOURTH
 	CODE_VALUE_BITS = 16
+	MAX_FREQ = 16383
 )
 
 
@@ -102,7 +103,6 @@ func decode(bits bitString) []byte {
 	var high, low, value uint32
 	high = MAX_CODE
 	bits = bits + "10"
-	fmt.Println(string(bits)[:CODE_VALUE_BITS])
 
 	val, err := strconv.ParseInt(string(bits)[:CODE_VALUE_BITS], 2, 32)
 	if err != nil { panic(err) }
@@ -227,10 +227,11 @@ const denomFloat = float64(denom)
 
 type Model struct {
 	cumulative_frequencies []int
+	frozen bool
 }
 
 func newModel() *Model {
-	model := Model{make([]int, 258)}
+	model := Model{make([]int, 258), false}
 	for i := 0; i < 258; i++ {
 		model.cumulative_frequencies[i] = i;
 	}
@@ -241,11 +242,15 @@ func (model *Model) update(input int) {
 	for i := input + 1 ; i < 258 ; i++ {
 		model.cumulative_frequencies[i]++;
 	}
+	if ( model.cumulative_frequencies[257] >= MAX_FREQ ) {
+	  model.frozen = true;
+	  fmt.Println("FROZEN")
+    }
 }
 
 func (model *Model) getProbability(input int) (uint32, uint32, uint32) {
 	lower, upper, count := model.cumulative_frequencies[input], model.cumulative_frequencies[input+1], model.cumulative_frequencies[257]
-    model.update(input);
+    if !model.frozen { model.update(input) }
     return uint32(lower), uint32(upper), uint32(count)
 }
 
@@ -259,7 +264,7 @@ func (model *Model) getChar(scaled_value uint32) (int, uint32, uint32, uint32) {
       if scaled_value < uint32(model.cumulative_frequencies[i+1]) {
         char = i
         lower, upper, count := model.cumulative_frequencies[i], model.cumulative_frequencies[i+1], model.cumulative_frequencies[257]
-        model.update(char)
+        if !model.frozen { model.update(char) }
         return char, uint32(lower), uint32(upper), uint32(count)
 	  }
 	}
