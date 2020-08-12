@@ -72,16 +72,16 @@ func encode_bits(keys []byte, freqs map[byte]float64, input []byte) bitString {
 
 	var high, low uint32
 	high = MAX_CODE
-	model := newModel()
+	// model := newModel()
 
 	for i := 0; i < len(input); i++ {
 		encodeByte = input[i]
 
 		difference := (high - low) + 1
-		// lower, upper, denom := getProbability(keys, freqs, encodeByte)
-		lower, upper, count := model.getProbability(encodeByte)
-		high = low + (difference * upper / count) - 1
-		low = low + (difference * lower / count)
+		lower, upper, denom := getProbability(keys, freqs, encodeByte)
+		// lower, upper, count := model.getProbability(encodeByte)
+		high = low + (difference * upper / denom) - 1
+		low = low + (difference * lower / denom)
 		for {
 			if high < ONE_HALF {
 				// Lower half
