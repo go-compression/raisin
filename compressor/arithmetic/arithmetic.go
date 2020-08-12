@@ -66,7 +66,7 @@ func Compress(input []byte) []byte {
 	// fmt.Println(bits, len(bits))
 	// bits = bits.pack()
 	bits := encode(input)
-	fmt.Println(bits) 
+	// fmt.Println(bits) 
 
 	return bits.pack().AsByteSlice()
 }
@@ -75,7 +75,7 @@ func Decompress(input []byte) []byte {
 	inputString := fmt.Sprintf("%08b", input)
 	bits := bitString(strings.Replace(inputString[1:len(inputString)-1], " ", "", -1))
 	bits = bits.unpack()
-	fmt.Println(string(bits), len(bits))
+	// fmt.Println(string(bits), len(bits))
 
 	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
 	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
@@ -83,7 +83,7 @@ func Decompress(input []byte) []byte {
 	// printFreqs(freqs, keys)
 
 	output := decode(bits)
-	fmt.Println(string(output))
+	// fmt.Println(string(output))
 	
 	return output
 }
