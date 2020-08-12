@@ -56,8 +56,9 @@ func (b bitString) AsByteSlice() []byte {
 }
 
 func Compress(input []byte) []byte {
-	freqs := buildFreqTable(input)
-	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
+	// freqs := buildFreqTable(input)
+	freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
+	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
 	keys := buildKeys(freqs)
 	printFreqs(freqs, keys)
 	
@@ -66,7 +67,7 @@ func Compress(input []byte) []byte {
 	// bits = bits.pack()
 	bits, top, bot := encode(true, keys, freqs, input)
 	fmt.Println(bot, "-", top, string(input))
-	binaryLocation := bits + getRootBinaryPosition(top, bot)
+	binaryLocation := bits + getRootBinaryPosition(top, bot) + "1"
 	fmt.Println(binaryLocation) 
 
 	bot, top = bitsToRange(binaryLocation)
@@ -86,6 +87,7 @@ func Decompress(input []byte) []byte {
 	fmt.Println(string(bits), len(bits))
 
 	freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
+	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
 	keys := buildKeys(freqs)
 	printFreqs(freqs, keys)
 
@@ -110,28 +112,59 @@ func decode(keys []byte, freqs map[byte]float64, bits bitString) []byte {
 		} else {
 			// Bottom half
 			top = midpoint
-		}
-
-		// fmt.Println(bot, "-", top)
-
-		// Look for char that falls in range
-		var byteTop, byteBot float64
-		for i := 0; i < len(keys); i++ {
-			char := keys[i]
-			freq := freqs[char]
-			byteTop = byteBot + freq
-			if byteBot <= bot && byteTop > top {
-				// Found char, scale up
-				fmt.Println(char)
+		}	
+		
+		var char byte
+		found := true
+		for found {
+			// var charTop, charBot float64
+			char, found, _, _ = getCharFromRange(top, bot, keys, freqs)
+			if found {
 				output = append(output, char)
-				top *= 2
-				bot *= 2
-				break
+				fmt.Println(string(output))
+				top = 1
+				bot = 0
 			}
-			byteBot += freq
 		}
 	}
 	return output
+}
+
+func getCharFromRange(top float64, bot float64, keys []byte, freqs map[byte]float64) (byte, bool, float64, float64) {
+	var byteTop, byteBot float64
+	for i := 0; i < len(keys); i++ {
+		char := keys[i]
+		freq := freqs[char]
+		byteTop = byteBot + freq
+		if byteBot <= bot && byteTop > top {
+			// Found char, scale up
+			return char, true, byteTop, byteBot
+		}
+		byteBot += freq
+	}
+	return 0, false, 0, 0
+}
+
+func findChar(top float64, bot float64, keys []byte, freqs map[byte]float64) (float64, float64, []byte) {
+	var byteTop, byteBot float64
+	var output []byte
+	for i := 0; i < len(keys); i++ {
+		char := keys[i]
+		freq := freqs[char]
+		byteTop = byteBot + freq
+		if byteBot <= bot && byteTop > top {
+			// Found char, scale up
+			fmt.Println(char)
+			output = append(output, char)
+			top *= 2
+			bot *= 2
+			var chars []byte
+			top, bot, chars = findChar(top, bot, keys, freqs)
+			output = append(output, chars...)
+		}
+		byteBot += freq
+	}
+	return top, bot, output
 }
 
 
@@ -176,7 +209,7 @@ func encode(finite bool, keys []byte, freqs map[byte]float64, input []byte) (str
 				freqsPassed *= 2
 				// fmt.Println("1" + getBitsPending(pending, "0"), "Scaled to", bottom, top)
 				pending = 0
-			} else if (bottom >= 0.25 && bottom < 0.5) && (top <= 0.75 && top > 0.5) {
+			} else if (bottom >= 0.25) && (top < 0.75) {
 				top = (top - 0.25) * 2 
 				bottom = (bottom - 0.25) * 2
 				freqsPassed *= 2
