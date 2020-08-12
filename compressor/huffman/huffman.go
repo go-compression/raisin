@@ -1,4 +1,4 @@
-package huffman
+package main
 
 import (
 	"container/heap"
@@ -99,38 +99,6 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 	return heap.Pop(&trees).(HuffmanTree)
 }
 
-func rebuildTree(symFreqs map[rune]int) HuffmanTree {
-	type sorter struct {
-		Key   rune
-		Value int
-	}
-	var toSort []sorter
-	for i, j := range symFreqs {
-		toSort = append(toSort, sorter{i, j})
-	}
-	sort.Slice(toSort, func(i, j int) bool {
-		return toSort[i].Value < toSort[j].Value
-	})
-	symFreqs2 := make(map[rune]int)
-	for _, item := range toSort {
-		symFreqs2[item.Key] = item.Value
-	}
-
-	var trees treeHeap
-	for c, f := range symFreqs2 {
-		trees = append(trees, HuffmanLeaf{f, c})
-	}
-
-	heap.Init(&trees)
-	for trees.Len() > 1 {
-		a := heap.Pop(&trees).(HuffmanTree)
-		b := heap.Pop(&trees).(HuffmanTree)
-
-		heap.Push(&trees, HuffmanNode{a.Freq() + b.Freq(), a, b})
-	}
-
-	return heap.Pop(&trees).(HuffmanTree)
-}
 func check(e error) {
 	if e != nil {
 		panic(e)
@@ -158,7 +126,9 @@ func printCodes(tree HuffmanTree, prefix []byte, vals []rune, bin []string) ([]r
 var answer strings.Builder
 
 func findCodes(tree HuffmanTree, og HuffmanTree, data string, i int, max int) string {
-	if  i > 900000 { panic("Max recursion depth") }
+	if i > 900000 {
+		panic("Max recursion depth")
+	}
 	if i <= max {
 		switch huff := tree.(type) {
 		case HuffmanLeaf:
@@ -217,24 +187,6 @@ func (b bitString) AsByteSlice() []byte {
 	return out
 }
 
-var ostring strings.Builder
-
-func encodeTree(tree HuffmanTree) {
-	switch huff := tree.(type) {
-	case HuffmanLeaf:
-		fmt.Fprintf(&ostring, "1")
-		if huff.value != 10 {
-			fmt.Fprintf(&ostring, "%s", string(huff.value))
-		} else {
-			fmt.Fprintf(&ostring, "\\n")
-		}
-	case HuffmanNode:
-		fmt.Fprintf(&ostring, "0")
-		encodeTree(huff.right)
-		encodeTree(huff.left)
-	}
-}
-
 var decodedTree HuffmanTree
 var treeH treeHeap
 
@@ -260,6 +212,7 @@ func decodeTree(tree string) HuffmanTree {
 	//fmt.Print(symFreqs)
 	return buildTree(symFreqs)
 }
+
 func encode(tree HuffmanTree, input string) []byte {
 	//fmt.Println("encoding")
 	var answer strings.Builder
@@ -289,7 +242,6 @@ func encode(tree HuffmanTree, input string) []byte {
 
 	return append([]byte(estring.String()), append([]byte("\\\n"), test...)...)
 }
-
 
 func decode(fileContents []byte) []byte {
 	//fmt.Println("decoding")
@@ -334,7 +286,6 @@ func decode(fileContents []byte) []byte {
 
 func Compress(fileContents []byte) []byte {
 	estring.Reset()
-	ostring.Reset()
 	answer.Reset()
 	newTree := new(HuffmanTree)
 	decodedTree = *newTree
