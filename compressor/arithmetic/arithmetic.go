@@ -124,10 +124,10 @@ func decode(bits bitString) []byte {
 
 		output = append(output, byte(char))
 
-		if count == 0 {
-			fmt.Printf("Uh oh")
-			char, lower, upper, count = model.getChar(scaled_value)
-		}
+		// if count == 0 {
+		// 	fmt.Printf("Uh oh")
+		// 	char, lower, upper, count = model.getChar(scaled_value)
+		// }
 		
 		high = low + (difference*upper)/count - 1
 		low = low + (difference*lower)/count
@@ -153,9 +153,9 @@ func decode(bits bitString) []byte {
 			var nextBit uint32
 			nextBit, bits = getNextBit(bits)
 			value += nextBit
-			if value > 65536 {
-				fmt.Println("uh oh")
-			}
+			// if value > 65536 {
+			// 	fmt.Println("uh oh")
+			// }
 			// fmt.Println(strconv.FormatUint(uint64(value), 2), len(strconv.FormatUint(uint64(value), 2)))
 		}
 	}
@@ -172,7 +172,7 @@ func getNextBit(bits bitString) (uint32, bitString) {
 
 func encode(input []byte) bitString {
 	var toEncode int
-	var bits string
+	var bits []byte
 	var pendingBits int
 
 	var high, low uint32
@@ -198,11 +198,11 @@ func encode(input []byte) bitString {
 		for {
 			if high < ONE_HALF {
 				// Lower half
-				bits += "0" + getBitsPending(pendingBits, "0")
+				bits = pushBits(bits, '0', pendingBits)
 				pendingBits = 0
 			} else if low >= ONE_HALF {
 				// Upper half
-				bits += "1" + getBitsPending(pendingBits, "1")
+				bits = pushBits(bits, '1', pendingBits)
 				pendingBits = 0
 				// fmt.Println(strconv.FormatUint(uint64(high), 2))
 			} else if (low >= ONE_FOURTH && high < THREE_FOURTHS) {
@@ -219,7 +219,31 @@ func encode(input []byte) bitString {
 			low &= MAX_CODE
 		}
 	}
-	return bitString(bits)
+	return bitString(string(bits))
+}
+
+func pushBits(bits []byte, bit byte, pendingBits int) []byte {
+	bits = append(bits, bit)
+	bits = append(bits, getBitsPending(pendingBits, bit)...)
+	return bits
+}
+
+
+func getBitsPending(pendingBits int, bit byte) []byte {
+	additionalBits := make([]byte, pendingBits)
+	switch bit {
+	case '0':
+		for i := 0; i < pendingBits; i++ {
+			additionalBits[i] = '1'
+		}
+	case '1':
+		for i := 0; i < pendingBits; i++ {
+			additionalBits[i] = '0'
+		}
+	default:
+		panic("Invalid bit")
+	}
+	return additionalBits
 }
 
 const denom = uint32(100)
@@ -271,23 +295,6 @@ func (model *Model) getChar(scaled_value uint32) (int, uint32, uint32, uint32) {
 	return ' ', 0, 0, 0
 }
 
-
-func getBitsPending(pendingBits int, bit string) (additionalBits string) {
-	switch bit {
-	case "0":
-		for i := 0; i < pendingBits; i++ {
-			additionalBits += "1"
-		}
-	case "1":
-		for i := 0; i < pendingBits; i++ {
-			additionalBits += "0"
-		}
-	default:
-		panic("Invalid bit")
-	}
-	return
-}
-
 func bitsToRange(bits string) (float64, float64) {
 	bot, top := float64(0), float64(1)
 
@@ -307,6 +314,7 @@ func bitsToRange(bits string) (float64, float64) {
 
 	return bot, top
 }
+
 
 
 func buildFreqTable(input []byte) map[byte]float64 {
