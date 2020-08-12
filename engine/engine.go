@@ -30,7 +30,7 @@ import (
 )
 
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
-var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib"}}
+var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}}
 
 type CompressedFile struct {
 	engine                string
@@ -197,7 +197,7 @@ type Result struct {
 
 func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) string {
 	var html string
-	timeout := 1 * time.Minute
+	timeout := 4 * time.Minute
 
 	for i, fileString := range files {
 		fmt.Printf("Compressing file %d/%d - %s\n", i + 1, len(files), fileString)
