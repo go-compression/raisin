@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"sort"
 	"strconv"
-	"strings"
+	// "strings"
+	// "reflect"
 )
 
 type sortBytes []byte
@@ -62,19 +63,22 @@ func Compress(input []byte) []byte {
 	// keys := buildKeys(freqs)
 	// printFreqs(freqs, keys)
 	
-	// bits := encode(keys, freqs, input)
-	// fmt.Println(bits, len(bits))
-	// bits = bits.pack()
 	bits := encode(input)
 	// fmt.Println(bits) 
 
-	return bits.pack().AsByteSlice()
+	err, bytes := bits.Pack().AsByteSlice()
+	if err != nil { panic(err) }
+	return bytes
 }
 
 func Decompress(input []byte) []byte {
-	inputString := fmt.Sprintf("%08b", input)
-	bits := bitString(strings.Replace(inputString[1:len(inputString)-1], " ", "", -1))
-	bits = bits.unpack()
+	bits := FromByteSlice(input).Unpack()
+	// _, bytes := bits2.AsByteSlice()
+	// fmt.Println(reflect.DeepEqual(bytes, input))
+	// bits2 = bits2.Unpack()
+	// inputString := fmt.Sprintf("%08b", input)
+	// bits := bitString(strings.Replace(inputString[1:len(inputString)-1], " ", "", -1))
+	// bits = bits.unpack()
 	// fmt.Println(string(bits), len(bits))
 
 	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
@@ -98,15 +102,20 @@ const (
 )
 
 
-func decode(bits bitString) []byte {
+func decode(bits bitSlice) []byte {
 	var output []byte
 	var high, low, value uint32
 	high = MAX_CODE
-	bits = bits + "10"
+	bits = append(bits, []bool{true, false}...)
 
-	val, err := strconv.ParseInt(string(bits)[:CODE_VALUE_BITS], 2, 32)
-	if err != nil { panic(err) }
-	value = uint32(val)
+	for i := 0; i < CODE_VALUE_BITS; i++ {
+		value <<= 1
+		if bits[i] { value += 1 }
+	}
+
+	// val, err := strconv.ParseInt(bits[:CODE_VALUE_BITS], 2, 32)
+	// if err != nil { panic(err) }
+	// value = uint32(val)
 	bits = bits[CODE_VALUE_BITS:]
 
 	model := newModel()
@@ -151,7 +160,7 @@ func decode(bits bitString) []byte {
 			value <<= 1;
 			
 			var nextBit uint32
-			nextBit, bits = getNextBit(bits)
+			nextBit, bits = GetNextBit(bits)
 			value += nextBit
 			// if value > 65536 {
 			// 	fmt.Println("uh oh")
@@ -170,9 +179,9 @@ func getNextBit(bits bitString) (uint32, bitString) {
 	return 0, bits
 }
 
-func encode(input []byte) bitString {
+func encode(input []byte) bitSlice {
 	var toEncode int
-	var bits []byte
+	var bits bitSlice
 	var pendingBits int
 
 	var high, low uint32
@@ -198,11 +207,11 @@ func encode(input []byte) bitString {
 		for {
 			if high < ONE_HALF {
 				// Lower half
-				bits = pushBits(bits, '0', pendingBits)
+				bits = PushBits(bits, false, pendingBits)
 				pendingBits = 0
 			} else if low >= ONE_HALF {
 				// Upper half
-				bits = pushBits(bits, '1', pendingBits)
+				bits = PushBits(bits, true, pendingBits)
 				pendingBits = 0
 				// fmt.Println(strconv.FormatUint(uint64(high), 2))
 			} else if (low >= ONE_FOURTH && high < THREE_FOURTHS) {
@@ -219,31 +228,7 @@ func encode(input []byte) bitString {
 			low &= MAX_CODE
 		}
 	}
-	return bitString(string(bits))
-}
-
-func pushBits(bits []byte, bit byte, pendingBits int) []byte {
-	bits = append(bits, bit)
-	bits = append(bits, getBitsPending(pendingBits, bit)...)
 	return bits
-}
-
-
-func getBitsPending(pendingBits int, bit byte) []byte {
-	additionalBits := make([]byte, pendingBits)
-	switch bit {
-	case '0':
-		for i := 0; i < pendingBits; i++ {
-			additionalBits[i] = '1'
-		}
-	case '1':
-		for i := 0; i < pendingBits; i++ {
-			additionalBits[i] = '0'
-		}
-	default:
-		panic("Invalid bit")
-	}
-	return additionalBits
 }
 
 const denom = uint32(100)
