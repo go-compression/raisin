@@ -4,6 +4,10 @@ COMPRESSIONTESTFILE.txt
 *.decompressed
 decompressed.txt
 
+# Built binaries
+main
+custom-compression
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -24,3 +28,6 @@ decompressed.txt
 .vscode/
 .DS_Store
 .idea/
+
+# Profiling
+*.pdf
