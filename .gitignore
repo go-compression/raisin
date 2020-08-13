@@ -31,3 +31,5 @@ custom-compression
 
 # Profiling
 *.pdf
+
+__pycache__/
