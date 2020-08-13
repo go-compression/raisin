@@ -91,7 +91,7 @@ func main() {
 			if len(files) > 1 {
 				errorMsg("Cannot benchmark more than one file without using multiple algorithms currently")
 			}
-			engine.BenchmarkFile(algorithm, files[0], false)
+			engine.BenchmarkFile(algorithm, files[0], engine.Settings{true, true, true})
 		}
 	default:
 		errorMsg(fmt.Sprintf(

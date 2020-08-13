@@ -1,4 +1,4 @@
-package algorithm
+package engine
 
 import (
 	"fmt"
@@ -33,11 +33,11 @@ var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flat
 var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}}
 
 type CompressedFile struct {
-	engine                string
-	compressed            []byte
-	decompressed          []byte
+	CompressionEngine                string
+	Compressed            []byte
+	Decompressed          []byte
 	pos                   int
-	maxSearchBufferLength int
+	MaxSearchBufferLength int
 }
 
 var Readers = map[string]interface{}{
@@ -53,13 +53,13 @@ var Readers = map[string]interface{}{
 }
 
 func (f *CompressedFile) Read(content []byte) (int, error) {
-	if f.decompressed == nil {
-		newReader := Readers[f.engine]
+	if f.Decompressed == nil {
+		newReader := Readers[f.CompressionEngine]
 		var r io.Reader
 		var b io.Reader
-		b = bytes.NewReader(f.compressed)
+		b = bytes.NewReader(f.Compressed)
 		var err error
-		switch f.engine {
+		switch f.CompressionEngine {
 		default:
 			r = newReader.(func(io.Reader) io.Reader)(b)
 		case "zlib":
@@ -73,18 +73,18 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 			r = newReader.(func(io.Reader, lzw.Order, int) (io.ReadCloser))(b, lzw.MSB, 8)
 		}
 		check(err)
-		f.decompressed, err = ioutil.ReadAll(r)
+		f.Decompressed, err = ioutil.ReadAll(r)
 		check(err)		
 	}
-	bytesToWriteOut := len(f.decompressed[f.pos:])
+	bytesToWriteOut := len(f.Decompressed[f.pos:])
 	if len(content) < bytesToWriteOut {
 		bytesToWriteOut = len(content)
 	}
 	for i := 0; i < bytesToWriteOut; i++ {
-		content[i] = f.decompressed[f.pos:][i]
+		content[i] = f.Decompressed[f.pos:][i]
 	}
 	var err error
-	if len(f.decompressed[f.pos:]) <= len(content) {
+	if len(f.Decompressed[f.pos:]) <= len(content) {
 		err = io.EOF
 	} else {
 		f.pos += len(content)
@@ -106,11 +106,11 @@ var Writers = map[string]interface{}{
 
 func (f *CompressedFile) Write(content []byte) (int, error) {
 	var compressed []byte
-	newWriter := Writers[f.engine]
+	newWriter := Writers[f.CompressionEngine]
 	var b bytes.Buffer
 	var w io.WriteCloser
 	var err error
-	switch f.engine {
+	switch f.CompressionEngine {
 	default:
 		w = newWriter.(func(io.Writer) io.WriteCloser)(&b)
 	case "zlib":
@@ -128,38 +128,38 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	w.Close()
 	compressed = b.Bytes()
 
-	f.compressed = append(f.compressed, compressed...)
+	f.Compressed = append(f.Compressed, compressed...)
 	return len(compressed), nil
 }
 
 func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	var cf CompressedFile
 	fileContents, err := ioutil.ReadFile(path)
-	cf = CompressedFile{compressed: fileContents}
+	cf = CompressedFile{Compressed: fileContents}
 	return cf, err
 }
 
-func CompressFile(engine string, fileString string) {
+func CompressFile(compressionEngine string, fileString string) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 	fmt.Printf("Compressing...\n")
 
-	file := CompressedFile{maxSearchBufferLength: 4096}
-	file.engine = engine
+	file := CompressedFile{MaxSearchBufferLength: 4096}
+	file.CompressionEngine = compressionEngine
 	file.Write(fileContents)
 
 	var compressedFilePath = filepath.Base(fileString) + ".compressed"
-	err = ioutil.WriteFile(compressedFilePath, file.compressed, 0644)
+	err = ioutil.WriteFile(compressedFilePath, file.Compressed, 0644)
 
 	fmt.Printf("Original bytes: %v\n", len(fileContents))
-	fmt.Printf("Compressed bytes: %v\n", len(file.compressed))
-	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
+	fmt.Printf("Compressed bytes: %v\n", len(file.Compressed))
+	percentageDiff := float32(len(file.Compressed)) / float32(len(fileContents)) * 100
 	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
 }
 
-func DecompressFile(engine string, fileString string) []byte {
+func DecompressFile(compressionEngine string, fileString string) []byte {
 	compressedFile, err := GetCompressedFileFromPath(fileString)
-	compressedFile.engine = engine
+	compressedFile.CompressionEngine = compressionEngine
 	check(err)
 	fmt.Printf("Decompressing...\n")
 
@@ -186,13 +186,13 @@ func DecompressFile(engine string, fileString string) []byte {
 }
 
 type Result struct {
-	engine string
-	timeTaken string 
-	ratio float32
-    actualEntropy float32
-	entropy  float64
-	lossless bool
-	failed bool
+	CompressionEngine string
+	TimeTaken string 
+	Ratio float32
+    ActualEntropy float32
+	Entropy  float64
+	Lossless bool
+	Failed bool
 }
 
 func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) string {
@@ -216,55 +216,55 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 		resultChans := make(map[string]chan Result)
 		var wg sync.WaitGroup
 
-		for _, engineName := range algorithms {
-			fmt.Println("Benchmarking", engineName)
+		for _, compressionEngineName := range algorithms {
+			fmt.Println("Benchmarking", compressionEngineName)
 
 			resultChannel := make(chan Result, 1)
-			resultChans[engineName] = resultChannel
+			resultChans[compressionEngineName] = resultChannel
 
 			wg.Add(1)
-			go AsyncBenchmarkFile(resultChannel, &wg, engineName, fileString, true)
+			go AsyncBenchmarkFile(resultChannel, &wg, compressionEngineName, fileString, true)
 		}
 
 		waitTimeout(&wg, timeout)
 
-		for engineName, resultChan := range resultChans {
+		for compressionEngineName, resultChan := range resultChans {
 			select {
 			case result := <-resultChan:
-				if result.failed {
+				if result.Failed {
 					failedResults = append(failedResults, result)
 				} else {
 					results = append(results, result)
 				}
 			default:
 				result := Result{}
-				result.engine = engineName
-				result.timeTaken = fmt.Sprintf(">%s", timeout)
-				result.lossless = false
-				result.failed = true
+				result.CompressionEngine = compressionEngineName
+				result.TimeTaken = fmt.Sprintf(">%s", timeout)
+				result.Lossless = false
+				result.Failed = true
 				failedResults = append(failedResults, result)
 			}
 		}
 
 		sort.Slice(results, func(i, j int) bool {
-			if results[j].lossless && results[i].lossless {
-				return results[j].ratio > results[i].ratio
-			} else if results[j].lossless && !results[i].lossless {
+			if results[j].Lossless && results[i].Lossless {
+				return results[j].Ratio > results[i].Ratio
+			} else if results[j].Lossless && !results[i].Lossless {
 				return false
-			} else if !results[j].lossless && results[i].lossless {
+			} else if !results[j].Lossless && results[i].Lossless {
 				return true
 			} else {
-				return results[j].ratio > results[i].ratio
+				return results[j].Ratio > results[i].Ratio
 			}
 		})
 
 		for _, result := range results {
-			t.AppendRow([]interface{}{result.engine, result.timeTaken, fmt.Sprintf("%.2f%%", result.ratio), fmt.Sprintf("%.2f", result.actualEntropy), fmt.Sprintf("%.2f", result.entropy), result.lossless})
+			t.AppendRow([]interface{}{result.CompressionEngine, result.TimeTaken, fmt.Sprintf("%.2f%%", result.Ratio), fmt.Sprintf("%.2f", result.ActualEntropy), fmt.Sprintf("%.2f", result.Entropy), result.Lossless})
 		}
 
 		t.AppendSeparator()
 		for _, result := range failedResults {
-			t.AppendRow([]interface{}{result.engine, result.timeTaken, "DNF", "DNF", "DNF", result.lossless})
+			t.AppendRow([]interface{}{result.CompressionEngine, result.TimeTaken, "DNF", "DNF", "DNF", result.Lossless})
 		}
 		t.AppendSeparator()
 		t.AppendRow(table.Row{"File", fileString, "Size", ByteCountSI(fileSize)})
@@ -287,39 +287,53 @@ func BenchmarkSuite(files []string, algorithms []string, generateHtml bool) stri
 	}
 }
 
-func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, engine string, fileString string, suite bool) {
+func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressionEngine string, fileString string, suite bool) {
 	defer wg.Done()
 
 	errorHandler := func() {
 		if r := recover(); r != nil {
-			fmt.Printf("%s errored during execution, continuing\n", engine)
+			fmt.Printf("%s errored during execution, continuing\n", compressionEngine)
 			fmt.Println("Err:", r)
 			fmt.Println(string(debug.Stack()))
 			fmt.Println("Continuing")
 			result := Result{}
-			result.engine = engine
-			result.timeTaken = "failed"
-			result.lossless = false
-			result.failed = true
+			result.CompressionEngine = compressionEngine
+			result.TimeTaken = "failed"
+			result.Lossless = false
+			result.Failed = true
 			resultChannel <- result
 		}
 	}
 
 	defer errorHandler()
 	start := time.Now()
-	result := BenchmarkFile(engine, fileString, suite)
+	result := BenchmarkFile(compressionEngine, fileString, NewSuiteSettings())
 	duration := time.Since(start)
-	result.timeTaken = fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
+	result.TimeTaken = fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
 
-	fmt.Printf("%s finished benchmarking\n", engine)
+	fmt.Printf("%s finished benchmarking\n", compressionEngine)
 
 	resultChannel <- result
 }
 
-func BenchmarkFile(engine string, fileString string, suite bool) Result  {
+type Settings struct {
+	WriteOutFiles bool
+	PrintStats bool
+	PrintStatus bool
+}
+
+func NewSuiteSettings() Settings {
+	s := Settings{}
+	s.PrintStatus = true
+	return s
+}
+
+func BenchmarkFile(compressionEngine string, fileString string, settings Settings) Result  {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
-	fmt.Printf("Compressing...\n")
+	if settings.PrintStatus {
+		fmt.Printf("%s Compressing...\n", compressionEngine)
+	}
 
 	symbolFrequencies := make(map[byte]int)
 	for _, c := range []byte(fileContents) {
@@ -333,18 +347,20 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 		i++
 	}
 
-	file := CompressedFile{maxSearchBufferLength: 4096}
-	file.engine = engine
+	file := CompressedFile{MaxSearchBufferLength: 4096}
+	file.CompressionEngine = compressionEngine
 	file.Write(fileContents)
 
-	if !suite {
+	if settings.WriteOutFiles {
 		var compressedFilePath = filepath.Base(fileString) + ".compressed"
-		err = ioutil.WriteFile(compressedFilePath, file.compressed, 0644)
+		err = ioutil.WriteFile(compressedFilePath, file.Compressed, 0644)
 	}
 
-	// if engine == "huffman" { fmt.Println(file.compressed) }
+	// if compressionEngine == "huffman" { fmt.Println(file.compressed) }
 
-	fmt.Printf("Decompressing...\n")
+	if settings.PrintStatus {
+		fmt.Printf("%s Decompressing...\n", compressionEngine)
+	}
 	stream := make([]byte, 0)
 	out := make([]byte, 512)
 	for {
@@ -360,21 +376,21 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 		}
 	}
 	
-	if !suite {
+	if settings.WriteOutFiles {
 		var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
 		err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
 		check(err)
 	}
 
-	lossless := reflect.DeepEqual(fileContents, file.decompressed)
-	percentageDiff := float32(len(file.compressed)) / float32(len(fileContents)) * 100
+	lossless := reflect.DeepEqual(fileContents, file.Decompressed)
+	percentageDiff := float32(len(file.Compressed)) / float32(len(fileContents)) * 100
 	entropy := ent.Entropy(freqs, math.Log)
 
 	symbolFrequencies = make(map[byte]int)
-	for _, c := range []byte(file.compressed) {
+	for _, c := range []byte(file.Compressed) {
 		symbolFrequencies[c]++
 	}
-	total = len([]byte(file.compressed))
+	total = len([]byte(file.Compressed))
 	freqs = make([]float64, len(symbolFrequencies))
 	i = 0
 	for _, freq := range symbolFrequencies {
@@ -383,17 +399,17 @@ func BenchmarkFile(engine string, fileString string, suite bool) Result  {
 	}
 	actualEntropy := float32(ent.Entropy(freqs, math.Log))
 
-	if !suite {
+	if settings.PrintStats {
 		fmt.Printf("Lossless: %t\n", lossless)
 
 		fmt.Printf("Original bytes: %v\n", len(fileContents))
-		fmt.Printf("Compressed bytes: %v\n", len(file.compressed))
+		fmt.Printf("Compressed bytes: %v\n", len(file.Compressed))
 		if !lossless {
-			fmt.Printf("Decompressed bytes: %v\n", len(file.decompressed))
+			fmt.Printf("Decompressed bytes: %v\n", len(file.Decompressed))
 		}
 		fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
 		fmt.Printf("Original Shannon entropy: %.2f\n", entropy)
 		fmt.Printf("Compressed Shannon entropy: %.2f\n", actualEntropy)
 	}
-	return Result{engine, "", percentageDiff, actualEntropy, entropy, lossless, false}
+	return Result{compressionEngine, "", percentageDiff, actualEntropy, entropy, lossless, false}
 }
