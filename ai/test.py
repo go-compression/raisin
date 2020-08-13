@@ -1,11 +1,11 @@
 import os
+import sys
 
-# This weirdness it to enter the engine directory, import everything, then back out
-os.chdir("engine")
-from engine import BenchmarkFile, Settings # type: ignore
-os.chdir("..")
+# Add the engine directory to the path of importable directories
+engine_path = os.getcwd() + "/engine"
+sys.path.append(engine_path)
+from engine import engine
 
-print("Test")
-settings = Settings(WriteOutFiles=True, PrintStatus=True, PrintStats=True)
-r = BenchmarkFile("arithmetic", "test.txt", settings)
-print(r)
+settings = engine.Settings(WriteOutFiles=False, PrintStatus=True, PrintStats=True)
+r = engine.BenchmarkFile("arithmetic", "test.txt", settings)
+
