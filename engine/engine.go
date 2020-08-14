@@ -349,6 +349,7 @@ func BenchmarkFile(compressionEngine string, fileString string, settings Setting
 
 	file := CompressedFile{MaxSearchBufferLength: 4096}
 	file.CompressionEngine = compressionEngine
+	start := time.Now()
 	file.Write(fileContents)
 
 	if settings.WriteOutFiles {
@@ -381,6 +382,7 @@ func BenchmarkFile(compressionEngine string, fileString string, settings Setting
 		err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
 		check(err)
 	}
+	duration := time.Since(start)
 
 	lossless := reflect.DeepEqual(fileContents, file.Decompressed)
 	percentageDiff := float32(len(file.Compressed)) / float32(len(fileContents)) * 100
@@ -399,6 +401,8 @@ func BenchmarkFile(compressionEngine string, fileString string, settings Setting
 	}
 	actualEntropy := float32(ent.Entropy(freqs, math.Log))
 
+	timeTaken := fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
+
 	if settings.PrintStats {
 		fmt.Printf("Lossless: %t\n", lossless)
 
@@ -410,6 +414,7 @@ func BenchmarkFile(compressionEngine string, fileString string, settings Setting
 		fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
 		fmt.Printf("Original Shannon entropy: %.2f\n", entropy)
 		fmt.Printf("Compressed Shannon entropy: %.2f\n", actualEntropy)
+		fmt.Printf("Time taken: %s\n", timeTaken)
 	}
-	return Result{compressionEngine, "", percentageDiff, actualEntropy, entropy, lossless, false}
+	return Result{compressionEngine, timeTaken, percentageDiff, actualEntropy, entropy, lossless, false}
 }

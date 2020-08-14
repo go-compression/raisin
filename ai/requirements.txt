@@ -2,3 +2,8 @@ numpy
 pillow
 python-magic
 fpdf
+essential_generators
+requests
+pandas
+tensorflow
+sklearn
