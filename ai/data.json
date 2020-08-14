@@ -1,0 +1,3767 @@
+{
+  "files": [
+    {
+      "name": "8d3a4c53-2557-4a54-920a-d82a56160273.jpg",
+      "type": "image/jpeg",
+      "entropy": 5.5104476930972925,
+      "size": 40155,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.81ms",
+        "compressed_ratio": 99.56169891357422,
+        "entropy": 5.510447693097295,
+        "compressed_entropy": 5.54001522064209,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "20.89ms",
+          "compressed_ratio": 99.73851776123047,
+          "entropy": 5.510447693097295,
+          "compressed_entropy": 5.54138708114624,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "18.02ms",
+          "compressed_ratio": 100.4034423828125,
+          "entropy": 5.5104476930972925,
+          "compressed_entropy": 5.505453586578369,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.81ms",
+          "compressed_ratio": 99.56169891357422,
+          "entropy": 5.510447693097295,
+          "compressed_entropy": 5.54001522064209,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.69ms",
+          "compressed_ratio": 99.60652923583984,
+          "entropy": 5.51044769309729,
+          "compressed_entropy": 5.539960861206055,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "2.25ms",
+          "compressed_ratio": 134.59095764160156,
+          "entropy": 5.510447693097292,
+          "compressed_entropy": 5.139825344085693,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.8ms",
+          "compressed_ratio": 99.5766372680664,
+          "entropy": 5.510447693097291,
+          "compressed_entropy": 5.540015697479248,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "paper6",
+      "type": "text/troff",
+      "entropy": 3.472322836159053,
+      "size": 38105,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "2.35ms",
+        "compressed_ratio": 35.02689743041992,
+        "entropy": 3.472322836159053,
+        "compressed_entropy": 5.532325267791748,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "15.88ms",
+          "compressed_ratio": 64.15956115722656,
+          "entropy": 3.4723228361590532,
+          "compressed_entropy": 5.539676189422607,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "42.69ms",
+          "compressed_ratio": 91.64676666259766,
+          "entropy": 3.4723228361590546,
+          "compressed_entropy": 3.69110369682312,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "2.35ms",
+          "compressed_ratio": 35.02689743041992,
+          "entropy": 3.472322836159053,
+          "compressed_entropy": 5.532325267791748,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.7ms",
+          "compressed_ratio": 35.09251022338867,
+          "entropy": 3.4723228361590546,
+          "compressed_entropy": 5.531072616577148,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.27ms",
+          "compressed_ratio": 53.9036865234375,
+          "entropy": 3.472322836159054,
+          "compressed_entropy": 5.50351619720459,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.06ms",
+          "compressed_ratio": 35.06101608276367,
+          "entropy": 3.472322836159053,
+          "compressed_entropy": 5.530843257904053,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "9c2ddf25-9c2a-450e-89ef-07d9282ce04b.jpg",
+      "type": "image/jpeg",
+      "entropy": 5.507489238389846,
+      "size": 40127,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "2.32ms",
+        "compressed_ratio": 99.52400970458984,
+        "entropy": 5.507489238389844,
+        "compressed_entropy": 5.540075302124023,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "20.74ms",
+          "compressed_ratio": 99.68350219726562,
+          "entropy": 5.507489238389843,
+          "compressed_entropy": 5.541446685791016,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "16.17ms",
+          "compressed_ratio": 100.41118621826172,
+          "entropy": 5.507489238389847,
+          "compressed_entropy": 5.502457618713379,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "2.32ms",
+          "compressed_ratio": 99.52400970458984,
+          "entropy": 5.507489238389844,
+          "compressed_entropy": 5.540075302124023,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.9ms",
+          "compressed_ratio": 99.5688705444336,
+          "entropy": 5.507489238389842,
+          "compressed_entropy": 5.540064334869385,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.91ms",
+          "compressed_ratio": 134.48052978515625,
+          "entropy": 5.507489238389839,
+          "compressed_entropy": 5.139634132385254,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "3.3ms",
+          "compressed_ratio": 99.5389633178711,
+          "entropy": 5.507489238389843,
+          "compressed_entropy": 5.540075778961182,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "2b2755c5-812b-4e15-86a7-ed2cc6161678words.pdf",
+      "type": "application/pdf",
+      "entropy": 5.51990505345534,
+      "size": 15709,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "870\u00b5s",
+        "compressed_ratio": 98.61225891113281,
+        "entropy": 5.519905053455343,
+        "compressed_entropy": 5.535452842712402,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "8.98ms",
+          "compressed_ratio": 100.19734191894531,
+          "entropy": 5.519905053455341,
+          "compressed_entropy": 5.537101745605469,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "7.02ms",
+          "compressed_ratio": 100.31192016601562,
+          "entropy": 5.519905053455338,
+          "compressed_entropy": 5.519229412078857,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "870\u00b5s",
+          "compressed_ratio": 98.61225891113281,
+          "entropy": 5.519905053455343,
+          "compressed_entropy": 5.535452842712402,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1ms",
+          "compressed_ratio": 98.72684478759766,
+          "entropy": 5.51990505345534,
+          "compressed_entropy": 5.535445690155029,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "890\u00b5s",
+          "compressed_ratio": 133.9359588623047,
+          "entropy": 5.51990505345534,
+          "compressed_entropy": 5.1469831466674805,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.49ms",
+          "compressed_ratio": 98.65045166015625,
+          "entropy": 5.519905053455342,
+          "compressed_entropy": 5.535449981689453,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "5a2526da-0831-4e7d-8889-73bfd78b9e4bphone.pdf",
+      "type": "application/pdf",
+      "entropy": 5.381121733213364,
+      "size": 4244,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "390\u00b5s",
+        "compressed_ratio": 94.32139587402344,
+        "entropy": 5.3811217332133685,
+        "compressed_entropy": 5.511298179626465,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "2.26ms",
+          "compressed_ratio": 98.79830169677734,
+          "entropy": 5.381121733213366,
+          "compressed_entropy": 5.515739440917969,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "1.65ms",
+          "compressed_ratio": 98.68048858642578,
+          "entropy": 5.381121733213368,
+          "compressed_entropy": 5.418873310089111,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "390\u00b5s",
+          "compressed_ratio": 94.32139587402344,
+          "entropy": 5.3811217332133685,
+          "compressed_entropy": 5.511298179626465,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "770\u00b5s",
+          "compressed_ratio": 94.74552154541016,
+          "entropy": 5.381121733213366,
+          "compressed_entropy": 5.510247707366943,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "220\u00b5s",
+          "compressed_ratio": 125.25918579101562,
+          "entropy": 5.381121733213368,
+          "compressed_entropy": 5.098992347717285,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "360\u00b5s",
+          "compressed_ratio": 94.4627685546875,
+          "entropy": 5.381121733213368,
+          "compressed_entropy": 5.511519908905029,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "ddfffd36-192f-4c80-a1cf-6e5432133a56email.pdf",
+      "type": "application/pdf",
+      "entropy": 5.299816171575306,
+      "size": 3319,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "740\u00b5s",
+        "compressed_ratio": 92.58812713623047,
+        "entropy": 5.2998161715753085,
+        "compressed_entropy": 5.504330158233643,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "2.03ms",
+          "compressed_ratio": 97.71015930175781,
+          "entropy": 5.299816171575308,
+          "compressed_entropy": 5.507491111755371,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "1.42ms",
+          "compressed_ratio": 97.68002319335938,
+          "entropy": 5.299816171575309,
+          "compressed_entropy": 5.369518756866455,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "740\u00b5s",
+          "compressed_ratio": 92.58812713623047,
+          "entropy": 5.2998161715753085,
+          "compressed_entropy": 5.504330158233643,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "330\u00b5s",
+          "compressed_ratio": 93.16059112548828,
+          "entropy": 5.29981617157531,
+          "compressed_entropy": 5.500295162200928,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "190\u00b5s",
+          "compressed_ratio": 120.39771270751953,
+          "entropy": 5.299816171575307,
+          "compressed_entropy": 5.13949728012085,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "350\u00b5s",
+          "compressed_ratio": 92.79903411865234,
+          "entropy": 5.299816171575303,
+          "compressed_entropy": 5.501127243041992,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "world192.txt",
+      "type": "text/plain",
+      "entropy": 3.464567077309584,
+      "size": 2473400,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "168.31ms",
+        "compressed_ratio": 29.272056579589844,
+        "entropy": 3.464567077309584,
+        "compressed_entropy": 5.543527126312256,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "644.22ms",
+          "compressed_ratio": 63.612396240234375,
+          "entropy": 3.464567077309584,
+          "compressed_entropy": 5.5450239181518555,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "2.38514s",
+          "compressed_ratio": 94.83480834960938,
+          "entropy": 3.4645670773095842,
+          "compressed_entropy": 3.6168274879455566,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "168.31ms",
+          "compressed_ratio": 29.272056579589844,
+          "entropy": 3.464567077309584,
+          "compressed_entropy": 5.543527126312256,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "116.78ms",
+          "compressed_ratio": 29.38825225830078,
+          "entropy": 3.4645670773095834,
+          "compressed_entropy": 5.5436530113220215,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "85.49ms",
+          "compressed_ratio": 57.22620391845703,
+          "entropy": 3.4645670773095842,
+          "compressed_entropy": 5.494280815124512,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "122.53ms",
+          "compressed_ratio": 29.387765884399414,
+          "entropy": 3.4645670773095834,
+          "compressed_entropy": 5.5436530113220215,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "4306c686-f73f-474d-abc1-38534e8784f7words.pdf",
+      "type": "application/pdf",
+      "entropy": 5.510241934016314,
+      "size": 12768,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "740\u00b5s",
+        "compressed_ratio": 98.23778533935547,
+        "entropy": 5.510241934016316,
+        "compressed_entropy": 5.53496789932251,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "7.8ms",
+          "compressed_ratio": 100.13314819335938,
+          "entropy": 5.510241934016315,
+          "compressed_entropy": 5.535721302032471,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "5.95ms",
+          "compressed_ratio": 100.1566390991211,
+          "entropy": 5.510241934016317,
+          "compressed_entropy": 5.512729167938232,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "740\u00b5s",
+          "compressed_ratio": 98.23778533935547,
+          "entropy": 5.510241934016316,
+          "compressed_entropy": 5.53496789932251,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "790\u00b5s",
+          "compressed_ratio": 98.40225219726562,
+          "entropy": 5.510241934016316,
+          "compressed_entropy": 5.533790111541748,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.86ms",
+          "compressed_ratio": 132.26817321777344,
+          "entropy": 5.510241934016316,
+          "compressed_entropy": 5.134537220001221,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.25ms",
+          "compressed_ratio": 98.30827331542969,
+          "entropy": 5.510241934016317,
+          "compressed_entropy": 5.533786296844482,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "geo",
+      "type": "application/octet-stream",
+      "entropy": 3.9137694414075335,
+      "size": 102400,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "7.2ms",
+        "compressed_ratio": 68.091796875,
+        "entropy": 3.9137694414075344,
+        "compressed_entropy": 5.517148971557617,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "35.24ms",
+          "compressed_ratio": 71.09765625,
+          "entropy": 3.913769441407533,
+          "compressed_entropy": 5.542599678039551,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "43.17ms",
+          "compressed_ratio": 99.4091796875,
+          "entropy": 3.913769441407533,
+          "compressed_entropy": 3.9620039463043213,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "7.2ms",
+          "compressed_ratio": 68.091796875,
+          "entropy": 3.9137694414075344,
+          "compressed_entropy": 5.517148971557617,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "6.24ms",
+          "compressed_ratio": 68.115234375,
+          "entropy": 3.9137694414075326,
+          "compressed_entropy": 5.5176801681518555,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "4.8ms",
+          "compressed_ratio": 77.419921875,
+          "entropy": 3.9137694414075335,
+          "compressed_entropy": 5.336493492126465,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "6.62ms",
+          "compressed_ratio": 68.103515625,
+          "entropy": 3.9137694414075344,
+          "compressed_entropy": 5.517628192901611,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "2f919a22-c367-4226-906b-df2893b13e6bwords.pdf",
+      "type": "application/pdf",
+      "entropy": 5.520473795437815,
+      "size": 16515,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "910\u00b5s",
+        "compressed_ratio": 98.69209289550781,
+        "entropy": 5.520473795437809,
+        "compressed_entropy": 5.536560535430908,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "9.02ms",
+          "compressed_ratio": 100.24825286865234,
+          "entropy": 5.52047379543781,
+          "compressed_entropy": 5.536695957183838,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "6.78ms",
+          "compressed_ratio": 100.32698059082031,
+          "entropy": 5.52047379543781,
+          "compressed_entropy": 5.519972801208496,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "910\u00b5s",
+          "compressed_ratio": 98.69209289550781,
+          "entropy": 5.520473795437809,
+          "compressed_entropy": 5.536560535430908,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "910\u00b5s",
+          "compressed_ratio": 98.80108642578125,
+          "entropy": 5.520473795437812,
+          "compressed_entropy": 5.536668300628662,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "760\u00b5s",
+          "compressed_ratio": 133.587646484375,
+          "entropy": 5.520473795437809,
+          "compressed_entropy": 5.13734769821167,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.61ms",
+          "compressed_ratio": 98.72843170166016,
+          "entropy": 5.520473795437812,
+          "compressed_entropy": 5.536551475524902,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "a5b5b324-ea03-434d-9122-24cd5d852f30words.pdf",
+      "type": "application/pdf",
+      "entropy": 5.5131059782754015,
+      "size": 12681,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "820\u00b5s",
+        "compressed_ratio": 98.27301025390625,
+        "entropy": 5.513105978275396,
+        "compressed_entropy": 5.531949996948242,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "7.37ms",
+          "compressed_ratio": 100.18925476074219,
+          "entropy": 5.513105978275403,
+          "compressed_entropy": 5.533478260040283,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "5.64ms",
+          "compressed_ratio": 100.27600860595703,
+          "entropy": 5.5131059782754015,
+          "compressed_entropy": 5.5141987800598145,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "820\u00b5s",
+          "compressed_ratio": 98.27301025390625,
+          "entropy": 5.513105978275396,
+          "compressed_entropy": 5.531949996948242,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "960\u00b5s",
+          "compressed_ratio": 98.41495513916016,
+          "entropy": 5.513105978275401,
+          "compressed_entropy": 5.531790733337402,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "610\u00b5s",
+          "compressed_ratio": 132.59207153320312,
+          "entropy": 5.5131059782754,
+          "compressed_entropy": 5.130478382110596,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.05ms",
+          "compressed_ratio": 98.32032012939453,
+          "entropy": 5.513105978275399,
+          "compressed_entropy": 5.53198766708374,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "17600011-4024-47c6-859f-110eaaab6afa.jpg",
+      "type": "image/jpeg",
+      "entropy": 5.507454089603071,
+      "size": 40266,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.99ms",
+        "compressed_ratio": 99.54551696777344,
+        "entropy": 5.507454089603071,
+        "compressed_entropy": 5.538916110992432,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "24.54ms",
+          "compressed_ratio": 99.6672134399414,
+          "entropy": 5.507454089603068,
+          "compressed_entropy": 5.541663646697998,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "15.98ms",
+          "compressed_ratio": 100.44206237792969,
+          "entropy": 5.507454089603071,
+          "compressed_entropy": 5.501761436462402,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.99ms",
+          "compressed_ratio": 99.54551696777344,
+          "entropy": 5.507454089603071,
+          "compressed_entropy": 5.538916110992432,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.98ms",
+          "compressed_ratio": 99.59022521972656,
+          "entropy": 5.507454089603069,
+          "compressed_entropy": 5.538875579833984,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "2.12ms",
+          "compressed_ratio": 134.53038024902344,
+          "entropy": 5.507454089603066,
+          "compressed_entropy": 5.137458801269531,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "3.12ms",
+          "compressed_ratio": 99.5604248046875,
+          "entropy": 5.507454089603073,
+          "compressed_entropy": 5.53892183303833,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "alice29.txt",
+      "type": "application/octet-stream",
+      "entropy": 3.166074660770124,
+      "size": 152089,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "15.42ms",
+        "compressed_ratio": 35.667930603027344,
+        "entropy": 3.166074660770123,
+        "compressed_entropy": 5.540178298950195,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "41.38ms",
+          "compressed_ratio": 57.63401794433594,
+          "entropy": 3.1660746607701236,
+          "compressed_entropy": 5.543835639953613,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "149.55ms",
+          "compressed_ratio": 95.39085388183594,
+          "entropy": 3.1660746607701227,
+          "compressed_entropy": 3.4740943908691406,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "15.42ms",
+          "compressed_ratio": 35.667930603027344,
+          "entropy": 3.166074660770123,
+          "compressed_entropy": 5.540178298950195,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "12.13ms",
+          "compressed_ratio": 35.72184753417969,
+          "entropy": 3.166074660770123,
+          "compressed_entropy": 5.540202617645264,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "4.92ms",
+          "compressed_ratio": 50.54014205932617,
+          "entropy": 3.166074660770123,
+          "compressed_entropy": 5.509543418884277,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "13.91ms",
+          "compressed_ratio": 35.71395492553711,
+          "entropy": 3.1660746607701227,
+          "compressed_entropy": 5.540189743041992,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "ptt5",
+      "type": "application/octet-stream",
+      "entropy": 0.8388300417342434,
+      "size": 513216,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "147.84ms",
+        "compressed_ratio": 10.029695510864258,
+        "entropy": 0.8388300417342434,
+        "compressed_entropy": 5.515779972076416,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "61.86ms",
+          "compressed_ratio": 22.816904067993164,
+          "entropy": 0.838830041734243,
+          "compressed_entropy": 4.758169174194336,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "621.49ms",
+          "compressed_ratio": 25.32111167907715,
+          "entropy": 0.8388300417342426,
+          "compressed_entropy": 3.587570905685425,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "147.84ms",
+          "compressed_ratio": 10.029695510864258,
+          "entropy": 0.8388300417342434,
+          "compressed_entropy": 5.515779972076416,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "12.73ms",
+          "compressed_ratio": 10.714396476745605,
+          "entropy": 0.8388300417342427,
+          "compressed_entropy": 5.5203399658203125,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "9.16ms",
+          "compressed_ratio": 12.827932357788086,
+          "entropy": 0.8388300417342427,
+          "compressed_entropy": 5.491344928741455,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "12.67ms",
+          "compressed_ratio": 10.712059020996094,
+          "entropy": 0.8388300417342431,
+          "compressed_entropy": 5.520377159118652,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "34bd6d62-0707-4ecb-a80b-4d6b2cb3eba5words.pdf",
+      "type": "application/pdf",
+      "entropy": 5.515439934263511,
+      "size": 14347,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "790\u00b5s",
+        "compressed_ratio": 98.43173217773438,
+        "entropy": 5.515439934263511,
+        "compressed_entropy": 5.5353779792785645,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "8.09ms",
+          "compressed_ratio": 100.16030883789062,
+          "entropy": 5.515439934263511,
+          "compressed_entropy": 5.535749435424805,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "6.02ms",
+          "compressed_ratio": 100.31365203857422,
+          "entropy": 5.5154399342635125,
+          "compressed_entropy": 5.515295028686523,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "790\u00b5s",
+          "compressed_ratio": 98.43173217773438,
+          "entropy": 5.515439934263511,
+          "compressed_entropy": 5.5353779792785645,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "810\u00b5s",
+          "compressed_ratio": 98.55718994140625,
+          "entropy": 5.515439934263511,
+          "compressed_entropy": 5.53541898727417,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "640\u00b5s",
+          "compressed_ratio": 132.82916259765625,
+          "entropy": 5.515439934263508,
+          "compressed_entropy": 5.146322250366211,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.27ms",
+          "compressed_ratio": 98.47354888916016,
+          "entropy": 5.5154399342635125,
+          "compressed_entropy": 5.535372734069824,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "a94139a9-148e-4db5-9354-5a6f3c4404c1words.pdf",
+      "type": "application/pdf",
+      "entropy": 5.50006142840918,
+      "size": 10976,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.3ms",
+        "compressed_ratio": 97.93184661865234,
+        "entropy": 5.500061428409184,
+        "compressed_entropy": 5.5333452224731445,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "6.14ms",
+          "compressed_ratio": 100.04554748535156,
+          "entropy": 5.500061428409187,
+          "compressed_entropy": 5.533312797546387,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "4.21ms",
+          "compressed_ratio": 100.27332305908203,
+          "entropy": 5.500061428409185,
+          "compressed_entropy": 5.5020270347595215,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.3ms",
+          "compressed_ratio": 97.93184661865234,
+          "entropy": 5.500061428409184,
+          "compressed_entropy": 5.5333452224731445,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "820\u00b5s",
+          "compressed_ratio": 98.0958480834961,
+          "entropy": 5.500061428409183,
+          "compressed_entropy": 5.533266544342041,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "510\u00b5s",
+          "compressed_ratio": 132.28863525390625,
+          "entropy": 5.50006142840918,
+          "compressed_entropy": 5.128914833068848,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "780\u00b5s",
+          "compressed_ratio": 97.98651123046875,
+          "entropy": 5.500061428409181,
+          "compressed_entropy": 5.533398151397705,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "kennedy.xls",
+      "type": "application/octet-stream",
+      "entropy": 2.4769412504388435,
+      "size": 1029744,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "534.39ms",
+        "compressed_ratio": 20.14889144897461,
+        "entropy": 2.4769412504388386,
+        "compressed_entropy": 5.184934616088867,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "182.48ms",
+          "compressed_ratio": 46.83280563354492,
+          "entropy": 2.4769412504388395,
+          "compressed_entropy": 5.5310211181640625,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "532.24ms",
+          "compressed_ratio": 92.8014144897461,
+          "entropy": 2.476941250438842,
+          "compressed_entropy": 3.2636876106262207,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "534.39ms",
+          "compressed_ratio": 20.14889144897461,
+          "entropy": 2.4769412504388386,
+          "compressed_entropy": 5.184934616088867,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "61.59ms",
+          "compressed_ratio": 20.19599151611328,
+          "entropy": 2.476941250438839,
+          "compressed_entropy": 5.183671474456787,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "21.99ms",
+          "compressed_ratio": 26.19728660583496,
+          "entropy": 2.47694125043884,
+          "compressed_entropy": 5.526005268096924,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "61.41ms",
+          "compressed_ratio": 20.194826126098633,
+          "entropy": 2.4769412504388413,
+          "compressed_entropy": 5.18358039855957,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "paper4",
+      "type": "text/troff",
+      "entropy": 3.257601862034433,
+      "size": 13286,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "810\u00b5s",
+        "compressed_ratio": 41.29158401489258,
+        "entropy": 3.257601862034433,
+        "compressed_entropy": 5.5133376121521,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "7.19ms",
+          "compressed_ratio": 60.19117736816406,
+          "entropy": 3.257601862034433,
+          "compressed_entropy": 5.530459880828857,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "13.5ms",
+          "compressed_ratio": 93.45928192138672,
+          "entropy": 3.2576018620344325,
+          "compressed_entropy": 3.551327705383301,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "810\u00b5s",
+          "compressed_ratio": 41.29158401489258,
+          "entropy": 3.257601862034433,
+          "compressed_entropy": 5.5133376121521,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.1ms",
+          "compressed_ratio": 41.427066802978516,
+          "entropy": 3.2576018620344342,
+          "compressed_entropy": 5.513360977172852,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "590\u00b5s",
+          "compressed_ratio": 53.7483024597168,
+          "entropy": 3.257601862034433,
+          "compressed_entropy": 5.490814685821533,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.05ms",
+          "compressed_ratio": 41.33674621582031,
+          "entropy": 3.2576018620344325,
+          "compressed_entropy": 5.513396739959717,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "progl",
+      "type": "text/x-lisp",
+      "entropy": 3.3063710334623804,
+      "size": 71646,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "5.69ms",
+        "compressed_ratio": 22.48276138305664,
+        "entropy": 3.3063710334623813,
+        "compressed_entropy": 5.5358991622924805,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "25.2ms",
+          "compressed_ratio": 61.69220733642578,
+          "entropy": 3.3063710334623813,
+          "compressed_entropy": 5.54142951965332,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "71.36ms",
+          "compressed_ratio": 65.93250274658203,
+          "entropy": 3.3063710334623804,
+          "compressed_entropy": 3.651144027709961,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "5.69ms",
+          "compressed_ratio": 22.48276138305664,
+          "entropy": 3.3063710334623813,
+          "compressed_entropy": 5.5358991622924805,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "4.06ms",
+          "compressed_ratio": 22.58046531677246,
+          "entropy": 3.3063710334623804,
+          "compressed_entropy": 5.536562919616699,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "2.13ms",
+          "compressed_ratio": 42.56343460083008,
+          "entropy": 3.3063710334623804,
+          "compressed_entropy": 5.523910045623779,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "12.66ms",
+          "compressed_ratio": 22.563716888427734,
+          "entropy": 3.30637103346238,
+          "compressed_entropy": 5.536581039428711,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "paper3",
+      "type": "text/troff",
+      "entropy": 3.2336037369904975,
+      "size": 46526,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "3.26ms",
+        "compressed_ratio": 38.64720916748047,
+        "entropy": 3.2336037369904975,
+        "compressed_entropy": 5.535399913787842,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "19.91ms",
+          "compressed_ratio": 58.99066925048828,
+          "entropy": 3.233603736990498,
+          "compressed_entropy": 5.541617393493652,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "55.54ms",
+          "compressed_ratio": 96.5030288696289,
+          "entropy": 3.2336037369904984,
+          "compressed_entropy": 3.5105247497558594,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "3.26ms",
+          "compressed_ratio": 38.64720916748047,
+          "entropy": 3.2336037369904975,
+          "compressed_entropy": 5.535399913787842,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.79ms",
+          "compressed_ratio": 38.69879150390625,
+          "entropy": 3.2336037369904975,
+          "compressed_entropy": 5.532999038696289,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.53ms",
+          "compressed_ratio": 54.343807220458984,
+          "entropy": 3.2336037369904975,
+          "compressed_entropy": 5.50507926940918,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "3.02ms",
+          "compressed_ratio": 38.67300033569336,
+          "entropy": 3.2336037369904957,
+          "compressed_entropy": 5.533095836639404,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "grammar.lsp",
+      "type": "text/x-lisp",
+      "entropy": 3.2108432726016076,
+      "size": 3721,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "350\u00b5s",
+        "compressed_ratio": 32.545013427734375,
+        "entropy": 3.210843272601607,
+        "compressed_entropy": 5.411316394805908,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "2.22ms",
+          "compressed_ratio": 61.78446578979492,
+          "entropy": 3.210843272601609,
+          "compressed_entropy": 5.48441743850708,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "2.46ms",
+          "compressed_ratio": 75.30233764648438,
+          "entropy": 3.210843272601607,
+          "compressed_entropy": 3.590576648712158,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "350\u00b5s",
+          "compressed_ratio": 32.545013427734375,
+          "entropy": 3.210843272601607,
+          "compressed_entropy": 5.411316394805908,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "340\u00b5s",
+          "compressed_ratio": 33.02875518798828,
+          "entropy": 3.210843272601609,
+          "compressed_entropy": 5.40838098526001,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "170\u00b5s",
+          "compressed_ratio": 48.66971206665039,
+          "entropy": 3.2108432726016085,
+          "compressed_entropy": 5.435814380645752,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "800\u00b5s",
+          "compressed_ratio": 32.706260681152344,
+          "entropy": 3.2108432726016067,
+          "compressed_entropy": 5.412970542907715,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "bible.txt",
+      "type": "text/plain",
+      "entropy": 3.0101658813315946,
+      "size": 4047392,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "388.95ms",
+        "compressed_ratio": 29.00000762939453,
+        "entropy": 3.0101658813315937,
+        "compressed_entropy": 5.544633865356445,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "978.03ms",
+          "compressed_ratio": 54.85895919799805,
+          "entropy": 3.010165881331593,
+          "compressed_entropy": 5.545099258422852,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "4.61328s",
+          "compressed_ratio": 92.48271942138672,
+          "entropy": 3.0101658813315937,
+          "compressed_entropy": 3.34049654006958,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "388.95ms",
+          "compressed_ratio": 29.00000762939453,
+          "entropy": 3.0101658813315937,
+          "compressed_entropy": 5.544633865356445,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "290.35ms",
+          "compressed_ratio": 29.130634307861328,
+          "entropy": 3.0101658813315932,
+          "compressed_entropy": 5.54462194442749,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "120.71ms",
+          "compressed_ratio": 45.3167839050293,
+          "entropy": 3.0101658813315932,
+          "compressed_entropy": 5.521162986755371,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "297.2ms",
+          "compressed_ratio": 29.130340576171875,
+          "entropy": 3.010165881331593,
+          "compressed_entropy": 5.54462194442749,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "news",
+      "type": "message/rfc822",
+      "entropy": 3.597178521462382,
+      "size": 377109,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "21.54ms",
+        "compressed_ratio": 38.414886474609375,
+        "entropy": 3.5971785214623826,
+        "compressed_entropy": 5.5415143966674805,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "108.19ms",
+          "compressed_ratio": 65.80537414550781,
+          "entropy": 3.5971785214623817,
+          "compressed_entropy": 5.544346809387207,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "372.84ms",
+          "compressed_ratio": 88.71784973144531,
+          "entropy": 3.597178521462383,
+          "compressed_entropy": 3.733046293258667,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "21.54ms",
+          "compressed_ratio": 38.414886474609375,
+          "entropy": 3.5971785214623826,
+          "compressed_entropy": 5.5415143966674805,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "22.12ms",
+          "compressed_ratio": 38.49895095825195,
+          "entropy": 3.5971785214623817,
+          "compressed_entropy": 5.541709899902344,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "14.3ms",
+          "compressed_ratio": 61.40293502807617,
+          "entropy": 3.597178521462383,
+          "compressed_entropy": 5.490869045257568,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "20.42ms",
+          "compressed_ratio": 38.495765686035156,
+          "entropy": 3.59717852146238,
+          "compressed_entropy": 5.5416951179504395,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "pic",
+      "type": "application/octet-stream",
+      "entropy": 0.8388300417342434,
+      "size": 513216,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "144.25ms",
+        "compressed_ratio": 10.029695510864258,
+        "entropy": 0.8388300417342436,
+        "compressed_entropy": 5.515779972076416,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "59.63ms",
+          "compressed_ratio": 22.816904067993164,
+          "entropy": 0.8388300417342438,
+          "compressed_entropy": 4.758169174194336,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "626.58ms",
+          "compressed_ratio": 25.32111167907715,
+          "entropy": 0.8388300417342431,
+          "compressed_entropy": 3.587570905685425,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "144.25ms",
+          "compressed_ratio": 10.029695510864258,
+          "entropy": 0.8388300417342436,
+          "compressed_entropy": 5.515779972076416,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "12.63ms",
+          "compressed_ratio": 10.714396476745605,
+          "entropy": 0.8388300417342431,
+          "compressed_entropy": 5.5203399658203125,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "9.77ms",
+          "compressed_ratio": 12.827932357788086,
+          "entropy": 0.8388300417342434,
+          "compressed_entropy": 5.491344928741455,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "12.89ms",
+          "compressed_ratio": 10.712059020996094,
+          "entropy": 0.8388300417342428,
+          "compressed_entropy": 5.520377159118652,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "progc",
+      "type": "text/x-c",
+      "entropy": 3.6036833046371437,
+      "size": 39611,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "3.34ms",
+        "compressed_ratio": 33.85423278808594,
+        "entropy": 3.6036833046371437,
+        "compressed_entropy": 5.535275936126709,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "14.85ms",
+          "compressed_ratio": 66.18111419677734,
+          "entropy": 3.603683304637144,
+          "compressed_entropy": 5.539615631103516,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "35.32ms",
+          "compressed_ratio": 87.15003204345703,
+          "entropy": 3.603683304637145,
+          "compressed_entropy": 3.7971673011779785,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "3.34ms",
+          "compressed_ratio": 33.85423278808594,
+          "entropy": 3.6036833046371437,
+          "compressed_entropy": 5.535275936126709,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.63ms",
+          "compressed_ratio": 33.90724563598633,
+          "entropy": 3.603683304637144,
+          "compressed_entropy": 5.5326313972473145,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.62ms",
+          "compressed_ratio": 53.369014739990234,
+          "entropy": 3.6036833046371455,
+          "compressed_entropy": 5.498143672943115,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.47ms",
+          "compressed_ratio": 33.876953125,
+          "entropy": 3.6036833046371433,
+          "compressed_entropy": 5.53267765045166,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "book2",
+      "type": "text/troff",
+      "entropy": 3.321999916061011,
+      "size": 610856,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "44.46ms",
+        "compressed_ratio": 33.79438018798828,
+        "entropy": 3.3219999160610127,
+        "compressed_entropy": 5.543926239013672,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "166.29ms",
+          "compressed_ratio": 60.70890426635742,
+          "entropy": 3.321999916061012,
+          "compressed_entropy": 5.54470157623291,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "668.23ms",
+          "compressed_ratio": 94.2791748046875,
+          "entropy": 3.321999916061012,
+          "compressed_entropy": 3.5318403244018555,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "44.46ms",
+          "compressed_ratio": 33.79438018798828,
+          "entropy": 3.3219999160610127,
+          "compressed_entropy": 5.543926239013672,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "38.9ms",
+          "compressed_ratio": 33.833343505859375,
+          "entropy": 3.3219999160610123,
+          "compressed_entropy": 5.543992042541504,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "21.4ms",
+          "compressed_ratio": 53.24364471435547,
+          "entropy": 3.321999916061012,
+          "compressed_entropy": 5.511315822601318,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "41.82ms",
+          "compressed_ratio": 33.83137893676758,
+          "entropy": 3.321999916061012,
+          "compressed_entropy": 5.543990612030029,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "xargs.1",
+      "type": "text/troff",
+      "entropy": 3.395334001231695,
+      "size": 4227,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "640\u00b5s",
+        "compressed_ratio": 40.80908203125,
+        "entropy": 3.395334001231696,
+        "compressed_entropy": 5.455728530883789,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "2.08ms",
+          "compressed_ratio": 64.75041198730469,
+          "entropy": 3.3953340012316953,
+          "compressed_entropy": 5.492809295654297,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "2.93ms",
+          "compressed_ratio": 88.73905944824219,
+          "entropy": 3.395334001231694,
+          "compressed_entropy": 3.6725544929504395,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "640\u00b5s",
+          "compressed_ratio": 40.80908203125,
+          "entropy": 3.395334001231696,
+          "compressed_entropy": 5.455728530883789,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "330\u00b5s",
+          "compressed_ratio": 41.234920501708984,
+          "entropy": 3.395334001231695,
+          "compressed_entropy": 5.453402042388916,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "150\u00b5s",
+          "compressed_ratio": 55.31109619140625,
+          "entropy": 3.3953340012316957,
+          "compressed_entropy": 5.449612617492676,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "330\u00b5s",
+          "compressed_ratio": 40.951026916503906,
+          "entropy": 3.395334001231695,
+          "compressed_entropy": 5.4563446044921875,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "fields.c",
+      "type": "text/x-c",
+      "entropy": 3.471071803998083,
+      "size": 11150,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "620\u00b5s",
+        "compressed_ratio": 27.946189880371094,
+        "entropy": 3.4710718039980835,
+        "compressed_entropy": 5.501375198364258,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "6.99ms",
+          "compressed_ratio": 64.19731140136719,
+          "entropy": 3.4710718039980835,
+          "compressed_entropy": 5.527454853057861,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "9.65ms",
+          "compressed_ratio": 72.38565063476562,
+          "entropy": 3.4710718039980835,
+          "compressed_entropy": 3.703159809112549,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "620\u00b5s",
+          "compressed_ratio": 27.946189880371094,
+          "entropy": 3.4710718039980835,
+          "compressed_entropy": 5.501375198364258,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "700\u00b5s",
+          "compressed_ratio": 28.125560760498047,
+          "entropy": 3.471071803998083,
+          "compressed_entropy": 5.496646404266357,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "330\u00b5s",
+          "compressed_ratio": 44.51121139526367,
+          "entropy": 3.471071803998083,
+          "compressed_entropy": 5.4917473793029785,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.45ms",
+          "compressed_ratio": 28.0179386138916,
+          "entropy": 3.4710718039980835,
+          "compressed_entropy": 5.498534202575684,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "aaa.txt",
+      "type": "text/plain",
+      "entropy": 0,
+      "size": 100000,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.09ms",
+        "compressed_ratio": 0.11899999529123306,
+        "entropy": 0.0,
+        "compressed_entropy": 0.8032115697860718,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "16.13ms",
+          "compressed_ratio": 0.47699999809265137,
+          "entropy": 0.0,
+          "compressed_entropy": 5.239670276641846,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "9.07ms",
+          "compressed_ratio": 0.4000000059604645,
+          "entropy": 0.0,
+          "compressed_entropy": 2.591623306274414,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.09ms",
+          "compressed_ratio": 0.11899999529123306,
+          "entropy": 0.0,
+          "compressed_entropy": 0.8032115697860718,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "750\u00b5s",
+          "compressed_ratio": 0.13699999451637268,
+          "entropy": 0.0,
+          "compressed_entropy": 1.1532725095748901,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.06ms",
+          "compressed_ratio": 0.5289999842643738,
+          "entropy": 0.0,
+          "compressed_entropy": 5.089846611022949,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "800\u00b5s",
+          "compressed_ratio": 0.125,
+          "entropy": 0.0,
+          "compressed_entropy": 1.043245553970337,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "progp",
+      "type": "text/x-c",
+      "entropy": 3.374775730320193,
+      "size": 49379,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "4.5ms",
+        "compressed_ratio": 22.892322540283203,
+        "entropy": 3.3747757303201924,
+        "compressed_entropy": 5.530001640319824,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "17.38ms",
+          "compressed_ratio": 61.77727508544922,
+          "entropy": 3.3747757303201924,
+          "compressed_entropy": 5.540858745574951,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "48.69ms",
+          "compressed_ratio": 64.25403594970703,
+          "entropy": 3.3747757303201933,
+          "compressed_entropy": 3.7748098373413086,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "4.5ms",
+          "compressed_ratio": 22.892322540283203,
+          "entropy": 3.3747757303201924,
+          "compressed_entropy": 5.530001640319824,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.53ms",
+          "compressed_ratio": 23.017881393432617,
+          "entropy": 3.3747757303201924,
+          "compressed_entropy": 5.529799938201904,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.48ms",
+          "compressed_ratio": 43.538753509521484,
+          "entropy": 3.3747757303201933,
+          "compressed_entropy": 5.520173072814941,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "3.18ms",
+          "compressed_ratio": 22.993581771850586,
+          "entropy": 3.3747757303201924,
+          "compressed_entropy": 5.5298871994018555,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "alphabet.txt",
+      "type": "text/plain",
+      "entropy": 3.2580965336217447,
+      "size": 100000,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.3ms",
+        "compressed_ratio": 0.28599998354911804,
+        "entropy": 3.2580965336217447,
+        "compressed_entropy": 2.3306162357330322,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "31.8ms",
+          "compressed_ratio": 59.191001892089844,
+          "entropy": 3.2580965336217447,
+          "compressed_entropy": 5.514537334442139,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "773.08ms",
+          "compressed_ratio": 100.0,
+          "entropy": 3.2580965336217447,
+          "compressed_entropy": 3.25809645652771,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.3ms",
+          "compressed_ratio": 0.28599998354911804,
+          "entropy": 3.2580965336217447,
+          "compressed_entropy": 2.3306162357330322,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.29ms",
+          "compressed_ratio": 0.30400002002716064,
+          "entropy": 3.258096533621745,
+          "compressed_entropy": 2.4808452129364014,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.08ms",
+          "compressed_ratio": 3.052000045776367,
+          "entropy": 3.258096533621745,
+          "compressed_entropy": 5.459863662719727,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.86ms",
+          "compressed_ratio": 0.29200002551078796,
+          "entropy": 3.2580965336217447,
+          "compressed_entropy": 2.4149603843688965,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "obj1",
+      "type": "application/octet-stream",
+      "entropy": 4.122957618735321,
+      "size": 21504,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.9ms",
+        "compressed_ratio": 49.33501052856445,
+        "entropy": 4.122957618735322,
+        "compressed_entropy": 5.524684906005859,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "11.05ms",
+          "compressed_ratio": 75.70684814453125,
+          "entropy": 4.122957618735319,
+          "compressed_entropy": 5.46394157409668,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "16.22ms",
+          "compressed_ratio": 79.1387710571289,
+          "entropy": 4.122957618735319,
+          "compressed_entropy": 4.592039585113525,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.9ms",
+          "compressed_ratio": 49.33501052856445,
+          "entropy": 4.122957618735322,
+          "compressed_entropy": 5.524684906005859,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.84ms",
+          "compressed_ratio": 49.43266677856445,
+          "entropy": 4.122957618735319,
+          "compressed_entropy": 5.524441719055176,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.04ms",
+          "compressed_ratio": 63.625370025634766,
+          "entropy": 4.12295761873532,
+          "compressed_entropy": 5.376060485839844,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.62ms",
+          "compressed_ratio": 49.376861572265625,
+          "entropy": 4.1229576187353185,
+          "compressed_entropy": 5.525326251983643,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "cp.html",
+      "type": "text/html",
+      "entropy": 3.6245613521385565,
+      "size": 24603,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "2.1ms",
+        "compressed_ratio": 32.10990524291992,
+        "entropy": 3.624561352138556,
+        "compressed_entropy": 5.523293972015381,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "11.76ms",
+          "compressed_ratio": 66.28459930419922,
+          "entropy": 3.624561352138556,
+          "compressed_entropy": 5.536552906036377,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "22.98ms",
+          "compressed_ratio": 76.36873626708984,
+          "entropy": 3.624561352138555,
+          "compressed_entropy": 3.8237075805664062,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "2.1ms",
+          "compressed_ratio": 32.10990524291992,
+          "entropy": 3.624561352138556,
+          "compressed_entropy": 5.523293972015381,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.27ms",
+          "compressed_ratio": 32.24810028076172,
+          "entropy": 3.6245613521385565,
+          "compressed_entropy": 5.522791385650635,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "860\u00b5s",
+          "compressed_ratio": 52.009918212890625,
+          "entropy": 3.624561352138556,
+          "compressed_entropy": 5.491621971130371,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.42ms",
+          "compressed_ratio": 32.19932556152344,
+          "entropy": 3.6245613521385565,
+          "compressed_entropy": 5.522830963134766,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "b3f37bf8-abb6-4c9a-a23e-d43ad216ce2aphone.pdf",
+      "type": "application/pdf",
+      "entropy": 5.252128024799273,
+      "size": 3080,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "380\u00b5s",
+        "compressed_ratio": 91.4935073852539,
+        "entropy": 5.252128024799263,
+        "compressed_entropy": 5.498311996459961,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "1.82ms",
+          "compressed_ratio": 96.98051452636719,
+          "entropy": 5.252128024799264,
+          "compressed_entropy": 5.503006458282471,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "1.14ms",
+          "compressed_ratio": 97.56493377685547,
+          "entropy": 5.252128024799267,
+          "compressed_entropy": 5.32248067855835,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "380\u00b5s",
+          "compressed_ratio": 91.4935073852539,
+          "entropy": 5.252128024799263,
+          "compressed_entropy": 5.498311996459961,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "480\u00b5s",
+          "compressed_ratio": 92.07792663574219,
+          "entropy": 5.252128024799266,
+          "compressed_entropy": 5.49641752243042,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "300\u00b5s",
+          "compressed_ratio": 118.47402954101562,
+          "entropy": 5.252128024799265,
+          "compressed_entropy": 5.147504806518555,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "420\u00b5s",
+          "compressed_ratio": 91.68830871582031,
+          "entropy": 5.252128024799266,
+          "compressed_entropy": 5.498399257659912,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "book1",
+      "type": "application/octet-stream",
+      "entropy": 3.1379802634385983,
+      "size": 768771,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "64.65ms",
+        "compressed_ratio": 40.63108444213867,
+        "entropy": 3.1379802634385987,
+        "compressed_entropy": 5.543600082397461,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "198.67ms",
+          "compressed_ratio": 57.0899543762207,
+          "entropy": 3.1379802634385987,
+          "compressed_entropy": 5.5448079109191895,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "810.84ms",
+          "compressed_ratio": 99.4470443725586,
+          "entropy": 3.1379802634385983,
+          "compressed_entropy": 3.2412238121032715,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "64.65ms",
+          "compressed_ratio": 40.63108444213867,
+          "entropy": 3.1379802634385987,
+          "compressed_entropy": 5.543600082397461,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "65.97ms",
+          "compressed_ratio": 40.668678283691406,
+          "entropy": 3.1379802634385983,
+          "compressed_entropy": 5.543548583984375,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "27.23ms",
+          "compressed_ratio": 54.511810302734375,
+          "entropy": 3.1379802634385996,
+          "compressed_entropy": 5.506439208984375,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "59.46ms",
+          "compressed_ratio": 40.667118072509766,
+          "entropy": 3.137980263438599,
+          "compressed_entropy": 5.543546676635742,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "obj2",
+      "type": "application/octet-stream",
+      "entropy": 4.339365370998656,
+      "size": 246814,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "13.91ms",
+        "compressed_ratio": 33.89232635498047,
+        "entropy": 4.339365370998652,
+        "compressed_entropy": 5.538808822631836,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "92.55ms",
+          "compressed_ratio": 98.65121459960938,
+          "entropy": 4.339365370998653,
+          "compressed_entropy": 5.537008762359619,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "278.59ms",
+          "compressed_ratio": 78.01461791992188,
+          "entropy": 4.339365370998654,
+          "compressed_entropy": 4.393874168395996,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "13.91ms",
+          "compressed_ratio": 33.89232635498047,
+          "entropy": 4.339365370998652,
+          "compressed_entropy": 5.538808822631836,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "11.99ms",
+          "compressed_ratio": 33.936485290527344,
+          "entropy": 4.339365370998652,
+          "compressed_entropy": 5.539285659790039,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "8.86ms",
+          "compressed_ratio": 54.51392364501953,
+          "entropy": 4.339365370998653,
+          "compressed_entropy": 5.450526237487793,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "13.21ms",
+          "compressed_ratio": 33.93162536621094,
+          "entropy": 4.339365370998652,
+          "compressed_entropy": 5.539274215698242,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "paper5",
+      "type": "text/troff",
+      "entropy": 3.4214815425780403,
+      "size": 11954,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.6ms",
+        "compressed_ratio": 41.57604217529297,
+        "entropy": 3.42148154257804,
+        "compressed_entropy": 5.518586158752441,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "5.85ms",
+          "compressed_ratio": 63.23406219482422,
+          "entropy": 3.42148154257804,
+          "compressed_entropy": 5.527339458465576,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "11.45ms",
+          "compressed_ratio": 92.76393127441406,
+          "entropy": 3.42148154257804,
+          "compressed_entropy": 3.7025868892669678,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.6ms",
+          "compressed_ratio": 41.57604217529297,
+          "entropy": 3.42148154257804,
+          "compressed_entropy": 5.518586158752441,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "760\u00b5s",
+          "compressed_ratio": 41.726619720458984,
+          "entropy": 3.4214815425780403,
+          "compressed_entropy": 5.5176682472229,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "460\u00b5s",
+          "compressed_ratio": 56.88472366333008,
+          "entropy": 3.4214815425780407,
+          "compressed_entropy": 5.481770992279053,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "830\u00b5s",
+          "compressed_ratio": 41.6262321472168,
+          "entropy": 3.42148154257804,
+          "compressed_entropy": 5.518609046936035,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "sum",
+      "type": "application/x-executable",
+      "entropy": 3.6937744340046943,
+      "size": 38240,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "5.58ms",
+        "compressed_ratio": 34.67573165893555,
+        "entropy": 3.693774434004694,
+        "compressed_entropy": 5.5227484703063965,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "16.29ms",
+          "compressed_ratio": 74.25470733642578,
+          "entropy": 3.693774434004692,
+          "compressed_entropy": 5.536661624908447,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "26.25ms",
+          "compressed_ratio": 82.30648803710938,
+          "entropy": 3.693774434004693,
+          "compressed_entropy": 3.984191656112671,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "5.58ms",
+          "compressed_ratio": 34.67573165893555,
+          "entropy": 3.693774434004694,
+          "compressed_entropy": 5.5227484703063965,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.75ms",
+          "compressed_ratio": 34.77248764038086,
+          "entropy": 3.6937744340046934,
+          "compressed_entropy": 5.524159908294678,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.31ms",
+          "compressed_ratio": 52.38755416870117,
+          "entropy": 3.6937744340046903,
+          "compressed_entropy": 5.460714340209961,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.48ms",
+          "compressed_ratio": 34.74110794067383,
+          "entropy": 3.6937744340046925,
+          "compressed_entropy": 5.524136066436768,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "a.txt",
+      "type": "application/octet-stream",
+      "entropy": 0,
+      "size": 1,
+      "best_result": {
+        "engine": "lzss",
+        "time_taken": "250\u00b5s",
+        "compressed_ratio": 100.0,
+        "entropy": 0.0,
+        "compressed_entropy": 0.0,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "10\u00b5s",
+          "compressed_ratio": 300.0,
+          "entropy": 0.0,
+          "compressed_entropy": 1.0986123085021973,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "250\u00b5s",
+          "compressed_ratio": 100.0,
+          "entropy": 0.0,
+          "compressed_entropy": 0.0,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "120\u00b5s",
+          "compressed_ratio": 700.0,
+          "entropy": 0.0,
+          "compressed_entropy": 1.3517839908599854,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "130\u00b5s",
+          "compressed_ratio": 2500.0,
+          "entropy": 0.0,
+          "compressed_entropy": 1.976516604423523,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "20\u00b5s",
+          "compressed_ratio": 300.0,
+          "entropy": 0.0,
+          "compressed_entropy": 1.0986123085021973,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "130\u00b5s",
+          "compressed_ratio": 1300.0,
+          "entropy": 0.0,
+          "compressed_entropy": 1.8184831142425537,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "paper1",
+      "type": "text/troff",
+      "entropy": 3.453940282941565,
+      "size": 53161,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "3.88ms",
+        "compressed_ratio": 34.880836486816406,
+        "entropy": 3.453940282941566,
+        "compressed_entropy": 5.533957481384277,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "21.75ms",
+          "compressed_ratio": 63.42055130004883,
+          "entropy": 3.453940282941567,
+          "compressed_entropy": 5.541228294372559,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "52.13ms",
+          "compressed_ratio": 91.39218139648438,
+          "entropy": 3.453940282941567,
+          "compressed_entropy": 3.6614959239959717,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "3.88ms",
+          "compressed_ratio": 34.880836486816406,
+          "entropy": 3.453940282941566,
+          "compressed_entropy": 5.533957481384277,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "3.04ms",
+          "compressed_ratio": 34.956077575683594,
+          "entropy": 3.4539402829415664,
+          "compressed_entropy": 5.534115791320801,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "2.48ms",
+          "compressed_ratio": 54.468502044677734,
+          "entropy": 3.4539402829415677,
+          "compressed_entropy": 5.501805782318115,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "3.27ms",
+          "compressed_ratio": 34.93350601196289,
+          "entropy": 3.453940282941567,
+          "compressed_entropy": 5.534172058105469,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "plrabn12.txt",
+      "type": "application/octet-stream",
+      "entropy": 3.1409013476981507,
+      "size": 481861,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "41.66ms",
+        "compressed_ratio": 40.258705139160156,
+        "entropy": 3.1409013476981493,
+        "compressed_entropy": 5.54347038269043,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "128.33ms",
+          "compressed_ratio": 57.04030990600586,
+          "entropy": 3.1409013476981515,
+          "compressed_entropy": 5.544726371765137,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "483.73ms",
+          "compressed_ratio": 99.56336212158203,
+          "entropy": 3.14090134769815,
+          "compressed_entropy": 3.23295259475708,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "41.66ms",
+          "compressed_ratio": 40.258705139160156,
+          "entropy": 3.1409013476981493,
+          "compressed_entropy": 5.54347038269043,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "40.7ms",
+          "compressed_ratio": 40.295021057128906,
+          "entropy": 3.140901347698151,
+          "compressed_entropy": 5.543626308441162,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "16.57ms",
+          "compressed_ratio": 52.704410552978516,
+          "entropy": 3.14090134769815,
+          "compressed_entropy": 5.5071001052856445,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "40.45ms",
+          "compressed_ratio": 40.29253005981445,
+          "entropy": 3.140901347698151,
+          "compressed_entropy": 5.543628215789795,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "8a5c6530-a43d-4e3f-a7e3-0864fe6ff43a.jpg",
+      "type": "image/jpeg",
+      "entropy": 5.508771463437536,
+      "size": 40119,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.91ms",
+        "compressed_ratio": 99.5538330078125,
+        "entropy": 5.508771463437535,
+        "compressed_entropy": 5.539665699005127,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "18.68ms",
+          "compressed_ratio": 99.69091796875,
+          "entropy": 5.508771463437538,
+          "compressed_entropy": 5.541154861450195,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "17.12ms",
+          "compressed_ratio": 100.48605346679688,
+          "entropy": 5.508771463437537,
+          "compressed_entropy": 5.502028942108154,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.91ms",
+          "compressed_ratio": 99.5538330078125,
+          "entropy": 5.508771463437535,
+          "compressed_entropy": 5.539665699005127,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "2.92ms",
+          "compressed_ratio": 99.59869384765625,
+          "entropy": 5.508771463437536,
+          "compressed_entropy": 5.539617538452148,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "2.26ms",
+          "compressed_ratio": 134.68679809570312,
+          "entropy": 5.508771463437536,
+          "compressed_entropy": 5.128359794616699,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.88ms",
+          "compressed_ratio": 99.56878662109375,
+          "entropy": 5.508771463437535,
+          "compressed_entropy": 5.539669513702393,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "data.json",
+      "type": "application/json",
+      "entropy": 3.4184120819644366,
+      "size": 65510,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "4.57ms",
+        "compressed_ratio": 14.684781074523926,
+        "entropy": 3.4184120819644384,
+        "compressed_entropy": 5.527471542358398,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "21.55ms",
+          "compressed_ratio": 62.17676544189453,
+          "entropy": 3.4184120819644375,
+          "compressed_entropy": 5.541918754577637,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "42.12ms",
+          "compressed_ratio": 42.1798210144043,
+          "entropy": 3.4184120819644375,
+          "compressed_entropy": 2.854386329650879,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "4.57ms",
+          "compressed_ratio": 14.684781074523926,
+          "entropy": 3.4184120819644384,
+          "compressed_entropy": 5.527471542358398,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.97ms",
+          "compressed_ratio": 15.438863754272461,
+          "entropy": 3.418412081964438,
+          "compressed_entropy": 5.527588367462158,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "1.64ms",
+          "compressed_ratio": 31.715768814086914,
+          "entropy": 3.418412081964437,
+          "compressed_entropy": 5.524014949798584,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "2.73ms",
+          "compressed_ratio": 15.420547485351562,
+          "entropy": 3.4184120819644384,
+          "compressed_entropy": 5.52772855758667,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "trans",
+      "type": "application/octet-stream",
+      "entropy": 3.8350315366177807,
+      "size": 93695,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "7.18ms",
+        "compressed_ratio": 20.393831253051758,
+        "entropy": 3.835031536617779,
+        "compressed_entropy": 5.536750793457031,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "31.78ms",
+          "compressed_ratio": 70.15742492675781,
+          "entropy": 3.835031536617779,
+          "compressed_entropy": 5.53376579284668,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "82.8ms",
+          "compressed_ratio": 67.79764556884766,
+          "entropy": 3.8350315366177803,
+          "compressed_entropy": 3.8631603717803955,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "7.18ms",
+          "compressed_ratio": 20.393831253051758,
+          "entropy": 3.835031536617779,
+          "compressed_entropy": 5.536750793457031,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "4.02ms",
+          "compressed_ratio": 20.5069637298584,
+          "entropy": 3.83503153661778,
+          "compressed_entropy": 5.535138130187988,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "3.48ms",
+          "compressed_ratio": 50.03682327270508,
+          "entropy": 3.8350315366177803,
+          "compressed_entropy": 5.503077983856201,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "4.45ms",
+          "compressed_ratio": 20.494157791137695,
+          "entropy": 3.8350315366177785,
+          "compressed_entropy": 5.535171985626221,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "asyoulik.txt",
+      "type": "text/plain",
+      "entropy": 3.332732201940066,
+      "size": 125179,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "11.22ms",
+        "compressed_ratio": 38.91707229614258,
+        "entropy": 3.332732201940065,
+        "compressed_entropy": 5.539981365203857,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "39.34ms",
+          "compressed_ratio": 60.55009460449219,
+          "entropy": 3.332732201940065,
+          "compressed_entropy": 5.543351650238037,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "127.31ms",
+          "compressed_ratio": 96.9523696899414,
+          "entropy": 3.3327322019400647,
+          "compressed_entropy": 3.486531972885132,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "11.22ms",
+          "compressed_ratio": 38.91707229614258,
+          "entropy": 3.332732201940065,
+          "compressed_entropy": 5.539981365203857,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "10.55ms",
+          "compressed_ratio": 38.94902420043945,
+          "entropy": 3.3327322019400647,
+          "compressed_entropy": 5.540741920471191,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "4.52ms",
+          "compressed_ratio": 53.79816436767578,
+          "entropy": 3.332732201940065,
+          "compressed_entropy": 5.5096635818481445,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "9.53ms",
+          "compressed_ratio": 38.93943786621094,
+          "entropy": 3.3327322019400656,
+          "compressed_entropy": 5.540709972381592,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "lcet10.txt",
+      "type": "text/plain",
+      "entropy": 3.2363858643095678,
+      "size": 426754,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "30.75ms",
+        "compressed_ratio": 33.87665939331055,
+        "entropy": 3.236385864309568,
+        "compressed_entropy": 5.543416976928711,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "117.11ms",
+          "compressed_ratio": 60.40787124633789,
+          "entropy": 3.2363858643095673,
+          "compressed_entropy": 5.533139705657959,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "452.19ms",
+          "compressed_ratio": 94.25031280517578,
+          "entropy": 3.2363858643095664,
+          "compressed_entropy": 3.4697153568267822,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "30.75ms",
+          "compressed_ratio": 33.87665939331055,
+          "entropy": 3.236385864309568,
+          "compressed_entropy": 5.543416976928711,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "28.52ms",
+          "compressed_ratio": 33.928443908691406,
+          "entropy": 3.2363858643095673,
+          "compressed_entropy": 5.543197154998779,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "14.41ms",
+          "compressed_ratio": 51.14585876464844,
+          "entropy": 3.236385864309567,
+          "compressed_entropy": 5.509430885314941,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "29.53ms",
+          "compressed_ratio": 33.925636291503906,
+          "entropy": 3.2363858643095678,
+          "compressed_entropy": 5.5431928634643555,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "random.txt",
+      "type": "text/plain",
+      "entropy": 4.158528469456235,
+      "size": 100000,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "4.86ms",
+        "compressed_ratio": 75.34600067138672,
+        "entropy": 4.158528469456235,
+        "compressed_entropy": 5.542537689208984,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "38.56ms",
+          "compressed_ratio": 75.40399932861328,
+          "entropy": 4.1585284694562334,
+          "compressed_entropy": 5.543337821960449,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "76.3ms",
+          "compressed_ratio": 100.0,
+          "entropy": 4.158528469456234,
+          "compressed_entropy": 4.1585283279418945,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "4.86ms",
+          "compressed_ratio": 75.34600067138672,
+          "entropy": 4.158528469456235,
+          "compressed_entropy": 5.542537689208984,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "4.26ms",
+          "compressed_ratio": 75.36399841308594,
+          "entropy": 4.158528469456234,
+          "compressed_entropy": 5.542544841766357,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "4.8ms",
+          "compressed_ratio": 104.48600006103516,
+          "entropy": 4.158528469456236,
+          "compressed_entropy": 5.281140327453613,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "4.7ms",
+          "compressed_ratio": 75.35200500488281,
+          "entropy": 4.158528469456234,
+          "compressed_entropy": 5.54254150390625,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "pi.txt",
+      "type": "text/plain",
+      "entropy": 2.3025823330123467,
+      "size": 1000000,
+      "best_result": {
+        "engine": "arithmetic",
+        "time_taken": "193.59ms",
+        "compressed_ratio": 41.8223991394043,
+        "entropy": 2.3025823330123463,
+        "compressed_entropy": 5.54484748840332,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "193.59ms",
+          "compressed_ratio": 41.8223991394043,
+          "entropy": 2.3025823330123463,
+          "compressed_entropy": 5.54484748840332,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "1.42984s",
+          "compressed_ratio": 100.0,
+          "entropy": 2.3025823330123467,
+          "compressed_entropy": 2.3026533126831055,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "68.7ms",
+          "compressed_ratio": 46.70000076293945,
+          "entropy": 2.3025823330123463,
+          "compressed_entropy": 5.539651393890381,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "70.42ms",
+          "compressed_ratio": 46.70180130004883,
+          "entropy": 2.3025823330123467,
+          "compressed_entropy": 5.539656639099121,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "32.39ms",
+          "compressed_ratio": 50.44680404663086,
+          "entropy": 2.3025823330123467,
+          "compressed_entropy": 5.506435394287109,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "71.26ms",
+          "compressed_ratio": 46.700599670410156,
+          "entropy": 2.3025823330123467,
+          "compressed_entropy": 5.539650917053223,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "paper2",
+      "type": "text/troff",
+      "entropy": 3.189471494676916,
+      "size": 82199,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "6.95ms",
+        "compressed_ratio": 36.00165557861328,
+        "entropy": 3.1894714946769147,
+        "compressed_entropy": 5.538911819458008,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "27.04ms",
+          "compressed_ratio": 58.11871337890625,
+          "entropy": 3.1894714946769165,
+          "compressed_entropy": 5.541861057281494,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "91.24ms",
+          "compressed_ratio": 95.84180450439453,
+          "entropy": 3.1894714946769147,
+          "compressed_entropy": 3.496696710586548,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "6.95ms",
+          "compressed_ratio": 36.00165557861328,
+          "entropy": 3.1894714946769147,
+          "compressed_entropy": 5.538911819458008,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "5.42ms",
+          "compressed_ratio": 36.05518341064453,
+          "entropy": 3.189471494676915,
+          "compressed_entropy": 5.53890323638916,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "3.27ms",
+          "compressed_ratio": 51.947105407714844,
+          "entropy": 3.1894714946769156,
+          "compressed_entropy": 5.505169868469238,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "5.62ms",
+          "compressed_ratio": 36.040584564208984,
+          "entropy": 3.1894714946769156,
+          "compressed_entropy": 5.538830280303955,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "65f3998f-ae69-4a81-9415-33ce0c3cea1c.jpg",
+      "type": "image/jpeg",
+      "entropy": 5.510010666247002,
+      "size": 40185,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "1.95ms",
+        "compressed_ratio": 99.6117935180664,
+        "entropy": 5.510010666247003,
+        "compressed_entropy": 5.53924560546875,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "19.98ms",
+          "compressed_ratio": 99.71630859375,
+          "entropy": 5.510010666247,
+          "compressed_entropy": 5.542112827301025,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "16.15ms",
+          "compressed_ratio": 100.43051147460938,
+          "entropy": 5.510010666247002,
+          "compressed_entropy": 5.504368305206299,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "1.95ms",
+          "compressed_ratio": 99.6117935180664,
+          "entropy": 5.510010666247003,
+          "compressed_entropy": 5.53924560546875,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.9ms",
+          "compressed_ratio": 99.65658569335938,
+          "entropy": 5.510010666246997,
+          "compressed_entropy": 5.53922700881958,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "2.74ms",
+          "compressed_ratio": 134.71693420410156,
+          "entropy": 5.510010666246997,
+          "compressed_entropy": 5.141524791717529,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.88ms",
+          "compressed_ratio": 99.62672424316406,
+          "entropy": 5.510010666247002,
+          "compressed_entropy": 5.539243698120117,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "E.coli",
+      "type": "text/plain",
+      "entropy": 1.3861704579797518,
+      "size": 4638690,
+      "best_result": {
+        "engine": "arithmetic",
+        "time_taken": "847.48ms",
+        "compressed_ratio": 25.303264617919922,
+        "entropy": 1.3861704579797518,
+        "compressed_entropy": 5.545071601867676,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "847.48ms",
+          "compressed_ratio": 25.303264617919922,
+          "entropy": 1.3861704579797518,
+          "compressed_entropy": 5.545071601867676,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "1.78019s",
+          "compressed_ratio": 99.77375030517578,
+          "entropy": 1.3861704579797518,
+          "compressed_entropy": 1.418967366218567,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "2.00614s",
+          "compressed_ratio": 28.010086059570312,
+          "entropy": 1.3861704579797518,
+          "compressed_entropy": 5.543186187744141,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "1.59105s",
+          "compressed_ratio": 28.226869583129883,
+          "entropy": 1.3861704579797518,
+          "compressed_entropy": 5.543788909912109,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "97.12ms",
+          "compressed_ratio": 29.119449615478516,
+          "entropy": 1.3861704579797518,
+          "compressed_entropy": 5.528290271759033,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "1.58872s",
+          "compressed_ratio": 28.22661018371582,
+          "entropy": 1.3861704579797518,
+          "compressed_entropy": 5.543787956237793,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "c695818a-71b5-4985-8417-55e0bea3d93bwords.pdf",
+      "type": "application/pdf",
+      "entropy": 5.50816324788906,
+      "size": 11974,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "710\u00b5s",
+        "compressed_ratio": 98.11257934570312,
+        "entropy": 5.508163247889058,
+        "compressed_entropy": 5.5334248542785645,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "6.73ms",
+          "compressed_ratio": 100.13362121582031,
+          "entropy": 5.508163247889059,
+          "compressed_entropy": 5.535485744476318,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "6.58ms",
+          "compressed_ratio": 100.23384094238281,
+          "entropy": 5.508163247889062,
+          "compressed_entropy": 5.510194301605225,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "710\u00b5s",
+          "compressed_ratio": 98.11257934570312,
+          "entropy": 5.508163247889058,
+          "compressed_entropy": 5.5334248542785645,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "690\u00b5s",
+          "compressed_ratio": 98.26290130615234,
+          "entropy": 5.508163247889065,
+          "compressed_entropy": 5.533256530761719,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "530\u00b5s",
+          "compressed_ratio": 132.8795623779297,
+          "entropy": 5.508163247889063,
+          "compressed_entropy": 5.114442825317383,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "680\u00b5s",
+          "compressed_ratio": 98.16268920898438,
+          "entropy": 5.508163247889062,
+          "compressed_entropy": 5.533469200134277,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    },
+    {
+      "name": "bib",
+      "type": "text/plain",
+      "entropy": 3.6048341141871005,
+      "size": 111261,
+      "best_result": {
+        "engine": "flate",
+        "time_taken": "9.39ms",
+        "compressed_ratio": 31.53485870361328,
+        "entropy": 3.604834114187099,
+        "compressed_entropy": 5.538331031799316,
+        "lossless": true,
+        "failed": false
+      },
+      "results": [
+        {
+          "engine": "arithmetic",
+          "time_taken": "33.75ms",
+          "compressed_ratio": 65.41375732421875,
+          "entropy": 3.6048341141870996,
+          "compressed_entropy": 5.54334831237793,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzss",
+          "time_taken": "120.87ms",
+          "compressed_ratio": 87.99129486083984,
+          "entropy": 3.6048341141871,
+          "compressed_entropy": 3.781252384185791,
+          "lossless": false,
+          "failed": false
+        },
+        {
+          "engine": "flate",
+          "time_taken": "9.39ms",
+          "compressed_ratio": 31.53485870361328,
+          "entropy": 3.604834114187099,
+          "compressed_entropy": 5.538331031799316,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "gzip",
+          "time_taken": "6.64ms",
+          "compressed_ratio": 31.60676383972168,
+          "entropy": 3.604834114187099,
+          "compressed_entropy": 5.538562297821045,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "lzw",
+          "time_taken": "4.36ms",
+          "compressed_ratio": 54.1968879699707,
+          "entropy": 3.6048341141871005,
+          "compressed_entropy": 5.499667644500732,
+          "lossless": true,
+          "failed": false
+        },
+        {
+          "engine": "zlib",
+          "time_taken": "7.24ms",
+          "compressed_ratio": 31.595977783203125,
+          "entropy": 3.6048341141871,
+          "compressed_entropy": 5.53850793838501,
+          "lossless": true,
+          "failed": false
+        }
+      ]
+    }
+  ]
+}
