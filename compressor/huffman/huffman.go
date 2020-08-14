@@ -219,14 +219,13 @@ func encode(tree HuffmanTree, input string) []byte {
 	tempV := make([]rune, 0)
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
-	finished := ""
+
 	for i := 0; i < len(input); i++ {
 		if indexOf(rune(input[i]), vals) != -1 {
 			fmt.Fprintf(&answer, "%s", bin[indexOf(rune(input[i]), vals)])
 		} else {
 			fmt.Fprintf(&answer, "%s", bin[0])
 		}
-		finished += string(input[i])
 	}
 
 	//Println(len(answer))
