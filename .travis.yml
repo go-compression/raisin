@@ -7,7 +7,7 @@ before_install:
   - docker build . -t compressor
 
 script:
-  - docker run --cidfile="machine.id" -it compressor ./main -algorithm suite benchmark -generate alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
+  - docker run --cidfile="machine.id" -it compressor ./main benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
   - docker cp $(cat machine.id):/go/src/github.com/mrfleap/custom-compression/index.html ./index.html
   - rm machine.id
 
