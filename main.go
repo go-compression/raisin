@@ -96,7 +96,7 @@ func main() {
 			return
 		}
 
-		algorithms := strings.Split(*algorithm, ",")
+		algorithms := parseAlgorithms(*algorithm)
 
 		if *algorithm == "default" { suite := "suite"; algorithm = &suite }
 
@@ -117,6 +117,34 @@ func main() {
 			"please provide a valid command, " +
 			"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
 	}
+}
+
+func parseAlgorithms(algorithmString string) (algorithms [][]string) {
+	var buffer []byte
+	var inLayer bool
+	var layer []string
+	for _, char := range []byte(algorithmString) {
+		if char == ',' {
+			if inLayer && len(buffer) > 0 {
+				layer = append(layer, string(buffer))
+			} else if len(buffer) > 0 {
+				algorithms = append(algorithms, []string{string(buffer)})
+			}
+			buffer = make([]byte, 0)
+		} else if char == '[' {
+			inLayer = true
+		} else if char == ']' {
+			layer = append(layer, string(buffer))
+			buffer = make([]byte, 0)
+			inLayer = false
+			algorithms = append(algorithms, layer)
+			layer = make([]string, 0)
+		} else {
+			buffer = append(buffer, char)
+		}
+	}
+	algorithms = append(algorithms, []string{string(buffer)})
+	return algorithms
 }
 
 func getPosAfterCommand(command string, args []string) int {
