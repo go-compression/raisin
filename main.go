@@ -14,17 +14,17 @@ import (
 
 var Commands = [...]string{"compress", "decompress", "benchmark", "help"}
 
-var algorithm string
-
 func main() {
 	// Profiling statement here V
 	// defer profile.Start().Stop()
 	// ^
-	flag.StringVar(&algorithm, "algorithm", "default", 
-		fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+	compressCmd := flag.NewFlagSet("compress", flag.ExitOnError)
+
+
+	decompressCmd := flag.NewFlagSet("decompress", flag.ExitOnError)
+
 	
-	_ = flag.NewFlagSet("compress", flag.ExitOnError)
-	_ = flag.NewFlagSet("decompress", flag.ExitOnError)
+
 	benchmarkCmd := flag.NewFlagSet("benchmark", flag.ExitOnError)
 
 	generateHTML := benchmarkCmd.Bool("generate", false, "Compile benchmark results as an html file")
@@ -32,7 +32,7 @@ func main() {
 	flag.Parse()
 	command := flag.Arg(0)
 	if command == "" {
-		errorMsg(fmt.Sprintf(
+		errorWithMsg(fmt.Sprintf(
 			"Please provide a valid command, possible commands include: \n\t %s\n", strings.Join(Commands[:], ", ")))
 	}
 
@@ -46,24 +46,47 @@ func main() {
 		return
 	}
 
+	// Get flag argument that is not a flag "-algorithm..."
 	file := flag.Arg(1)
 	for i := 2; len(file) > 0 && file[0] == '-'; i++ {
 		file = flag.Arg(i)
 	}
+
 	if file == "" && !strings.Contains(file, ",") {
-		errorMsg("Please provide a file to be compressed/decompressed")
-	} else if _, err := os.Stat(file); os.IsNotExist(err) && file != "help" && !strings.Contains(file, ",") {
-		errorMsg(fmt.Sprintf("Could not open file (likely does not exist): %s", file))
-	}
+		errorWithMsg("Please provide a file to be compressed/decompressed\n")
+	} else if strings.Contains(file, ",") {
+		for _, filename := range strings.Split(file, ",") {
+			if _, err := os.Stat(filename); os.IsNotExist(err) {
+				errorWithMsg(fmt.Sprintf("Could not open file (likely does not exist): %s\n", filename))
+			}
+		}
+	} else if _, err := os.Stat(file); os.IsNotExist(err) && file != "help" {
+		errorWithMsg(fmt.Sprintf("Could not open file (likely does not exist): %s\n", file))
+	} 
 
 	switch command {
 	case "compress", "c":
-		if algorithm == "default" { algorithm = "lzss" }
-		engine.CompressFile(algorithm, file)
+		algorithm := compressCmd.String("algorithm", "default", 
+			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+
+		posAfterCommand := getPosAfterCommand("compress", os.Args)
+		compressCmd.Parse(os.Args[posAfterCommand:])
+
+		if *algorithm == "default" { lzss := "lzss"; algorithm = &lzss }
+		engine.CompressFile(*algorithm, file)
 	case "decompress", "d":
-		if algorithm == "default" { algorithm = "lzss" }
-		engine.DecompressFile(algorithm, file)
+		algorithm := decompressCmd.String("algorithm", "default", 
+			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+
+		posAfterCommand := getPosAfterCommand("decompress", os.Args)
+		decompressCmd.Parse(os.Args[posAfterCommand:])
+
+		if *algorithm == "default" { lzss := "lzss"; algorithm = &lzss }
+		engine.DecompressFile(*algorithm, file)
 	case "benchmark":
+		algorithm := benchmarkCmd.String("algorithm", "default", 
+			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+
 		posAfterCommand := getPosAfterCommand("benchmark", os.Args)
 		benchmarkCmd.Parse(os.Args[posAfterCommand:])
 
@@ -73,32 +96,55 @@ func main() {
 			return
 		}
 
-		if algorithm == "default" { algorithm = "suite" }
+		algorithms := parseAlgorithms(*algorithm)
+
+		if *algorithm == "default" { suite := "suite"; algorithm = &suite }
 
 		files := strings.Split(file, ",")
 		for i := range files {
 			files[i] = strings.TrimSpace(files[i])
 		}
 
-		if algorithm == "all" || algorithm == "suite" {			
-			output := engine.BenchmarkSuite(files, engine.Suites[algorithm], *generateHTML)
-			if *generateHTML {
-				err := ioutil.WriteFile("index.html", []byte(output), 0644)
-				check(err)
-				fmt.Println("Wrote table to index.html")
-			}
-		} else {
-			if len(files) > 1 {
-				errorMsg("Cannot benchmark more than one file without using multiple algorithms currently")
-			}
-			engine.BenchmarkFile(algorithm, files[0], engine.Settings{true, true, true})
+		output := engine.BenchmarkSuite(files, algorithms, *generateHTML)
+		if *generateHTML {
+			err := ioutil.WriteFile("index.html", []byte(output), 0644)
+			check(err)
+			fmt.Println("Wrote table to index.html")
 		}
 	default:
-		errorMsg(fmt.Sprintf(
+		errorWithMsg(fmt.Sprintf(
 			"'&s' is not a valid command, " +
 			"please provide a valid command, " +
 			"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
 	}
+}
+
+func parseAlgorithms(algorithmString string) (algorithms [][]string) {
+	var buffer []byte
+	var inLayer bool
+	var layer []string
+	for _, char := range []byte(algorithmString) {
+		if char == ',' {
+			if inLayer && len(buffer) > 0 {
+				layer = append(layer, string(buffer))
+			} else if len(buffer) > 0 {
+				algorithms = append(algorithms, []string{string(buffer)})
+			}
+			buffer = make([]byte, 0)
+		} else if char == '[' {
+			inLayer = true
+		} else if char == ']' {
+			layer = append(layer, string(buffer))
+			buffer = make([]byte, 0)
+			inLayer = false
+			algorithms = append(algorithms, layer)
+			layer = make([]string, 0)
+		} else {
+			buffer = append(buffer, char)
+		}
+	}
+	if len(buffer) > 0 { algorithms = append(algorithms, []string{string(buffer)}) }
+	return algorithms
 }
 
 func getPosAfterCommand(command string, args []string) int {
@@ -108,7 +154,7 @@ func getPosAfterCommand(command string, args []string) int {
 	return -1
 }
 
-func errorMsg(msg string) {
+func errorWithMsg(msg string) {
 	fmt.Print(msg)
 	os.Exit(1)
 }
