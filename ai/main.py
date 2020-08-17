@@ -23,12 +23,12 @@ algorithms = ["arithmetic", "lzss", "flate", "gzip", "lzw", "zlib"]
 
 benchmark_params = {
     "generate": False, 
-    "download": False, 
+    "download": True, 
     "fresh": False, 
     "delete_at_end": False,
 }
 
-def main(load_data=True, save_data=False, json_file="data.json"):
+def main(load_data=False, save_data=False, json_file="data.json"):
     if load_data:
         with open(json_file) as f:
             data = json.load(f)
