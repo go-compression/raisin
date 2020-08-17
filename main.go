@@ -143,7 +143,7 @@ func parseAlgorithms(algorithmString string) (algorithms [][]string) {
 			buffer = append(buffer, char)
 		}
 	}
-	algorithms = append(algorithms, []string{string(buffer)})
+	if len(buffer) > 0 { algorithms = append(algorithms, []string{string(buffer)}) }
 	return algorithms
 }
 
