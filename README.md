@@ -37,11 +37,9 @@ Hello world!
 
 The possible commands include:
 
-```
-compress - Compress a given file and output the compressed contents to a file with ".compressed" at the end
-decompress - Decompress a given file and output the decompressed contents to a file without ".compressed" at the end
-benchmark - Benchmark a given file and measure the compression ratio, outputs a .compressed and a .decompressed file
-```
+- `compress` - Compress a given file and output the compressed contents to a file with ".compressed" at the end
+- `decompress` - Decompress a given file and output the decompressed contents to a file without ".compressed" at the end
+- `benchmark` - Benchmark a given file and measure the compression ratio, outputs a .compressed and a .decompressed file
 
 The most important flag is the `-algorithm` flag which allows you to specify which algorithm to use during compression, decompression, or benchmarking. The possible algorithms include:
 
