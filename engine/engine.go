@@ -29,9 +29,13 @@ import (
 	"time"
 )
 
+// Engines is a slice of strings representing possible algorithms.
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
+
+// Suites is a map of strings to strings representing a suite name and the contained algorithms.
 var Suites = map[string][]string{"all": Engines[2:], "suite": {"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}}
 
+// CompressedFile is a struct used to read a compressed file or write to a compressed file.
 type CompressedFile struct {
 	CompressionEngine     string
 	Compressed            []byte
@@ -40,6 +44,7 @@ type CompressedFile struct {
 	MaxSearchBufferLength int
 }
 
+// Readers represents a map of algorithm names to their NewReader interfaces.
 var Readers = map[string]interface{}{
 	"lzss":       lz.NewReader,
 	"dmc":        dmc.NewReader,
@@ -92,6 +97,7 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 	return bytesToWriteOut, err
 }
 
+// Writers represents a map of algorithm names to their NewWriter interfaces.
 var Writers = map[string]interface{}{
 	"lzss":       lz.NewWriter,
 	"dmc":        dmc.NewWriter,
@@ -132,6 +138,7 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	return len(compressed), nil
 }
 
+// GetCompressedFileFromPath takes a path variable and returns a CompressedFile object or an error.
 func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	var cf CompressedFile
 	fileContents, err := ioutil.ReadFile(path)
@@ -139,6 +146,7 @@ func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	return cf, err
 }
 
+// CompressFile takes a compression algorithm as a string and a path to a file and writes out the file  in the same path with .compressed appended to the end.
 func CompressFile(compressionEngine string, fileString string) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
@@ -157,6 +165,7 @@ func CompressFile(compressionEngine string, fileString string) {
 	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
 }
 
+// DecompressFile takes a compression algorithm as a string and a path to a file and writes out the decompressed file in the same path with .decompressed appended to the end.
 func DecompressFile(compressionEngine string, fileString string) []byte {
 	compressedFile, err := GetCompressedFileFromPath(fileString)
 	compressedFile.CompressionEngine = compressionEngine
@@ -185,6 +194,7 @@ func DecompressFile(compressionEngine string, fileString string) []byte {
 	return stream
 }
 
+// Result is an intermediary object used to represent the benchmarked results of a certain file and algorithm.
 type Result struct {
 	CompressionEngine string
 	TimeTaken         string
@@ -195,7 +205,9 @@ type Result struct {
 	Failed            bool
 }
 
-func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) string {
+// BenchmarkSuite takes a set of files and algorithms and returns the result as an html table if generateHTML is set.
+// The result is also outputted to stdout.
+func BenchmarkSuite(files []string, algorithms [][]string, generateHTML bool) string {
 	var html string
 	timeout := 2 * time.Minute
 
@@ -224,7 +236,7 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) st
 			resultChans[algorithmsString] = resultChannel
 
 			wg.Add(1)
-			go AsyncBenchmarkFile(resultChannel, &wg, algorithmsInLayer, fileString, true)
+			go AsyncBenchmarkFile(resultChannel, &wg, algorithmsInLayer, fileString)
 		}
 
 		waitTimeout(&wg, timeout)
@@ -271,11 +283,11 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) st
 		t.AppendRow(table.Row{"File", fileString, "Size", ByteCountSI(fileSize)})
 
 		t.Render()
-		if generateHtml {
+		if generateHTML {
 			html = html + "<br>" + t.RenderHTML()
 		}
 	}
-	if generateHtml {
+	if generateHTML {
 		tmpl := template.Must(template.ParseFiles("templates/benchmark.html"))
 		var b bytes.Buffer
 		tmpl.Execute(&b, struct {
@@ -283,12 +295,13 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) st
 			Created string
 		}{Tables: template.HTML(html), Created: strconv.FormatInt(time.Now().Unix(), 10)})
 		return b.String()
-	} else {
-		return ""
 	}
+	return ""
 }
 
-func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressionEngines []string, fileString string, suite bool) {
+// AsyncBenchmarkFile takes a channel to push the result, a waitgroup, engines, a file string and runs the benchmark.
+// The function will push the result to the channel or push a failed result if it is able to catch an error during execution.
+func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressionEngines []string, fileString string) {
 	defer wg.Done()
 
 	algorithmsString := strings.Join(compressionEngines[:], ",")
@@ -319,18 +332,22 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressi
 	resultChannel <- result
 }
 
+// Settings represents an object that can be used to modify the settings when benchmarking files with BenchmarkFile
 type Settings struct {
 	WriteOutFiles bool
 	PrintStats    bool
 	PrintStatus   bool
 }
 
+// NewSuiteSettings returns common settings for a testing suite as a Settings object
 func NewSuiteSettings() Settings {
 	s := Settings{}
 	s.PrintStatus = true
 	return s
 }
 
+// BenchmarkFile takes a set of algorithms, a file path, and a settings object.
+// It benchmarks the file and returns the result as a Result object.
 func BenchmarkFile(algorithms []string, fileString string, settings Settings) Result {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)

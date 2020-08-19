@@ -37,15 +37,15 @@ func (bits bitString) unpack() bitString {
 	panic("Couldn't unpack")
 }
 
-func (b bitString) AsByteSlice() []byte {
+func (bits bitString) AsByteSlice() []byte {
 	var out []byte
 	var str string
 
-	for i := len(b); i > 0; i -= 8 {
+	for i := len(bits); i > 0; i -= 8 {
 		if i-8 < 0 {
-			str = string(b[0:i])
+			str = string(bits[0:i])
 		} else {
-			str = string(b[i-8 : i])
+			str = string(bits[i-8 : i])
 		}
 		v, err := strconv.ParseUint(str, 2, 8)
 		if err != nil {
@@ -56,15 +56,10 @@ func (b bitString) AsByteSlice() []byte {
 	return out
 }
 
+// Compress takes a slice of bytes and returns a slice of bytes representing the compressed stream
 func Compress(input []byte) []byte {
-	// freqs := buildFreqTable(input)
-	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
-	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
-	// keys := buildKeys(freqs)
-	// printFreqs(freqs, keys)
 
 	bits := encode(input)
-	// fmt.Println(bits)
 
 	err, bytes := bits.Pack().AsByteSlice()
 	if err != nil {
@@ -73,53 +68,41 @@ func Compress(input []byte) []byte {
 	return bytes
 }
 
+// Decompress takes a slice of bytes and returns a slice of bytes representing the decompressed stream
 func Decompress(input []byte) []byte {
 	bits := FromByteSlice(input).Unpack()
-	// _, bytes := bits2.AsByteSlice()
-	// fmt.Println(reflect.DeepEqual(bytes, input))
-	// bits2 = bits2.Unpack()
-	// inputString := fmt.Sprintf("%08b", input)
-	// bits := bitString(strings.Replace(inputString[1:len(inputString)-1], " ", "", -1))
-	// bits = bits.unpack()
-	// fmt.Println(string(bits), len(bits))
-
-	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
-	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
-	// keys := buildKeys(freqs)
-	// printFreqs(freqs, keys)
 
 	output := decode(bits)
-	// fmt.Println(string(output))
 
 	return output
 }
 
 const (
-	MAX_CODE        = 0xffff
-	ONE_FOURTH      = 0x4000
-	ONE_HALF        = 2 * ONE_FOURTH
-	THREE_FOURTHS   = 3 * ONE_FOURTH
-	CODE_VALUE_BITS = 16
-	MAX_FREQ        = 16383
+	MaxCode       = 0xffff
+	OneFourth     = 0x4000
+	OneHalf       = 2 * OneFourth
+	ThreeFourths  = 3 * OneFourth
+	CodeValueBits = 16
+	MaxFreq       = 16383
 )
 
 func decode(bits bitSlice) []byte {
 	var output []byte
 	var high, low, value uint32
-	high = MAX_CODE
+	high = MaxCode
 	bits = append(bits, []bool{true, false}...)
 
-	for i := 0; i < CODE_VALUE_BITS; i++ {
+	for i := 0; i < CodeValueBits; i++ {
 		value <<= 1
 		if bits[i] {
 			value += 1
 		}
 	}
 
-	// val, err := strconv.ParseInt(bits[:CODE_VALUE_BITS], 2, 32)
+	// val, err := strconv.ParseInt(bits[:CodeValueBits], 2, 32)
 	// if err != nil { panic(err) }
 	// value = uint32(val)
-	bits = bits[CODE_VALUE_BITS:]
+	bits = bits[CodeValueBits:]
 
 	model := newModel()
 
@@ -144,16 +127,16 @@ func decode(bits bitSlice) []byte {
 		high = low + (difference*upper)/count - 1
 		low = low + (difference*lower)/count
 		for {
-			if high < ONE_HALF {
+			if high < OneHalf {
 				//do nothing, bit is a zero
-			} else if low >= ONE_HALF {
-				value -= ONE_HALF //subtract one half from all three code values
-				low -= ONE_HALF
-				high -= ONE_HALF
-			} else if low >= ONE_FOURTH && high < THREE_FOURTHS {
-				value -= ONE_FOURTH
-				low -= ONE_FOURTH
-				high -= ONE_FOURTH
+			} else if low >= OneHalf {
+				value -= OneHalf //subtract one half from all three code values
+				low -= OneHalf
+				high -= OneHalf
+			} else if low >= OneFourth && high < ThreeFourths {
+				value -= OneFourth
+				low -= OneFourth
+				high -= OneFourth
 			} else {
 				break
 			}
@@ -192,7 +175,7 @@ func encode(input []byte) bitSlice {
 	var pendingBits int
 
 	var high, low uint32
-	high = MAX_CODE
+	high = MaxCode
 	model := newModel()
 
 	inputChars := make([]int, len(input))
@@ -212,27 +195,27 @@ func encode(input []byte) bitSlice {
 		high = low + (difference * upper / count) - 1
 		low = low + (difference * lower / count)
 		for {
-			if high < ONE_HALF {
+			if high < OneHalf {
 				// Lower half
 				bits = PushBits(bits, false, pendingBits)
 				pendingBits = 0
-			} else if low >= ONE_HALF {
+			} else if low >= OneHalf {
 				// Upper half
 				bits = PushBits(bits, true, pendingBits)
 				pendingBits = 0
 				// fmt.Println(strconv.FormatUint(uint64(high), 2))
-			} else if low >= ONE_FOURTH && high < THREE_FOURTHS {
+			} else if low >= OneFourth && high < ThreeFourths {
 				pendingBits++
-				low -= ONE_FOURTH
-				high -= ONE_FOURTH
+				low -= OneFourth
+				high -= OneFourth
 			} else {
 				break
 			}
 			high <<= 1
 			high++
 			low <<= 1
-			high &= MAX_CODE
-			low &= MAX_CODE
+			high &= MaxCode
+			low &= MaxCode
 		}
 	}
 	return bits
@@ -258,7 +241,7 @@ func (model *Model) update(input int) {
 	for i := input + 1; i < 258; i++ {
 		model.cumulative_frequencies[i]++
 	}
-	if model.cumulative_frequencies[257] >= MAX_FREQ {
+	if model.cumulative_frequencies[257] >= MaxFreq {
 		model.frozen = true
 		fmt.Println("FROZEN")
 	}
