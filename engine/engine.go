@@ -156,7 +156,7 @@ func CompressFile(compressionEngine string, fileString string) {
 	file.CompressionEngine = compressionEngine
 	file.Write(fileContents)
 
-	var compressedFilePath = filepath.Base(fileString) + ".compressed"
+	var compressedFilePath = fileString + ".compressed"
 	err = ioutil.WriteFile(compressedFilePath, file.Compressed, 0644)
 
 	fmt.Printf("Original bytes: %v\n", len(fileContents))
@@ -187,7 +187,7 @@ func DecompressFile(compressionEngine string, fileString string) []byte {
 		}
 	}
 
-	var decompressedFilePath = filepath.Base(strings.Replace(fileString, ".compressed", "", -1))
+	var decompressedFilePath = strings.Replace(fileString, ".compressed", "", -1)
 	err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
 	check(err)
 
