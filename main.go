@@ -113,7 +113,7 @@ func main() {
 		}
 	default:
 		errorWithMsg(fmt.Sprintf(
-			"'&s' is not a valid command, " +
+			"'%s' is not a valid command, " +
 			"please provide a valid command, " +
 			"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
 	}

@@ -19,7 +19,7 @@ import (
 	ent "github.com/kzahedi/goent/discrete"
 	"math"
 	"bytes"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"sort"
 	"os"
 	"html/template"
