@@ -12,6 +12,7 @@ import (
 
 // https://github.com/spf13/cobra#getting-started
 
+// Commands represents all possible commands that can be used durinv CLI invocation
 var Commands = [...]string{"compress", "decompress", "benchmark", "help"}
 
 func main() {
