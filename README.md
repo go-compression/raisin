@@ -1,6 +1,6 @@
 # Custom Compression Engine
 
-[![Build Status](https://travis-ci.com/mrfleap/custom-compression.svg?branch=master)](https://travis-ci.com/mrfleap/custom-compression)
+[![Build Status](https://travis-ci.com/mrfleap/custom-compression.svg?branch=master)](https://travis-ci.com/mrfleap/custom-compression) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/custom-compression)](https://goreportcard.com/report/github.com/mrfleap/custom-compression) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/custom-compression/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/custom-compression?branch=master)
 
 [View benchmarks for latest deployment](https://mrfleap.github.io/custom-compression/)
 

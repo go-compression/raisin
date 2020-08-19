@@ -197,7 +197,7 @@ type Result struct {
 
 func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) string {
 	var html string
-	timeout := 4 * time.Minute
+	timeout := 2 * time.Minute
 
 	for i, fileString := range files {
 		fmt.Printf("Compressing file %d/%d - %s\n", i + 1, len(files), fileString)
