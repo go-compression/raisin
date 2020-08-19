@@ -207,8 +207,9 @@ type Result struct {
 
 // BenchmarkSuite takes a set of files and algorithms and returns the result as an html table if generateHTML is set.
 // The result is also outputted to stdout.
-func BenchmarkSuite(files []string, algorithms [][]string, generateHTML bool) string {
+func BenchmarkSuite(files []string, algorithms [][]string, generateHTML bool) (string, []Result) {
 	var html string
+	var allResults []Result
 	timeout := 2 * time.Minute
 
 	for i, fileString := range files {
@@ -273,11 +274,13 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHTML bool) st
 
 		for _, result := range results {
 			t.AppendRow([]interface{}{result.CompressionEngine, result.TimeTaken, fmt.Sprintf("%.2f%%", result.Ratio), fmt.Sprintf("%.2f", result.ActualEntropy), fmt.Sprintf("%.2f", result.Entropy), result.Lossless})
+			allResults = append(allResults, result)
 		}
 
 		t.AppendSeparator()
 		for _, result := range failedResults {
 			t.AppendRow([]interface{}{result.CompressionEngine, result.TimeTaken, "DNF", "DNF", "DNF", result.Lossless})
+			allResults = append(allResults, result)
 		}
 		t.AppendSeparator()
 		t.AppendRow(table.Row{"File", fileString, "Size", ByteCountSI(fileSize)})
@@ -294,9 +297,9 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHTML bool) st
 			Tables  template.HTML
 			Created string
 		}{Tables: template.HTML(html), Created: strconv.FormatInt(time.Now().Unix(), 10)})
-		return b.String()
+		return b.String(), allResults
 	}
-	return ""
+	return "", allResults
 }
 
 // AsyncBenchmarkFile takes a channel to push the result, a waitgroup, engines, a file string and runs the benchmark.

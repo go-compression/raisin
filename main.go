@@ -19,6 +19,10 @@ func main() {
 	// Profiling statement here V
 	// defer profile.Start().Stop()
 	// ^
+	mainBehaviour()
+}
+
+func mainBehaviour() []engine.Result {
 	compressCmd := flag.NewFlagSet("compress", flag.ExitOnError)
 
 	decompressCmd := flag.NewFlagSet("decompress", flag.ExitOnError)
@@ -41,7 +45,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Valid commands include: \n\t %s\n", strings.Join(Commands[:], ", "))
 		fmt.Fprintf(os.Stderr, "Flags:\n")
 		flag.PrintDefaults()
-		return
+		return nil
 	}
 
 	// Get flag argument that is not a flag "-algorithm..."
@@ -97,7 +101,7 @@ func main() {
 		if file == "help" {
 			fmt.Fprintf(os.Stderr, "Flags:\n")
 			flag.PrintDefaults()
-			return
+			return nil
 		}
 
 		algorithms := parseAlgorithms(*algorithm)
@@ -112,18 +116,20 @@ func main() {
 			files[i] = strings.TrimSpace(files[i])
 		}
 
-		output := engine.BenchmarkSuite(files, algorithms, *generateHTML)
+		output, results := engine.BenchmarkSuite(files, algorithms, *generateHTML)
 		if *generateHTML {
 			err := ioutil.WriteFile("index.html", []byte(output), 0644)
 			check(err)
 			fmt.Println("Wrote table to index.html")
 		}
+		return results
 	default:
 		errorWithMsg(fmt.Sprintf(
 			"'%s' is not a valid command, "+
 				"please provide a valid command, "+
 				"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
 	}
+	return nil
 }
 
 func parseAlgorithms(algorithmString string) (algorithms [][]string) {

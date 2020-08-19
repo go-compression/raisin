@@ -1,6 +1,6 @@
 # Custom Compression Engine
 
-[![Build Status](https://travis-ci.com/mrfleap/custom-compression.svg?branch=master)](https://travis-ci.com/mrfleap/custom-compression) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/custom-compression)](https://goreportcard.com/report/github.com/mrfleap/custom-compression) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/custom-compression/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/custom-compression?branch=master)
+[![Build Status](https://travis-ci.com/mrfleap/custom-compression.svg?branch=master)](https://travis-ci.com/mrfleap/custom-compression) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/custom-compression)](https://goreportcard.com/report/github.com/mrfleap/custom-compression) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/custom-compression/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/custom-compression?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/mrfleap/custom-compression)
 
 [View benchmarks for latest deployment](https://mrfleap.github.io/custom-compression/)
 
