@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
+	"strings"
 	"testing"
-	// "reflect"
 )
 
 const samIAm = `GREEN EGGS AND HAM" (by Doctor Seuss) 
@@ -143,26 +145,56 @@ SAY! I WILL EAT THEM ANYWHERE!
 I DO SO LIKE GREEN EGGS AND HAM!
 THANK YOU! THANK YOU, SAM I AM.`
 
+var algorithms = []string{"arithmetic", "huffman", "lzss", "dmc", "mcc", "zlib", "flate", "gzip"}
+var losslessAlgorithms = []string{"arithmetic", "huffman", "lzss", "mcc", "zlib", "flate", "gzip"}
+
 func TestMainBehaviour(t *testing.T) {
 	path := "/tmp/samIAm.txt"
 
 	err := ioutil.WriteFile(path, []byte(samIAm), 0644)
 	check(err)
 
-	os.Args = []string{"custom-compression", "benchmark", "-algorithm=arithmetic,huffman,lzss", path}
+	os.Args = []string{"custom-compression", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
 	results := mainBehaviour()
 
 	for _, result := range results {
-		if !result.Lossless {
+		if !result.Lossless && stringInSlice(result.CompressionEngine, losslessAlgorithms) {
 			t.Errorf("Result for '%s' is not lossless", result.CompressionEngine)
 		}
 	}
 
-	// var decompressed []byte
-	// decompressed, err = ioutil.ReadFile(path + ".decompressed")
-	// check(err)
+	for _, algorithm := range algorithms {
+		os.Args = []string{"custom-compression", "compress", "-algorithm=" + algorithm, path}
+		mainBehaviour()
 
-	// if !reflect.DeepEqual([]byte(samIAm), decompressed) {
-	// 	t.Errorf("Decompressed and original files are not equal")
-	// }
+		os.Args = []string{"custom-compression", "decompress", "-algorithm=" + algorithm, path + ".compressed"}
+		mainBehaviour()
+
+		var decompressed []byte
+		decompressed, err = ioutil.ReadFile(path)
+		check(err)
+
+		if algorithm == "dmc" {
+			fmt.Printf("DMC running")
+			fmt.Printf(string(decompressed))
+		}
+
+		if !reflect.DeepEqual([]byte(samIAm), decompressed) && stringInSlice(algorithm, losslessAlgorithms) {
+			t.Errorf("Decompressed and original files are not equal for %s", algorithm)
+		}
+
+		err = os.Remove(path)
+		check(err)
+		err = ioutil.WriteFile(path, []byte(samIAm), 0644)
+		check(err)
+	}
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
