@@ -1,55 +1,60 @@
 package engine
 
 import (
-	"fmt"
-	lz "github.com/mrfleap/custom-compression/compressor/lz"
-	arithmetic "github.com/mrfleap/custom-compression/compressor/arithmetic"
-	huffman "github.com/mrfleap/custom-compression/compressor/huffman"
-	mcc "github.com/mrfleap/custom-compression/compressor/mcc"
-	dmc "github.com/mrfleap/custom-compression/compressor/dmc"
+	"bytes"
 	flate "compress/flate"
 	gzip "compress/gzip"
 	lzw "compress/lzw"
 	zlib "compress/zlib"
+	"fmt"
+	"github.com/jedib0t/go-pretty/v6/table"
+	ent "github.com/kzahedi/goent/discrete"
+	arithmetic "github.com/mrfleap/custom-compression/compressor/arithmetic"
+	dmc "github.com/mrfleap/custom-compression/compressor/dmc"
+	huffman "github.com/mrfleap/custom-compression/compressor/huffman"
+	lz "github.com/mrfleap/custom-compression/compressor/lz"
+	mcc "github.com/mrfleap/custom-compression/compressor/mcc"
+	"html/template"
 	"io"
 	"io/ioutil"
+	"math"
+	"os"
 	"path/filepath"
 	"reflect"
-	"strings"
-	ent "github.com/kzahedi/goent/discrete"
-	"math"
-	"bytes"
-	"github.com/jedib0t/go-pretty/v6/table"
-	"sort"
-	"os"
-	"html/template"
-	"time"
-	"sync"
-	"strconv"
 	"runtime/debug"
+	"sort"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
 )
 
+// Engines is a slice of strings representing possible algorithms.
 var Engines = [...]string{"all", "suite", "lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}
-var Suites = map[string][]string{"all": Engines[2:], "suite": []string{"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}}
 
+// Suites is a map of strings to strings representing a suite name and the contained algorithms.
+var Suites = map[string][]string{"all": Engines[2:], "suite": {"lzss", "dmc", "huffman", "mcc", "flate", "gzip", "lzw", "zlib", "arithmetic"}}
+
+// CompressedFile is a struct used to read a compressed file or write to a compressed file.
 type CompressedFile struct {
-	CompressionEngine                string
+	CompressionEngine     string
 	Compressed            []byte
 	Decompressed          []byte
 	pos                   int
 	MaxSearchBufferLength int
 }
 
+// Readers represents a map of algorithm names to their NewReader interfaces.
 var Readers = map[string]interface{}{
- 	"lzss": lz.NewReader,
-	"dmc": dmc.NewReader,
-	"mcc": mcc.NewReader,
-	"huffman": huffman.NewReader,
+	"lzss":       lz.NewReader,
+	"dmc":        dmc.NewReader,
+	"mcc":        mcc.NewReader,
+	"huffman":    huffman.NewReader,
 	"arithmetic": arithmetic.NewReader,
-	"zlib": zlib.NewReader,
-	"flate": flate.NewReader,
-	"gzip": gzip.NewReader,
-	"lzw": lzw.NewReader,
+	"zlib":       zlib.NewReader,
+	"flate":      flate.NewReader,
+	"gzip":       gzip.NewReader,
+	"lzw":        lzw.NewReader,
 }
 
 func (f *CompressedFile) Read(content []byte) (int, error) {
@@ -70,11 +75,11 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 			r, err = newReader.(func(r io.Reader) (*gzip.Reader, error))(b)
 		case "lzw":
 			// LZW requires special parameters for lzw
-			r = newReader.(func(io.Reader, lzw.Order, int) (io.ReadCloser))(b, lzw.MSB, 8)
+			r = newReader.(func(io.Reader, lzw.Order, int) io.ReadCloser)(b, lzw.MSB, 8)
 		}
 		check(err)
 		f.Decompressed, err = ioutil.ReadAll(r)
-		check(err)		
+		check(err)
 	}
 	bytesToWriteOut := len(f.Decompressed[f.pos:])
 	if len(content) < bytesToWriteOut {
@@ -92,16 +97,17 @@ func (f *CompressedFile) Read(content []byte) (int, error) {
 	return bytesToWriteOut, err
 }
 
+// Writers represents a map of algorithm names to their NewWriter interfaces.
 var Writers = map[string]interface{}{
- 	"lzss": lz.NewWriter,
-	"dmc": dmc.NewWriter,
-	"mcc": mcc.NewWriter,
-	"huffman": huffman.NewWriter,
+	"lzss":       lz.NewWriter,
+	"dmc":        dmc.NewWriter,
+	"mcc":        mcc.NewWriter,
+	"huffman":    huffman.NewWriter,
 	"arithmetic": arithmetic.NewWriter,
-	"zlib": zlib.NewWriter,
-	"flate": flate.NewWriter,
-	"gzip": gzip.NewWriter,
-	"lzw": lzw.NewWriter,
+	"zlib":       zlib.NewWriter,
+	"flate":      flate.NewWriter,
+	"gzip":       gzip.NewWriter,
+	"lzw":        lzw.NewWriter,
 }
 
 func (f *CompressedFile) Write(content []byte) (int, error) {
@@ -114,7 +120,7 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	default:
 		w = newWriter.(func(io.Writer) io.WriteCloser)(&b)
 	case "zlib":
-		w = newWriter.(func(r io.Writer) (*zlib.Writer))(&b)
+		w = newWriter.(func(r io.Writer) *zlib.Writer)(&b)
 	case "flate":
 		w, err = newWriter.(func(w io.Writer, level int) (*flate.Writer, error))(&b, 9)
 	case "gzip":
@@ -132,6 +138,7 @@ func (f *CompressedFile) Write(content []byte) (int, error) {
 	return len(compressed), nil
 }
 
+// GetCompressedFileFromPath takes a path variable and returns a CompressedFile object or an error.
 func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	var cf CompressedFile
 	fileContents, err := ioutil.ReadFile(path)
@@ -139,6 +146,7 @@ func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	return cf, err
 }
 
+// CompressFile takes a compression algorithm as a string and a path to a file and writes out the file  in the same path with .compressed appended to the end.
 func CompressFile(compressionEngine string, fileString string) {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
@@ -157,6 +165,7 @@ func CompressFile(compressionEngine string, fileString string) {
 	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
 }
 
+// DecompressFile takes a compression algorithm as a string and a path to a file and writes out the decompressed file in the same path with .decompressed appended to the end.
 func DecompressFile(compressionEngine string, fileString string) []byte {
 	compressedFile, err := GetCompressedFileFromPath(fileString)
 	compressedFile.CompressionEngine = compressionEngine
@@ -185,22 +194,26 @@ func DecompressFile(compressionEngine string, fileString string) []byte {
 	return stream
 }
 
+// Result is an intermediary object used to represent the benchmarked results of a certain file and algorithm.
 type Result struct {
 	CompressionEngine string
-	TimeTaken string 
-	Ratio float32
-    ActualEntropy float32
-	Entropy  float64
-	Lossless bool
-	Failed bool
+	TimeTaken         string
+	Ratio             float32
+	ActualEntropy     float32
+	Entropy           float64
+	Lossless          bool
+	Failed            bool
 }
 
-func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) string {
+// BenchmarkSuite takes a set of files and algorithms and returns the result as an html table if generateHTML is set.
+// The result is also outputted to stdout.
+func BenchmarkSuite(files []string, algorithms [][]string, generateHTML bool) (string, []Result) {
 	var html string
-	timeout := 4 * time.Minute
+	var allResults []Result
+	timeout := 2 * time.Minute
 
 	for i, fileString := range files {
-		fmt.Printf("Compressing file %d/%d - %s\n", i + 1, len(files), fileString)
+		fmt.Printf("Compressing file %d/%d - %s\n", i+1, len(files), fileString)
 		results := make([]Result, 0)
 		failedResults := make([]Result, 0)
 
@@ -224,7 +237,7 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) st
 			resultChans[algorithmsString] = resultChannel
 
 			wg.Add(1)
-			go AsyncBenchmarkFile(resultChannel, &wg, algorithmsInLayer, fileString, true)
+			go AsyncBenchmarkFile(resultChannel, &wg, algorithmsInLayer, fileString)
 		}
 
 		waitTimeout(&wg, timeout)
@@ -261,34 +274,37 @@ func BenchmarkSuite(files []string, algorithms [][]string, generateHtml bool) st
 
 		for _, result := range results {
 			t.AppendRow([]interface{}{result.CompressionEngine, result.TimeTaken, fmt.Sprintf("%.2f%%", result.Ratio), fmt.Sprintf("%.2f", result.ActualEntropy), fmt.Sprintf("%.2f", result.Entropy), result.Lossless})
+			allResults = append(allResults, result)
 		}
 
 		t.AppendSeparator()
 		for _, result := range failedResults {
 			t.AppendRow([]interface{}{result.CompressionEngine, result.TimeTaken, "DNF", "DNF", "DNF", result.Lossless})
+			allResults = append(allResults, result)
 		}
 		t.AppendSeparator()
 		t.AppendRow(table.Row{"File", fileString, "Size", ByteCountSI(fileSize)})
-		
+
 		t.Render()
-		if generateHtml {
+		if generateHTML {
 			html = html + "<br>" + t.RenderHTML()
 		}
 	}
-	if generateHtml {
+	if generateHTML {
 		tmpl := template.Must(template.ParseFiles("templates/benchmark.html"))
 		var b bytes.Buffer
-		tmpl.Execute(&b, struct{
-			Tables template.HTML
+		tmpl.Execute(&b, struct {
+			Tables  template.HTML
 			Created string
 		}{Tables: template.HTML(html), Created: strconv.FormatInt(time.Now().Unix(), 10)})
-		return b.String()
-	} else {
-		return ""
+		return b.String(), allResults
 	}
+	return "", allResults
 }
 
-func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressionEngines []string, fileString string, suite bool) {
+// AsyncBenchmarkFile takes a channel to push the result, a waitgroup, engines, a file string and runs the benchmark.
+// The function will push the result to the channel or push a failed result if it is able to catch an error during execution.
+func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressionEngines []string, fileString string) {
 	defer wg.Done()
 
 	algorithmsString := strings.Join(compressionEngines[:], ",")
@@ -312,26 +328,30 @@ func AsyncBenchmarkFile(resultChannel chan Result, wg *sync.WaitGroup, compressi
 	start := time.Now()
 	result := BenchmarkFile(compressionEngines, fileString, NewSuiteSettings())
 	duration := time.Since(start)
-	result.TimeTaken = fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
+	result.TimeTaken = fmt.Sprintf("%s", duration.Round(10*time.Microsecond).String())
 
 	fmt.Printf("%s finished benchmarking\n", algorithmsString)
 
 	resultChannel <- result
 }
 
+// Settings represents an object that can be used to modify the settings when benchmarking files with BenchmarkFile
 type Settings struct {
 	WriteOutFiles bool
-	PrintStats bool
-	PrintStatus bool
+	PrintStats    bool
+	PrintStatus   bool
 }
 
+// NewSuiteSettings returns common settings for a testing suite as a Settings object
 func NewSuiteSettings() Settings {
 	s := Settings{}
 	s.PrintStatus = true
 	return s
 }
 
-func BenchmarkFile(algorithms []string, fileString string, settings Settings) Result  {
+// BenchmarkFile takes a set of algorithms, a file path, and a settings object.
+// It benchmarks the file and returns the result as a Result object.
+func BenchmarkFile(algorithms []string, fileString string, settings Settings) Result {
 	fileContents, err := ioutil.ReadFile(fileString)
 	check(err)
 
@@ -398,7 +418,7 @@ func BenchmarkFile(algorithms []string, fileString string, settings Settings) Re
 		}
 
 		content = file.Decompressed
-		
+
 		if settings.WriteOutFiles {
 			var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
 			err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
@@ -427,7 +447,7 @@ func BenchmarkFile(algorithms []string, fileString string, settings Settings) Re
 	}
 	actualEntropy := float32(ent.Entropy(freqs, math.Log))
 
-	timeTaken := fmt.Sprintf("%s", duration.Round(10 * time.Microsecond).String())
+	timeTaken := fmt.Sprintf("%s", duration.Round(10*time.Microsecond).String())
 
 	if settings.PrintStats {
 		fmt.Printf("Lossless: %t\n", lossless)

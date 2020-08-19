@@ -5,13 +5,13 @@ import (
 	"strings"
 	// "errors"
 	// "bitbucket.org/sheran_gunasekera/leb128"
-	"encoding/binary"
 	"bytes"
+	"encoding/binary"
 	"sort"
 	// "unsafe"
-	"runtime"
 	"io"
 	"io/ioutil"
+	"runtime"
 )
 
 type MarkovChain struct {
@@ -134,28 +134,28 @@ func GetBitsFromChain(node *MarkovChain, input []byte, stack *[]MarkovChain) []i
 
 		if transition == -1 {
 			bitsFromChain := GetBitsFromChain(lookInNode, input[1:], &newStack)
-			if len(bitsFromChain) > 1 && bitsFromChain[len(bitsFromChain) - 2] == -2 {
-				bitsFromChain[len(bitsFromChain) - 1]++
+			if len(bitsFromChain) > 1 && bitsFromChain[len(bitsFromChain)-2] == -2 {
+				bitsFromChain[len(bitsFromChain)-1]++
 			}
 			return bitsFromChain
 		}
 		bitsFromChain := GetBitsFromChain(lookInNode, input[1:], &newStack)
-		if len(bitsFromChain) > 1 && bitsFromChain[len(bitsFromChain) - 2] == -2 {
-			bitsFromChain[len(bitsFromChain) - 2] = -1
+		if len(bitsFromChain) > 1 && bitsFromChain[len(bitsFromChain)-2] == -2 {
+			bitsFromChain[len(bitsFromChain)-2] = -1
 		}
 		return append([]int{transition}, bitsFromChain...)
 	}
 	return []int{-2, 0} // -2 represents end of input traversal, 0 is incremented as the end of input traverses down nodes not represented
 }
 
-func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovChain) ([]byte) {
+func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovChain) []byte {
 	stack := append(*previousStack, *node)
 	if len(*node.Nodes) == 1 && bits[0] >= 0 {
 		node = &(*node.Nodes)[0]
 		if node.MoveUp != 0 {
 			moveUp := node.MoveUp
-			node = &stack[len(stack) - moveUp]
-			stack = stack[:len(stack) - moveUp]
+			node = &stack[len(stack)-moveUp]
+			stack = stack[:len(stack)-moveUp]
 		}
 		nodeVal := node.Value
 		// fmt.Println(string(nodeVal))
@@ -170,8 +170,8 @@ func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovCha
 				node = &(*node.Nodes)[0]
 				if node.MoveUp != 0 {
 					moveUp := node.MoveUp
-					node = &stack[len(stack) - moveUp]
-					stack = stack[:len(stack) - moveUp + 1]
+					node = &stack[len(stack)-moveUp]
+					stack = stack[:len(stack)-moveUp+1]
 				} else {
 					stack = append(stack, *node)
 				}
@@ -183,8 +183,8 @@ func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovCha
 			node = &(*node.Nodes)[path]
 			if node.MoveUp != 0 {
 				moveUp := node.MoveUp
-				node = &stack[len(stack) - moveUp]
-				stack = stack[:len(stack) - moveUp]
+				node = &stack[len(stack)-moveUp]
+				stack = stack[:len(stack)-moveUp]
 			}
 			nodeVal := node.Value
 			// fmt.Println(string(nodeVal))
@@ -291,7 +291,6 @@ func check(e error) {
 	}
 }
 
-
 type Writer struct {
 	w io.Writer
 }
@@ -314,7 +313,7 @@ func (writer *Writer) Close() error {
 
 type Reader struct {
 	r            io.Reader
-	compressed []byte
+	compressed   []byte
 	decompressed []byte
 	pos          int
 }
@@ -328,7 +327,9 @@ func NewReader(r io.Reader) io.Reader {
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
 		r.compressed, err = ioutil.ReadAll(r.r)
-		if err != nil { return 0, err }
+		if err != nil {
+			return 0, err
+		}
 		r.decompressed = Decompress(r.compressed)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])

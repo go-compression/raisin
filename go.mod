@@ -8,5 +8,6 @@ require (
 	github.com/icza/huffman v0.0.0-20200205092023-031fa85c57cf
 	github.com/jedib0t/go-pretty/v6 v6.0.4
 	github.com/kzahedi/goent v0.0.0-20190403094137-49773660fa36
+	github.com/mattn/goveralls v0.0.6 // indirect
 	gonum.org/v1/gonum v0.8.0 // indirect
 )

@@ -3,27 +3,29 @@ package main
 import (
 	"flag"
 	"fmt"
-	"strings"
-	"os"
-	"io/ioutil"
 	engine "github.com/mrfleap/custom-compression/engine"
+	"io/ioutil"
+	"os"
+	"strings"
 	// "github.com/pkg/profile" // Profiling package
 )
 
 // https://github.com/spf13/cobra#getting-started
 
+// Commands represents all possible commands that can be used durinv CLI invocation
 var Commands = [...]string{"compress", "decompress", "benchmark", "help"}
 
 func main() {
 	// Profiling statement here V
 	// defer profile.Start().Stop()
 	// ^
+	mainBehaviour()
+}
+
+func mainBehaviour() []engine.Result {
 	compressCmd := flag.NewFlagSet("compress", flag.ExitOnError)
 
-
 	decompressCmd := flag.NewFlagSet("decompress", flag.ExitOnError)
-
-	
 
 	benchmarkCmd := flag.NewFlagSet("benchmark", flag.ExitOnError)
 
@@ -43,7 +45,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Valid commands include: \n\t %s\n", strings.Join(Commands[:], ", "))
 		fmt.Fprintf(os.Stderr, "Flags:\n")
 		flag.PrintDefaults()
-		return
+		return nil
 	}
 
 	// Get flag argument that is not a flag "-algorithm..."
@@ -62,29 +64,35 @@ func main() {
 		}
 	} else if _, err := os.Stat(file); os.IsNotExist(err) && file != "help" {
 		errorWithMsg(fmt.Sprintf("Could not open file (likely does not exist): %s\n", file))
-	} 
+	}
 
 	switch command {
 	case "compress", "c":
-		algorithm := compressCmd.String("algorithm", "default", 
+		algorithm := compressCmd.String("algorithm", "default",
 			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
 		posAfterCommand := getPosAfterCommand("compress", os.Args)
 		compressCmd.Parse(os.Args[posAfterCommand:])
 
-		if *algorithm == "default" { lzss := "lzss"; algorithm = &lzss }
+		if *algorithm == "default" {
+			lzss := "lzss"
+			algorithm = &lzss
+		}
 		engine.CompressFile(*algorithm, file)
 	case "decompress", "d":
-		algorithm := decompressCmd.String("algorithm", "default", 
+		algorithm := decompressCmd.String("algorithm", "default",
 			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
 		posAfterCommand := getPosAfterCommand("decompress", os.Args)
 		decompressCmd.Parse(os.Args[posAfterCommand:])
 
-		if *algorithm == "default" { lzss := "lzss"; algorithm = &lzss }
+		if *algorithm == "default" {
+			lzss := "lzss"
+			algorithm = &lzss
+		}
 		engine.DecompressFile(*algorithm, file)
 	case "benchmark":
-		algorithm := benchmarkCmd.String("algorithm", "default", 
+		algorithm := benchmarkCmd.String("algorithm", "default",
 			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
 		posAfterCommand := getPosAfterCommand("benchmark", os.Args)
@@ -93,30 +101,35 @@ func main() {
 		if file == "help" {
 			fmt.Fprintf(os.Stderr, "Flags:\n")
 			flag.PrintDefaults()
-			return
+			return nil
 		}
 
 		algorithms := parseAlgorithms(*algorithm)
 
-		if *algorithm == "default" { suite := "suite"; algorithm = &suite }
+		if *algorithm == "default" {
+			suite := "suite"
+			algorithm = &suite
+		}
 
 		files := strings.Split(file, ",")
 		for i := range files {
 			files[i] = strings.TrimSpace(files[i])
 		}
 
-		output := engine.BenchmarkSuite(files, algorithms, *generateHTML)
+		output, results := engine.BenchmarkSuite(files, algorithms, *generateHTML)
 		if *generateHTML {
 			err := ioutil.WriteFile("index.html", []byte(output), 0644)
 			check(err)
 			fmt.Println("Wrote table to index.html")
 		}
+		return results
 	default:
 		errorWithMsg(fmt.Sprintf(
-			"'%s' is not a valid command, " +
-			"please provide a valid command, " +
-			"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
+			"'%s' is not a valid command, "+
+				"please provide a valid command, "+
+				"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
 	}
+	return nil
 }
 
 func parseAlgorithms(algorithmString string) (algorithms [][]string) {
@@ -143,13 +156,17 @@ func parseAlgorithms(algorithmString string) (algorithms [][]string) {
 			buffer = append(buffer, char)
 		}
 	}
-	if len(buffer) > 0 { algorithms = append(algorithms, []string{string(buffer)}) }
+	if len(buffer) > 0 {
+		algorithms = append(algorithms, []string{string(buffer)})
+	}
 	return algorithms
 }
 
 func getPosAfterCommand(command string, args []string) int {
 	for i, s := range args {
-		if s == command { return i + 1 }
+		if s == command {
+			return i + 1
+		}
 	}
 	return -1
 }

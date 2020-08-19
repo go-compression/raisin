@@ -7,12 +7,12 @@ import (
 )
 
 func round(num float64) int {
-    return int(num + math.Copysign(0.5, num))
+	return int(num + math.Copysign(0.5, num))
 }
 
 func toFixed(num float64, precision int) float64 {
-    output := math.Pow(10, float64(precision))
-    return float64(round(num * output)) / output
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
 }
 
 func TestEncode(t *testing.T) {
@@ -27,7 +27,7 @@ func TestEncode(t *testing.T) {
 	// TODO rebuild this test
 	// precision := 3
 	// gotTop, gotBot = toFixed(gotTop, precision), toFixed(gotBot, precision)
-    // if gotTop != float64(0.425) || gotBot != float64(0.42)  {
-    //     t.Errorf("encodeLoop(keys, symFreqsWhole, input) = %f, %f; want 0.425, 0.42", gotTop, gotBot)
-    // }
+	// if gotTop != float64(0.425) || gotBot != float64(0.42)  {
+	//     t.Errorf("encodeLoop(keys, symFreqsWhole, input) = %f, %f; want 0.425, 0.42", gotTop, gotBot)
+	// }
 }

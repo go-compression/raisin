@@ -1,35 +1,35 @@
 package lz
 
 import (
+	"bytes"
+	"fmt"
+	pb "github.com/cheggaaa/pb/v3"
+	"io"
+	"io/ioutil"
 	"sort"
 	"strconv"
 	"sync"
-	"bytes"
-	pb "github.com/cheggaaa/pb/v3"
-	"io"
-	"fmt"
-	"io/ioutil"
 )
 
-const(
-    Opening = "<"
-    Closing = ">"
-    Separator = ","
+const (
+	Opening   = "<"
+	Closing   = ">"
+	Separator = ","
 )
 
-const MinimumSizeOfReference int = -1   // Use -1 to represent dynamic "smart" reference inclusion
+const MinimumSizeOfReference int = -1 // Use -1 to represent dynamic "smart" reference inclusion
 
 type Reference struct {
-	value []byte
-	isReference bool
+	value          []byte
+	isReference    bool
 	negativeOffset int
-	size int
+	size           int
 }
 
 type Writer struct {
-	windowSize int
+	windowSize     int
 	useProgressBar bool
-	w io.Writer
+	w              io.Writer
 }
 
 const DefaultWindowSize = 4096
@@ -62,7 +62,7 @@ func (writer *Writer) Close() error {
 
 type Reader struct {
 	r            io.Reader
-	compressed []byte
+	compressed   []byte
 	decompressed []byte
 	pos          int
 }
@@ -75,7 +75,9 @@ func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
 		var compressed []byte
 		compressed, err = ioutil.ReadAll(r.r)
-		if err != nil { return 0, err }
+		if err != nil {
+			return 0, err
+		}
 		r.decompressed = Decompress(compressed, true)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])
@@ -103,7 +105,7 @@ func (r *Reader) Close() error {
 	return nil
 }
 
-func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {
+func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) []byte {
 	fileContents = EncodeOpeningSymbols(fileContents)
 	var waitgroup sync.WaitGroup
 
@@ -160,7 +162,7 @@ func CompressorWorkerAsync(waitgroup *sync.WaitGroup, output chan<- Reference, s
 	bar.Increment()
 }
 
-func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) (Reference) {
+func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) Reference {
 	index, found := FindReverseSlice(searchBuffer, scanBytes)
 
 	if found {
@@ -180,7 +182,7 @@ func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, b
 	}
 }
 
-func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) ([]byte) {
+func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) []byte {
 	fileContents = EncodeOpeningSymbols(fileContents)
 	var output []byte
 
@@ -198,7 +200,7 @@ func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) (
 
 		if ignoreNextChars > 0 {
 			ignoreNextChars--
-		} else if (ref.isReference) {
+		} else if ref.isReference {
 			ignoreNextChars = ref.size - 1
 			if len(getEncoding(ref.negativeOffset, ref.size)) < ref.size {
 				output = append(output, getEncoding(ref.negativeOffset, ref.size)...)
@@ -213,7 +215,7 @@ func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) (
 	return output
 }
 
-func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) ([]byte) {
+func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) []byte {
 	fileContents = EncodeOpeningSymbols(fileContents)
 
 	var searchBuffer []byte
@@ -262,7 +264,7 @@ func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferL
 
 				if MinimumSizeOfReference == -1 {
 					if len(getEncoding(checkStartPointer, checkOffset)) > len(checkBytesToAdd) {
-						shouldAdd = false 
+						shouldAdd = false
 					}
 				}
 
@@ -290,13 +292,13 @@ func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferL
 		shouldAdd := true
 
 		if MinimumSizeOfReference == -1 {
-			if len([]byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)) > len(checkBytesToAdd) {
-				shouldAdd = false 
+			if len([]byte(Opening+strconv.Itoa(checkStartPointer)+Separator+strconv.Itoa(checkOffset)+Closing)) > len(checkBytesToAdd) {
+				shouldAdd = false
 			}
 		}
 
 		if len(checkBytesToAdd) > MinimumSizeOfReference && shouldAdd {
-			output = append(output, []byte(Opening + strconv.Itoa(checkStartPointer) + Separator + strconv.Itoa(checkOffset) + Closing)...)
+			output = append(output, []byte(Opening+strconv.Itoa(checkStartPointer)+Separator+strconv.Itoa(checkOffset)+Closing)...)
 		} else {
 			output = append(output, checkBytesToAdd...)
 		}
@@ -307,11 +309,11 @@ func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferL
 	return output
 }
 
-func getEncoding(relativePointer int, relativeOffset int) ([]byte) {
+func getEncoding(relativePointer int, relativeOffset int) []byte {
 	return []byte(Opening + strconv.Itoa(relativePointer) + Separator + strconv.Itoa(relativeOffset) + Closing)
 }
 
-func Decompress(fileContents []byte, useProgressBar bool) ([]byte) {
+func Decompress(fileContents []byte, useProgressBar bool) []byte {
 	searchBuffer := make([]byte, 0)
 	output := make([]byte, 0)
 
@@ -338,8 +340,8 @@ func Decompress(fileContents []byte, useProgressBar bool) ([]byte) {
 				offsetBytes = make([]byte, 0)
 
 				absolutePointer := len(searchBuffer) - pointer
-				slice := searchBuffer[absolutePointer:absolutePointer + offset]
-				
+				slice := searchBuffer[absolutePointer : absolutePointer+offset]
+
 				output = append(output, slice...)
 				searchBuffer = append(searchBuffer, slice...)
 			} else {
@@ -354,10 +356,10 @@ func Decompress(fileContents []byte, useProgressBar bool) ([]byte) {
 	return output
 }
 
-const EncodedOpening = 0xff 
+const EncodedOpening = 0xff
 const EscapeByte = 0x5c
 
-func EncodeOpeningSymbols(bytes []byte) ([]byte) {
+func EncodeOpeningSymbols(bytes []byte) []byte {
 	encoded := make([]byte, 0)
 	foundEscape := false
 	for _, val := range bytes {
@@ -368,7 +370,7 @@ func EncodeOpeningSymbols(bytes []byte) ([]byte) {
 			val = EncodedOpening
 		} else if val == EncodedOpening || val == EscapeByte {
 			encoded = append(encoded, EscapeByte)
-		} else if val == EscapeByte {  
+		} else if val == EscapeByte {
 			if foundEscape {
 				encoded = append(encoded, EscapeByte)
 			}
@@ -379,7 +381,7 @@ func EncodeOpeningSymbols(bytes []byte) ([]byte) {
 	return encoded
 }
 
-func DecodeOpeningSymbols(bytes []byte) ([]byte) {
+func DecodeOpeningSymbols(bytes []byte) []byte {
 	decoded := make([]byte, 0)
 	foundEscape := false
 	for _, val := range bytes {
@@ -398,12 +400,12 @@ func DecodeOpeningSymbols(bytes []byte) ([]byte) {
 
 func FindSequential(slice []byte, val byte) (int, bool) {
 	// Find
-    for i, item := range slice {
-        if item == val {
+	for i, item := range slice {
+		if item == val {
 			return i, true
 		}
-    }
-    return -1, false
+	}
+	return -1, false
 }
 
 func FindReverseSlice(input []byte, val []byte) (int, bool) {
@@ -411,19 +413,18 @@ func FindReverseSlice(input []byte, val []byte) (int, bool) {
 	return index, index != -1
 }
 
-
 func FindReverse(slice []byte, val byte) (int, bool) {
 	// Find
-    for i := len(slice) - 1; i >= 0; i-- {
+	for i := len(slice) - 1; i >= 0; i-- {
 		item := slice[i]
-        if item == val {
+		if item == val {
 			return i, true
 		}
-        i--
-    }
-    return -1, false
+		i--
+	}
+	return -1, false
 }
 
 func SortByteArray(src []byte) {
-	sort.Slice(src, func(i, j int) bool { return src[i] < src[j]})
+	sort.Slice(src, func(i, j int) bool { return src[i] < src[j] })
 }

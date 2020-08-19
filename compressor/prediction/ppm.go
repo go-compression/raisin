@@ -1,8 +1,8 @@
-package main
+package prediction
 
-import (
-	"io/ioutil"
-)
+// import (
+// 	"io/ioutil"
+// )
 
 // Algorithim Deatils
 /*
@@ -13,11 +13,11 @@ import (
 
 
 */
-func generate_prediction_tables() {
+// func generate_prediction_tables() {
 
-}
-func main() {
-	//defer profile.Start().Stop()
-	fileContents, err := ioutil.ReadFile("huffman-input.txt")
+// }
+// func main() {
+// 	//defer profile.Start().Stop()
+// 	fileContents, err := ioutil.ReadFile("huffman-input.txt")
 
-}
+// }

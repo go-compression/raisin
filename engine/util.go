@@ -1,10 +1,9 @@
 package engine
 
 import (
+	"fmt"
 	"sync"
-    "time"
-    "fmt"
-    
+	"time"
 )
 
 func check(e error) {
@@ -14,29 +13,30 @@ func check(e error) {
 }
 
 func waitTimeout(wg *sync.WaitGroup, timeout time.Duration) bool {
-    c := make(chan struct{})
-    go func() {
-        defer close(c)
-        wg.Wait()
-    }()
-    select {
-    case <-c:
-        return false // completed normally
-    case <-time.After(timeout):
-        return true // timed out
-    }
+	c := make(chan struct{})
+	go func() {
+		defer close(c)
+		wg.Wait()
+	}()
+	select {
+	case <-c:
+		return false // completed normally
+	case <-time.After(timeout):
+		return true // timed out
+	}
 }
 
+// ByteCountSI takes the number of bytes as an int64 and returns a human readable string in the largest significant units possible.
 func ByteCountSI(b int64) string {
-    const unit = 1000
-    if b < unit {
-        return fmt.Sprintf("%d B", b)
-    }
-    div, exp := int64(unit), 0
-    for n := b / unit; n >= unit; n /= unit {
-        div *= unit
-        exp++
-    }
-    return fmt.Sprintf("%.1f %cB",
-        float64(b)/float64(div), "kMGTPE"[exp])
+	const unit = 1000
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %cB",
+		float64(b)/float64(div), "kMGTPE"[exp])
 }
