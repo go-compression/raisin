@@ -18,7 +18,7 @@ func (bits bitString) pack() bitString {
 
 	bitsToAdd := 8 - (len(bits) % 8)
 	for i := 0; i < bitsToAdd; i++ {
-		if i == bitsToAdd - 1 {
+		if i == bitsToAdd-1 {
 			padded += "1"
 		} else {
 			padded += "0"
@@ -31,29 +31,29 @@ func (bits bitString) unpack() bitString {
 	for i := 0; i < len(bits); i++ {
 		bit := bits[i]
 		if bit == '1' {
-			return bits[i + 1:]
+			return bits[i+1:]
 		}
 	}
 	panic("Couldn't unpack")
 }
 
 func (b bitString) AsByteSlice() []byte {
-    var out []byte
-    var str string
+	var out []byte
+	var str string
 
-    for i := len(b); i > 0; i -= 8 {
-        if i-8 < 0 {
-            str = string(b[0:i])
-        } else {
-            str = string(b[i-8 : i])
-        }
-        v, err := strconv.ParseUint(str, 2, 8)
-        if err != nil {
-            panic(err)
-        }
-        out = append([]byte{byte(v)}, out...)
-    }
-    return out
+	for i := len(b); i > 0; i -= 8 {
+		if i-8 < 0 {
+			str = string(b[0:i])
+		} else {
+			str = string(b[i-8 : i])
+		}
+		v, err := strconv.ParseUint(str, 2, 8)
+		if err != nil {
+			panic(err)
+		}
+		out = append([]byte{byte(v)}, out...)
+	}
+	return out
 }
 
 func Compress(input []byte) []byte {
@@ -62,12 +62,14 @@ func Compress(input []byte) []byte {
 	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
 	// keys := buildKeys(freqs)
 	// printFreqs(freqs, keys)
-	
+
 	bits := encode(input)
-	// fmt.Println(bits) 
+	// fmt.Println(bits)
 
 	err, bytes := bits.Pack().AsByteSlice()
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
 	return bytes
 }
 
@@ -88,19 +90,18 @@ func Decompress(input []byte) []byte {
 
 	output := decode(bits)
 	// fmt.Println(string(output))
-	
+
 	return output
 }
 
 const (
-	MAX_CODE = 0xffff
-	ONE_FOURTH = 0x4000
-	ONE_HALF = 2 * ONE_FOURTH
-	THREE_FOURTHS = 3 * ONE_FOURTH
+	MAX_CODE        = 0xffff
+	ONE_FOURTH      = 0x4000
+	ONE_HALF        = 2 * ONE_FOURTH
+	THREE_FOURTHS   = 3 * ONE_FOURTH
 	CODE_VALUE_BITS = 16
-	MAX_FREQ = 16383
+	MAX_FREQ        = 16383
 )
-
 
 func decode(bits bitSlice) []byte {
 	var output []byte
@@ -110,7 +111,9 @@ func decode(bits bitSlice) []byte {
 
 	for i := 0; i < CODE_VALUE_BITS; i++ {
 		value <<= 1
-		if bits[i] { value += 1 }
+		if bits[i] {
+			value += 1
+		}
 	}
 
 	// val, err := strconv.ParseInt(bits[:CODE_VALUE_BITS], 2, 32)
@@ -122,13 +125,13 @@ func decode(bits bitSlice) []byte {
 
 	for {
 		difference := high - low + 1
-		scaled_value := ((value - low + 1) * model.getCount() - 1) / difference
+		scaled_value := ((value-low+1)*model.getCount() - 1) / difference
 
 		char, lower, upper, count := model.getChar(scaled_value)
 
-		if ( char == 256 ) {
-			// EOF char 
-			break;
+		if char == 256 {
+			// EOF char
+			break
 		}
 
 		output = append(output, byte(char))
@@ -137,28 +140,28 @@ func decode(bits bitSlice) []byte {
 		// 	fmt.Printf("Uh oh")
 		// 	char, lower, upper, count = model.getChar(scaled_value)
 		// }
-		
+
 		high = low + (difference*upper)/count - 1
 		low = low + (difference*lower)/count
 		for {
 			if high < ONE_HALF {
 				//do nothing, bit is a zero
 			} else if low >= ONE_HALF {
-				value -= ONE_HALF;  //subtract one half from all three code values
-				low -= ONE_HALF;
-				high -= ONE_HALF;
+				value -= ONE_HALF //subtract one half from all three code values
+				low -= ONE_HALF
+				high -= ONE_HALF
 			} else if low >= ONE_FOURTH && high < THREE_FOURTHS {
-				value -= ONE_FOURTH;
-				low -= ONE_FOURTH;
-				high -= ONE_FOURTH;
+				value -= ONE_FOURTH
+				low -= ONE_FOURTH
+				high -= ONE_FOURTH
 			} else {
 				break
 			}
-			low <<= 1;
-			high <<= 1;
-			high++;
-			value <<= 1;
-			
+			low <<= 1
+			high <<= 1
+			high++
+			value <<= 1
+
 			var nextBit uint32
 			nextBit, bits = GetNextBit(bits)
 			value += nextBit
@@ -172,10 +175,14 @@ func decode(bits bitSlice) []byte {
 }
 
 func getNextBit(bits bitString) (uint32, bitString) {
-	if len(bits) <= 0 { return 0, bits }
+	if len(bits) <= 0 {
+		return 0, bits
+	}
 	next_bit := bits[0]
 	bits = bits[1:]
-	if next_bit == '1' { return 1, bits }
+	if next_bit == '1' {
+		return 1, bits
+	}
 	return 0, bits
 }
 
@@ -214,15 +221,15 @@ func encode(input []byte) bitSlice {
 				bits = PushBits(bits, true, pendingBits)
 				pendingBits = 0
 				// fmt.Println(strconv.FormatUint(uint64(high), 2))
-			} else if (low >= ONE_FOURTH && high < THREE_FOURTHS) {
+			} else if low >= ONE_FOURTH && high < THREE_FOURTHS {
 				pendingBits++
-				low -= ONE_FOURTH; 
-          		high -= ONE_FOURTH 
+				low -= ONE_FOURTH
+				high -= ONE_FOURTH
 			} else {
 				break
 			}
 			high <<= 1
-			high++ 
+			high++
 			low <<= 1
 			high &= MAX_CODE
 			low &= MAX_CODE
@@ -236,31 +243,33 @@ const denomFloat = float64(denom)
 
 type Model struct {
 	cumulative_frequencies []int
-	frozen bool
+	frozen                 bool
 }
 
 func newModel() *Model {
 	model := Model{make([]int, 258), false}
 	for i := 0; i < 258; i++ {
-		model.cumulative_frequencies[i] = i;
+		model.cumulative_frequencies[i] = i
 	}
 	return &model
 }
 
 func (model *Model) update(input int) {
-	for i := input + 1 ; i < 258 ; i++ {
-		model.cumulative_frequencies[i]++;
+	for i := input + 1; i < 258; i++ {
+		model.cumulative_frequencies[i]++
 	}
-	if ( model.cumulative_frequencies[257] >= MAX_FREQ ) {
-	  model.frozen = true;
-	  fmt.Println("FROZEN")
-    }
+	if model.cumulative_frequencies[257] >= MAX_FREQ {
+		model.frozen = true
+		fmt.Println("FROZEN")
+	}
 }
 
 func (model *Model) getProbability(input int) (uint32, uint32, uint32) {
 	lower, upper, count := model.cumulative_frequencies[input], model.cumulative_frequencies[input+1], model.cumulative_frequencies[257]
-    if !model.frozen { model.update(input) }
-    return uint32(lower), uint32(upper), uint32(count)
+	if !model.frozen {
+		model.update(input)
+	}
+	return uint32(lower), uint32(upper), uint32(count)
 }
 
 func (model *Model) getCount() uint32 {
@@ -270,12 +279,14 @@ func (model *Model) getCount() uint32 {
 func (model *Model) getChar(scaled_value uint32) (int, uint32, uint32, uint32) {
 	var char int
 	for i := 0; i < 257; i++ {
-      if scaled_value < uint32(model.cumulative_frequencies[i+1]) {
-        char = i
-        lower, upper, count := model.cumulative_frequencies[i], model.cumulative_frequencies[i+1], model.cumulative_frequencies[257]
-        if !model.frozen { model.update(char) }
-        return char, uint32(lower), uint32(upper), uint32(count)
-	  }
+		if scaled_value < uint32(model.cumulative_frequencies[i+1]) {
+			char = i
+			lower, upper, count := model.cumulative_frequencies[i], model.cumulative_frequencies[i+1], model.cumulative_frequencies[257]
+			if !model.frozen {
+				model.update(char)
+			}
+			return char, uint32(lower), uint32(upper), uint32(count)
+		}
 	}
 	return ' ', 0, 0, 0
 }
@@ -286,7 +297,7 @@ func bitsToRange(bits string) (float64, float64) {
 	for i := 0; i < len(bits); i++ {
 		bit := bits[i]
 
-		midpoint := bot + ((top - bot) / 2 )
+		midpoint := bot + ((top - bot) / 2)
 
 		if bit == '1' {
 			// Top half
@@ -299,8 +310,6 @@ func bitsToRange(bits string) (float64, float64) {
 
 	return bot, top
 }
-
-
 
 func buildFreqTable(input []byte) map[byte]float64 {
 	symFreqs := make(map[byte]int)
@@ -317,7 +326,7 @@ func buildFreqTable(input []byte) map[byte]float64 {
 
 func buildKeys(freqs map[byte]float64) sortBytes {
 	keys := make(sortBytes, 0)
-	for k, _ := range freqs {
+	for k := range freqs {
 		keys = append(keys, k)
 	}
 	sort.Sort(keys)
@@ -352,7 +361,6 @@ func getBinaryPosition(targetTop float64, targetBot float64, top float64, bot fl
 	}
 }
 
-
 func getSection(keys []byte, freqs map[byte]float64, input byte) int {
 	for i, key := range keys {
 		if key == input {
@@ -363,15 +371,15 @@ func getSection(keys []byte, freqs map[byte]float64, input byte) int {
 }
 
 func (s sortBytes) Less(i, j int) bool {
-    return s[i] < s[j]
+	return s[i] < s[j]
 }
 
 func (s sortBytes) Swap(i, j int) {
-    s[i], s[j] = s[j], s[i]
+	s[i], s[j] = s[j], s[i]
 }
 
 func (s sortBytes) Len() int {
-    return len(s)
+	return len(s)
 }
 
 type Writer struct {
@@ -410,7 +418,9 @@ func NewReader(r io.Reader) io.Reader {
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
 		r.compressed, err = ioutil.ReadAll(r.r)
-		if err != nil { return 0, err }
+		if err != nil {
+			return 0, err
+		}
 		r.decompressed = Decompress(r.compressed)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])

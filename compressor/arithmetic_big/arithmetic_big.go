@@ -1,10 +1,10 @@
 package arithmetic_big
 
 import (
-	"math/big"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/big"
 	"sort"
 )
 
@@ -24,7 +24,7 @@ func Compress(input []byte) []byte {
 	}
 	// symFreqsWhole = map[byte]float64{'3': 0.4, '2': 0.5, '1': 0.05, '0': 0.05}
 	keys := make(sortBytes, 0)
-	for k, _ := range symFreqsWhole {
+	for k := range symFreqsWhole {
 		keys = append(keys, k)
 	}
 	sort.Sort(keys)
@@ -39,7 +39,6 @@ func Compress(input []byte) []byte {
 	fmt.Println(binaryLocation)
 	return []byte("compress")
 }
-
 
 func encode(keys []byte, freqs map[byte]*big.Float, input []byte) (top *big.Float, bottom *big.Float) {
 	if len(input) == 0 {
@@ -58,18 +57,22 @@ func encode(keys []byte, freqs map[byte]*big.Float, input []byte) (top *big.Floa
 	}
 	top.Add(bottom, freqs[keys[sec]])
 	// fmt.Println("before", bottom, "-", top, string(encodeByte))
-	
+
 	// fmt.Println(getRootBinaryPosition(top, bottom))
 
 	nextTop, nextBottom := encode(keys, freqs, input)
 	// fmt.Println("next after", nextBottom, "-", nextTop)
 	size := new(big.Float).SetPrec(prec)
-	if nextBottom != nil && nextTop != nil { size.Sub(nextTop, nextBottom) }
-	if nextBottom != nil { bottom.Add(bottom, new(big.Float).SetPrec(prec).Mul(freqs[keys[sec]], nextBottom))}
+	if nextBottom != nil && nextTop != nil {
+		size.Sub(nextTop, nextBottom)
+	}
+	if nextBottom != nil {
+		bottom.Add(bottom, new(big.Float).SetPrec(prec).Mul(freqs[keys[sec]], nextBottom))
+	}
 	if nextTop != nil {
 		top.Add(bottom, new(big.Float).SetPrec(prec).Mul(freqs[keys[sec]], size))
 	}
-	
+
 	return top, bottom
 }
 
@@ -101,7 +104,6 @@ func getBinaryPosition(targetTop *big.Float, targetBot *big.Float, top *big.Floa
 	}
 }
 
-
 func getSection(keys []byte, freqs map[byte]*big.Float, input byte) int {
 	for i, key := range keys {
 		if key == input {
@@ -115,17 +117,16 @@ func Decompress(input []byte) []byte {
 	return []byte("decompress")
 }
 
-
 func (s sortBytes) Less(i, j int) bool {
-    return s[i] < s[j]
+	return s[i] < s[j]
 }
 
 func (s sortBytes) Swap(i, j int) {
-    s[i], s[j] = s[j], s[i]
+	s[i], s[j] = s[j], s[i]
 }
 
 func (s sortBytes) Len() int {
-    return len(s)
+	return len(s)
 }
 
 type Writer struct {
@@ -164,7 +165,9 @@ func NewReader(r io.Reader) io.Reader {
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
 		r.compressed, err = ioutil.ReadAll(r.r)
-		if err != nil { return 0, err }
+		if err != nil {
+			return 0, err
+		}
 		r.decompressed = Decompress(r.compressed)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])

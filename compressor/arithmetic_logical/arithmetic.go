@@ -17,7 +17,7 @@ func (bits bitString) pack() bitString {
 
 	bitsToAdd := 8 - (len(bits) % 8)
 	for i := 0; i < bitsToAdd; i++ {
-		if i == bitsToAdd - 1 {
+		if i == bitsToAdd-1 {
 			padded += "1"
 		} else {
 			padded += "0"
@@ -30,29 +30,29 @@ func (bits bitString) unpack() bitString {
 	for i := 0; i < len(bits); i++ {
 		bit := bits[i]
 		if bit == '1' {
-			return bits[i + 1:]
+			return bits[i+1:]
 		}
 	}
 	panic("Couldn't unpack")
 }
 
 func (b bitString) AsByteSlice() []byte {
-    var out []byte
-    var str string
+	var out []byte
+	var str string
 
-    for i := len(b); i > 0; i -= 8 {
-        if i-8 < 0 {
-            str = string(b[0:i])
-        } else {
-            str = string(b[i-8 : i])
-        }
-        v, err := strconv.ParseUint(str, 2, 8)
-        if err != nil {
-            panic(err)
-        }
-        out = append([]byte{byte(v)}, out...)
-    }
-    return out
+	for i := len(b); i > 0; i -= 8 {
+		if i-8 < 0 {
+			str = string(b[0:i])
+		} else {
+			str = string(b[i-8 : i])
+		}
+		v, err := strconv.ParseUint(str, 2, 8)
+		if err != nil {
+			panic(err)
+		}
+		out = append([]byte{byte(v)}, out...)
+	}
+	return out
 }
 
 func Compress(input []byte) []byte {
@@ -61,14 +61,14 @@ func Compress(input []byte) []byte {
 	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
 	keys := buildKeys(freqs)
 	printFreqs(freqs, keys)
-	
+
 	// bits := encode(keys, freqs, input)
 	// fmt.Println(bits, len(bits))
 	// bits = bits.pack()
 	bits, top, bot := encode(true, keys, freqs, input)
 	fmt.Println(bot, "-", top, string(input))
 	binaryLocation := bits + getRootBinaryPosition(top, bot) + "1"
-	fmt.Println(binaryLocation) 
+	fmt.Println(binaryLocation)
 
 	bot, top = bitsToRange(binaryLocation)
 	fmt.Println("Result", bot, "-", top, string(binaryLocation))
@@ -93,7 +93,7 @@ func Decompress(input []byte) []byte {
 
 	output := decode(keys, freqs, bits)
 	fmt.Println(string(output))
-	
+
 	return output
 }
 
@@ -105,15 +105,15 @@ func decode(keys []byte, freqs map[byte]float64, bits bitString) []byte {
 		bit := bits[i]
 
 		// Enter half based on bit
-		midpoint := bot + ((top - bot) / 2 )
+		midpoint := bot + ((top - bot) / 2)
 		if bit == '1' {
 			// Top half
 			bot = midpoint
 		} else {
 			// Bottom half
 			top = midpoint
-		}	
-		
+		}
+
 		var char byte
 		found := true
 		for found {
@@ -167,7 +167,6 @@ func findChar(top float64, bot float64, keys []byte, freqs map[byte]float64) (fl
 	return top, bot, output
 }
 
-
 func encode(finite bool, keys []byte, freqs map[byte]float64, input []byte) (string, float64, float64) {
 	var encodeByte byte
 	var bits string
@@ -186,9 +185,9 @@ func encode(finite bool, keys []byte, freqs map[byte]float64, input []byte) (str
 			byteBot += freqs[keys[i]]
 		}
 		byteTop = byteBot + freqs[keys[sec]]
-		
+
 		size := freqsPassed * (byteTop - byteBot)
-		
+
 		bottom = bottom + (freqsPassed * byteBot)
 		top = bottom + size
 
@@ -210,7 +209,7 @@ func encode(finite bool, keys []byte, freqs map[byte]float64, input []byte) (str
 				// fmt.Println("1" + getBitsPending(pending, "0"), "Scaled to", bottom, top)
 				pending = 0
 			} else if (bottom >= 0.25) && (top < 0.75) {
-				top = (top - 0.25) * 2 
+				top = (top - 0.25) * 2
 				bottom = (bottom - 0.25) * 2
 				freqsPassed *= 2
 				// fmt.Println("-", "Scaled to", bottom, top)
@@ -247,7 +246,7 @@ func bitsToRange(bits string) (float64, float64) {
 	for i := 0; i < len(bits); i++ {
 		bit := bits[i]
 
-		midpoint := bot + ((top - bot) / 2 )
+		midpoint := bot + ((top - bot) / 2)
 
 		if bit == '1' {
 			// Top half
@@ -260,7 +259,6 @@ func bitsToRange(bits string) (float64, float64) {
 
 	return bot, top
 }
-
 
 func buildFreqTable(input []byte) map[byte]float64 {
 	symFreqs := make(map[byte]int)
@@ -277,7 +275,7 @@ func buildFreqTable(input []byte) map[byte]float64 {
 
 func buildKeys(freqs map[byte]float64) sortBytes {
 	keys := make(sortBytes, 0)
-	for k, _ := range freqs {
+	for k := range freqs {
 		keys = append(keys, k)
 	}
 	sort.Sort(keys)
@@ -312,7 +310,6 @@ func getBinaryPosition(targetTop float64, targetBot float64, top float64, bot fl
 	}
 }
 
-
 func getSection(keys []byte, freqs map[byte]float64, input byte) int {
 	for i, key := range keys {
 		if key == input {
@@ -323,15 +320,15 @@ func getSection(keys []byte, freqs map[byte]float64, input byte) int {
 }
 
 func (s sortBytes) Less(i, j int) bool {
-    return s[i] < s[j]
+	return s[i] < s[j]
 }
 
 func (s sortBytes) Swap(i, j int) {
-    s[i], s[j] = s[j], s[i]
+	s[i], s[j] = s[j], s[i]
 }
 
 func (s sortBytes) Len() int {
-    return len(s)
+	return len(s)
 }
 
 type Writer struct {
@@ -370,7 +367,9 @@ func NewReader(r io.Reader) io.Reader {
 func (r *Reader) Read(content []byte) (n int, err error) {
 	if r.decompressed == nil {
 		r.compressed, err = ioutil.ReadAll(r.r)
-		if err != nil { return 0, err }
+		if err != nil {
+			return 0, err
+		}
 		r.decompressed = Decompress(r.compressed)
 	}
 	bytesToWriteOut := len(r.decompressed[r.pos:])
