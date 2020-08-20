@@ -5,56 +5,11 @@ import (
 	"io"
 	"io/ioutil"
 	"sort"
-	"strconv"
 	// "strings"
 	// "reflect"
 )
 
 type sortBytes []byte
-type bitString string
-
-func (bits bitString) pack() bitString {
-	var padded bitString
-
-	bitsToAdd := 8 - (len(bits) % 8)
-	for i := 0; i < bitsToAdd; i++ {
-		if i == bitsToAdd-1 {
-			padded += "1"
-		} else {
-			padded += "0"
-		}
-	}
-	return padded + bits
-}
-
-func (bits bitString) unpack() bitString {
-	for i := 0; i < len(bits); i++ {
-		bit := bits[i]
-		if bit == '1' {
-			return bits[i+1:]
-		}
-	}
-	panic("Couldn't unpack")
-}
-
-func (bits bitString) AsByteSlice() []byte {
-	var out []byte
-	var str string
-
-	for i := len(bits); i > 0; i -= 8 {
-		if i-8 < 0 {
-			str = string(bits[0:i])
-		} else {
-			str = string(bits[i-8 : i])
-		}
-		v, err := strconv.ParseUint(str, 2, 8)
-		if err != nil {
-			panic(err)
-		}
-		out = append([]byte{byte(v)}, out...)
-	}
-	return out
-}
 
 // Compress takes a slice of bytes and returns a slice of bytes representing the compressed stream
 func Compress(input []byte) []byte {
@@ -155,18 +110,6 @@ func decode(bits BitSlice) []byte {
 		}
 	}
 	return output
-}
-
-func getNextBit(bits bitString) (uint32, bitString) {
-	if len(bits) <= 0 {
-		return 0, bits
-	}
-	nextBit := bits[0]
-	bits = bits[1:]
-	if nextBit == '1' {
-		return 1, bits
-	}
-	return 0, bits
 }
 
 func encode(input []byte) BitSlice {

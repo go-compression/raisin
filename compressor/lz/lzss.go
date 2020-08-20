@@ -51,7 +51,7 @@ func NewWriterLevel(w io.Writer, level int) (*Writer, error) {
 }
 
 func (writer *Writer) Write(data []byte) (n int, err error) {
-	compressed := CompressFileSync(data, writer.useProgressBar, writer.windowSize)
+	compressed := Compress(data, writer.useProgressBar, writer.windowSize)
 	writer.w.Write(compressed)
 	return len(compressed), nil
 }
@@ -105,7 +105,8 @@ func (r *Reader) Close() error {
 	return nil
 }
 
-func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) []byte {
+// CompressAsync is similar to Compress except that it uses goroutines to run as multi-threaded as possible
+func CompressAsync(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) []byte {
 	fileContents = EncodeOpeningSymbols(fileContents)
 	var waitgroup sync.WaitGroup
 
@@ -125,7 +126,7 @@ func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength in
 			startIndex = len(searchBuffer) - maxSearchBufferLength
 		}
 
-		go CompressorWorkerAsync(&waitgroup, output[i], searchBuffer[startIndex:], []byte{fileContents[i]}, fileContents[i:], bar)
+		go compressorWorkerAsync(&waitgroup, output[i], searchBuffer[startIndex:], []byte{fileContents[i]}, fileContents[i:], bar)
 	}
 
 	waitgroup.Wait()
@@ -152,23 +153,23 @@ func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength in
 	return finalOutput
 }
 
-func CompressorWorkerAsync(waitgroup *sync.WaitGroup, output chan<- Reference, searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) {
+func compressorWorkerAsync(waitgroup *sync.WaitGroup, output chan<- Reference, searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) {
 	defer waitgroup.Done()
 
-	out := CompressorWorker(searchBuffer, scanBytes, nextBytes[1:], bar)
+	out := compressorWorker(searchBuffer, scanBytes, nextBytes[1:], bar)
 
 	output <- out
 
 	bar.Increment()
 }
 
-func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) Reference {
+func compressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, bar *pb.ProgressBar) Reference {
 	index, found := FindReverseSlice(searchBuffer, scanBytes)
 
 	if found {
 		negativeOffset := len(searchBuffer) - index
 		if len(nextBytes) > 0 {
-			checkNextByte := CompressorWorker(searchBuffer, append(scanBytes, nextBytes[0]), nextBytes[1:], bar)
+			checkNextByte := compressorWorker(searchBuffer, append(scanBytes, nextBytes[0]), nextBytes[1:], bar)
 			if checkNextByte.isReference {
 				return checkNextByte
 			} else {
@@ -182,7 +183,10 @@ func CompressorWorker(searchBuffer []byte, scanBytes []byte, nextBytes []byte, b
 	}
 }
 
-func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) []byte {
+// CompressRecursive exists to substitute the Compress function with better performance and simplicity from recursion.
+// However, this implementation yields slower results than the base Compress function so should generally be unused.
+// This remains purely as a reference for understanding the algorithm. This should not be used as there are issues with data loss with large content streams.
+func CompressRecursive(fileContents []byte, _ bool, maxSearchBufferLength int) []byte {
 	fileContents = EncodeOpeningSymbols(fileContents)
 	var output []byte
 
@@ -196,7 +200,7 @@ func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) [
 		if i > maxSearchBufferLength {
 			windowStart = len(fileContents[:i]) - maxSearchBufferLength
 		}
-		ref := CompressorWorker(fileContents[windowStart:i], []byte{fileByte}, fileContents[i:], bar)
+		ref := compressorWorker(fileContents[windowStart:i], []byte{fileByte}, fileContents[i:], bar)
 
 		if ignoreNextChars > 0 {
 			ignoreNextChars--
@@ -215,7 +219,9 @@ func CompressFileSync2(fileContents []byte, _ bool, maxSearchBufferLength int) [
 	return output
 }
 
-func CompressFileSync(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) []byte {
+// Compress is the original LZSS compress function which takes a slice of bytes and some options and returns the compressed representation.
+// This function is the most performant of the three implementations, I suspect because of the iterative nature, however the code is not very clean so be weary.
+func Compress(fileContents []byte, useProgressBar bool, maxSearchBufferLength int) []byte {
 	fileContents = EncodeOpeningSymbols(fileContents)
 
 	var searchBuffer []byte
@@ -313,6 +319,7 @@ func getEncoding(relativePointer int, relativeOffset int) []byte {
 	return []byte(Opening + strconv.Itoa(relativePointer) + Separator + strconv.Itoa(relativeOffset) + Closing)
 }
 
+// Decompress decompressed the file contents and returns the decompressed contents as a slice of bytes
 func Decompress(fileContents []byte, useProgressBar bool) []byte {
 	searchBuffer := make([]byte, 0)
 	output := make([]byte, 0)
