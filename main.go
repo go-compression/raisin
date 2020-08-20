@@ -6,6 +6,7 @@ import (
 	engine "github.com/mrfleap/custom-compression/engine"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	// "github.com/pkg/profile" // Profiling package
 )
@@ -68,32 +69,80 @@ func mainBehaviour() []engine.Result {
 
 	switch command {
 	case "compress", "c":
-		algorithm := compressCmd.String("algorithm", "default",
-			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+		algorithm := compressCmd.String("algorithm", "lzss,arithmetic",
+			fmt.Sprintf("Which algorithm(s) to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+
+		files := strings.Split(file, ",")
+		for i := range files {
+			files[i] = strings.TrimSpace(files[i])
+		}
+
+		var output, outputExtension *string
+		if len(files) == 1 {
+			output = compressCmd.String("out", files[0]+".compressed", fmt.Sprintf("File name to output to"))
+		} else {
+			outputExtension = compressCmd.String("outext", "compressed", fmt.Sprintf("File extension used for the result"))
+		}
+
+		deleteAfter := compressCmd.Bool("delete", false, fmt.Sprintf("Delete file after compression"))
 
 		posAfterCommand := getPosAfterCommand("compress", os.Args)
 		compressCmd.Parse(os.Args[posAfterCommand:])
 
-		if *algorithm == "default" {
-			lzss := "lzss"
-			algorithm = &lzss
+		algorithms := strings.Split(*algorithm, ",")
+		for i := range files {
+			algorithms[i] = strings.TrimSpace(algorithms[i])
 		}
-		engine.CompressFile(*algorithm, file)
+
+		if len(files) > 1 {
+			engine.CompressFiles(algorithms, files, "."+*outputExtension)
+		} else {
+			engine.CompressFile(algorithms, file, *output)
+		}
+
+		if *deleteAfter {
+			deleteFiles(files)
+		}
 	case "decompress", "d":
-		algorithm := decompressCmd.String("algorithm", "default",
-			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+		algorithm := decompressCmd.String("algorithm", "lzss,arithmetic",
+			fmt.Sprintf("Which algorithm(s) to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+
+		files := strings.Split(file, ",")
+		for i := range files {
+			files[i] = strings.TrimSpace(files[i])
+		}
+
+		var output, outputExtension *string
+		if len(files) == 1 {
+			ext := filepath.Ext(files[0])
+			path := strings.TrimSuffix(files[0], ext)
+			output = decompressCmd.String("out", path, fmt.Sprintf("File name to output to"))
+		} else {
+			outputExtension = decompressCmd.String("outext", "", fmt.Sprintf("File extension used for the result"))
+		}
+
+		deleteAfter := decompressCmd.Bool("delete", true, fmt.Sprintf("Delete file after compression"))
 
 		posAfterCommand := getPosAfterCommand("decompress", os.Args)
 		decompressCmd.Parse(os.Args[posAfterCommand:])
 
-		if *algorithm == "default" {
-			lzss := "lzss"
-			algorithm = &lzss
+		algorithms := strings.Split(*algorithm, ",")
+		for i := range files {
+			algorithms[i] = strings.TrimSpace(algorithms[i])
 		}
-		engine.DecompressFile(*algorithm, file)
+
+		if len(files) > 1 {
+			engine.DecompressFiles(algorithms, files, "."+*outputExtension)
+		} else {
+			engine.DecompressFile(algorithms, file, *output)
+		}
+
+		if *deleteAfter {
+			deleteFiles(files)
+		}
 	case "benchmark":
-		algorithm := benchmarkCmd.String("algorithm", "default",
-			fmt.Sprintf("Which algorithm to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
+		algorithm := benchmarkCmd.String("algorithm", "lzss,arithmetic,huffman,[lzss,arithmetic],gzip",
+			fmt.Sprintf("Which algorithm(s) to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
 		posAfterCommand := getPosAfterCommand("benchmark", os.Args)
 		benchmarkCmd.Parse(os.Args[posAfterCommand:])
@@ -105,11 +154,6 @@ func mainBehaviour() []engine.Result {
 		}
 
 		algorithms := parseAlgorithms(*algorithm)
-
-		if *algorithm == "default" {
-			suite := "suite"
-			algorithm = &suite
-		}
 
 		files := strings.Split(file, ",")
 		for i := range files {
@@ -160,6 +204,13 @@ func parseAlgorithms(algorithmString string) (algorithms [][]string) {
 		algorithms = append(algorithms, []string{string(buffer)})
 	}
 	return algorithms
+}
+
+func deleteFiles(files []string) {
+	for _, file := range files {
+		err := os.Remove(file)
+		check(err)
+	}
 }
 
 func getPosAfterCommand(command string, args []string) int {

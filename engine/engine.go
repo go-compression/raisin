@@ -146,52 +146,55 @@ func GetCompressedFileFromPath(path string) (CompressedFile, error) {
 	return cf, err
 }
 
-// CompressFile takes a compression algorithm as a string and a path to a file and writes out the file  in the same path with .compressed appended to the end.
-func CompressFile(compressionEngine string, fileString string) {
-	fileContents, err := ioutil.ReadFile(fileString)
+// CompressFiles takes a set of compression algorithms as a string and multiple file paths as a slice and writes out the files in the same path with the extension appended.
+func CompressFiles(algorithms []string, files []string, extension string) {
+	for _, file := range files {
+		CompressFile(algorithms, file, file+extension)
+	}
+}
+
+// CompressFile takes a set of compression algorithms as a string and a path to a file and writes out the file  in the same path with .compressed appended to the end.
+func CompressFile(algorithms []string, path string, output string) []byte {
+	fileContents, err := ioutil.ReadFile(path)
 	check(err)
 	fmt.Printf("Compressing...\n")
 
-	file := CompressedFile{MaxSearchBufferLength: 4096}
-	file.CompressionEngine = compressionEngine
-	file.Write(fileContents)
+	compressed := compress(fileContents, algorithms)
 
-	var compressedFilePath = fileString + ".compressed"
-	err = ioutil.WriteFile(compressedFilePath, file.Compressed, 0644)
+	err = ioutil.WriteFile(output, compressed, 0644)
 
 	fmt.Printf("Original bytes: %v\n", len(fileContents))
-	fmt.Printf("Compressed bytes: %v\n", len(file.Compressed))
-	percentageDiff := float32(len(file.Compressed)) / float32(len(fileContents)) * 100
+	fmt.Printf("Compressed bytes: %v\n", len(compressed))
+	percentageDiff := float32(len(compressed)) / float32(len(fileContents)) * 100
 	fmt.Printf("Compression ratio: %.2f%%\n", percentageDiff)
+
+	return compressed
 }
 
-// DecompressFile takes a compression algorithm as a string and a path to a file and writes out the decompressed file in the same path with .decompressed appended to the end.
-func DecompressFile(compressionEngine string, fileString string) []byte {
-	compressedFile, err := GetCompressedFileFromPath(fileString)
-	compressedFile.CompressionEngine = compressionEngine
+// DecompressFiles takes a set of compression algorithms as a string and and multiple file paths as a slice and writes out the decompressed files in the same path with .decompressed appended to the end.
+func DecompressFiles(algorithms []string, files []string, extension string) {
+	for _, file := range files {
+		path := file + extension
+		if strings.TrimSpace(extension) == "" {
+			ext := filepath.Ext(file)
+			path = strings.TrimSuffix(file, ext)
+		}
+		DecompressFile(algorithms, file, path)
+	}
+}
+
+// DecompressFile takes a set of compression algorithms as a string and a path to a file and writes out the decompressed file in the same path with .decompressed appended to the end.
+func DecompressFile(algorithms []string, path string, output string) []byte {
+	fileContents, err := ioutil.ReadFile(path)
 	check(err)
 	fmt.Printf("Decompressing...\n")
 
-	stream := make([]byte, 0)
-	out := make([]byte, 512)
-	for {
-		n, err := compressedFile.Read(out)
-		if err != nil && err != io.EOF {
-			panic(err)
-		} else {
-			stream = append(stream, out[0:n]...)
-		}
+	decompressed := decompress(fileContents, algorithms)
 
-		if err == io.EOF {
-			break
-		}
-	}
-
-	var decompressedFilePath = strings.Replace(fileString, ".compressed", "", -1)
-	err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
+	err = ioutil.WriteFile(output, decompressed, 0644)
 	check(err)
 
-	return stream
+	return decompressed
 }
 
 // Result is an intermediary object used to represent the benchmarked results of a certain file and algorithm.
@@ -377,17 +380,11 @@ func BenchmarkFile(algorithms []string, fileString string, settings Settings) Re
 
 	content := fileContents
 
-	for _, algorithm := range algorithms {
-		file := CompressedFile{MaxSearchBufferLength: 4096}
-		file.CompressionEngine = algorithm
-		file.Write(content)
+	content = compress(content, algorithms)
 
-		if settings.WriteOutFiles {
-			var compressedFilePath = filepath.Base(fileString) + ".compressed"
-			err = ioutil.WriteFile(compressedFilePath, file.Compressed, 0644)
-		}
-
-		content = file.Compressed
+	if settings.WriteOutFiles {
+		var compressedFilePath = filepath.Base(fileString) + ".compressed"
+		err = ioutil.WriteFile(compressedFilePath, content, 0644)
 	}
 
 	compressed := content
@@ -396,34 +393,12 @@ func BenchmarkFile(algorithms []string, fileString string, settings Settings) Re
 		fmt.Printf("%s Decompressing...\n", algorithmsString)
 	}
 
-	for i := len(algorithms) - 1; i >= 0; i-- {
-		algorithm := algorithms[i]
-		file := CompressedFile{}
-		file.Compressed = content
-		file.CompressionEngine = algorithm
+	content = decompress(content, algorithms)
 
-		stream := make([]byte, 0)
-		out := make([]byte, 512)
-		for {
-			n, err := file.Read(out)
-			if err != nil && err != io.EOF {
-				panic(err)
-			} else {
-				stream = append(stream, out[0:n]...)
-			}
-
-			if err == io.EOF {
-				break
-			}
-		}
-
-		content = file.Decompressed
-
-		if settings.WriteOutFiles {
-			var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
-			err = ioutil.WriteFile(decompressedFilePath, stream, 0644)
-			check(err)
-		}
+	if settings.WriteOutFiles {
+		var decompressedFilePath = filepath.Base(fileString) + ".decompressed"
+		err = ioutil.WriteFile(decompressedFilePath, content, 0644)
+		check(err)
 	}
 
 	decompressed := content
@@ -463,4 +438,42 @@ func BenchmarkFile(algorithms []string, fileString string, settings Settings) Re
 		fmt.Printf("Time taken: %s\n", timeTaken)
 	}
 	return Result{algorithmsString, timeTaken, percentageDiff, actualEntropy, entropy, lossless, false}
+}
+
+func compress(content []byte, algorithms []string) []byte {
+	for _, algorithm := range algorithms {
+		file := CompressedFile{MaxSearchBufferLength: 4096}
+		file.CompressionEngine = algorithm
+		file.Write(content)
+
+		content = file.Compressed
+	}
+	return content
+}
+
+func decompress(content []byte, algorithms []string) []byte {
+	for i := len(algorithms) - 1; i >= 0; i-- {
+		algorithm := algorithms[i]
+		file := CompressedFile{}
+		file.Compressed = content
+		file.CompressionEngine = algorithm
+
+		stream := make([]byte, 0)
+		out := make([]byte, 512)
+		for {
+			n, err := file.Read(out)
+			if err != nil && err != io.EOF {
+				panic(err)
+			} else {
+				stream = append(stream, out[0:n]...)
+			}
+
+			if err == io.EOF {
+				break
+			}
+		}
+
+		content = file.Decompressed
+	}
+	return content
 }
