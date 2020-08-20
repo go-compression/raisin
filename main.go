@@ -20,10 +20,10 @@ func main() {
 	// Profiling statement here V
 	// defer profile.Start().Stop()
 	// ^
-	mainBehaviour()
+	mainBehavior()
 }
 
-func mainBehaviour() []engine.Result {
+func mainBehavior() []engine.Result {
 	compressCmd := flag.NewFlagSet("compress", flag.ExitOnError)
 
 	decompressCmd := flag.NewFlagSet("decompress", flag.ExitOnError)

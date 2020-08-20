@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -9,6 +9,108 @@ import (
 	"testing"
 	// "net/http"
 )
+
+var algorithms = []string{"arithmetic", "huffman", "lzss", "dmc", "mcc", "zlib", "flate", "gzip"}
+var losslessAlgorithms = []string{"arithmetic", "huffman", "lzss", "mcc", "zlib", "flate", "gzip"}
+
+func TestMainBehavior(t *testing.T) {
+	path := "/tmp/compression_test.txt"
+	testContents(t, []byte(samIAm), path)
+
+	// resp, err := http.Get("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-2mb-text-file.txt")
+	// check(err)
+
+	// body, err := ioutil.ReadAll(resp.Body)
+	// check(err)
+
+	// testContents(t, body, path)
+}
+
+func testContents(t *testing.T, contents []byte, path string) {
+	err := ioutil.WriteFile(path, contents, 0644)
+	check(err)
+
+	os.Args = []string{"raisin", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
+	results := mainBehavior()
+
+	for _, result := range results {
+		if !result.Lossless && stringInSlice(result.CompressionEngine, losslessAlgorithms) {
+			t.Errorf("Result for '%s' is not lossless", result.CompressionEngine)
+		}
+	}
+
+	for _, algorithm := range algorithms {
+		os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
+		mainBehavior()
+
+		os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
+		mainBehavior()
+
+		var decompressed []byte
+		decompressed, err = ioutil.ReadFile(path)
+		check(err)
+
+		if !reflect.DeepEqual(contents, decompressed) && stringInSlice(algorithm, losslessAlgorithms) {
+			t.Errorf("Decompressed and original files are not equal for %s", algorithm)
+		}
+
+		err = os.Remove("out.decompressed")
+		check(err)
+	}
+}
+
+func BenchmarkMainBehavior(b *testing.B) {
+	path := "/tmp/compression_test.txt"
+	contents := []byte(samIAm)
+	err := ioutil.WriteFile(path, contents, 0644)
+	check(err)
+	// realOut, realErr := os.Stdout, os.Stderr
+	// _, w, _ := os.Pipe()
+	// os.Stdout = w
+	// os.Stderr = w
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		os.Args = []string{"raisin", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
+		results := mainBehavior()
+
+		for _, result := range results {
+			if !result.Lossless && stringInSlice(result.CompressionEngine, losslessAlgorithms) {
+				b.Errorf("Result for '%s' is not lossless", result.CompressionEngine)
+			}
+		}
+
+		for _, algorithm := range algorithms {
+			os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
+			mainBehavior()
+
+			os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
+			mainBehavior()
+
+			var decompressed []byte
+			decompressed, err = ioutil.ReadFile(path)
+			check(err)
+
+			if !reflect.DeepEqual(contents, decompressed) && stringInSlice(algorithm, losslessAlgorithms) {
+				b.Errorf("Decompressed and original files are not equal for %s", algorithm)
+			}
+
+			err = os.Remove("out.decompressed")
+			check(err)
+		}
+	}
+	// w.Close()
+	// os.Stdout = realOut
+	// os.Stderr = realErr
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
 
 const samIAm = `"GREEN EGGS AND HAM" (by Doctor Seuss) 
 
@@ -145,68 +247,3 @@ AND I WILL EAT THEM HERE AND THERE.
 SAY! I WILL EAT THEM ANYWHERE!
 I DO SO LIKE GREEN EGGS AND HAM!
 THANK YOU! THANK YOU, SAM I AM.`
-
-var algorithms = []string{"arithmetic", "huffman", "lzss", "dmc", "mcc", "zlib", "flate", "gzip"}
-var losslessAlgorithms = []string{"arithmetic", "huffman", "lzss", "mcc", "zlib", "flate", "gzip", "[lzss,huffman]"}
-
-func TestMainBehaviour(t *testing.T) {
-	path := "/tmp/compression_test.txt"
-	testContents(t, []byte(samIAm), path)
-
-	// resp, err := http.Get("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-2mb-text-file.txt")
-	// check(err)
-
-	// body, err := ioutil.ReadAll(resp.Body)
-	// check(err)
-
-	// testContents(t, body, path)
-}
-
-func testContents(t *testing.T, contents []byte, path string) {
-	err := ioutil.WriteFile(path, contents, 0644)
-	check(err)
-
-	os.Args = []string{"raisin", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
-	results := mainBehaviour()
-
-	for _, result := range results {
-		if !result.Lossless && stringInSlice(result.CompressionEngine, losslessAlgorithms) {
-			t.Errorf("Result for '%s' is not lossless", result.CompressionEngine)
-		}
-	}
-
-	for _, algorithm := range algorithms {
-		os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
-		mainBehaviour()
-
-		os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, path + ".compressed"}
-		mainBehaviour()
-
-		var decompressed []byte
-		decompressed, err = ioutil.ReadFile(path)
-		check(err)
-
-		if algorithm == "dmc" {
-			fmt.Printf("DMC running")
-			fmt.Printf(string(decompressed))
-		}
-
-		if !reflect.DeepEqual(contents, decompressed) && stringInSlice(algorithm, losslessAlgorithms) {
-			t.Errorf("Decompressed and original files are not equal for %s", algorithm)
-		}
-
-		err = os.Remove(path)
-		check(err)
-		err = ioutil.WriteFile(path, contents, 0644)
-		check(err)
-	}
-}
-
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
