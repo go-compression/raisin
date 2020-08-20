@@ -9,16 +9,10 @@ go:
 before_install:
   - docker build . -t compressor
   - go get github.com/mattn/goveralls
-  - go install github.com/lawrencewoodman/roveralls
 
 script:
   - set -e
-  - $GOPATH/bin/roveralls
-  - go test -covermode=count -coverprofile=profile.coverprofile
-  - cat profile.coverprofile >> roveralls.coverprofile
-  - $GOPATH/bin/goveralls -coverprofile=roveralls.coverprofile -service=travis-ci
-  - rm roveralls.coverprofile
-  - rm profile.coverprofile
+  - $GOPATH/bin/goveralls -service=travis-ci
   - docker run --cidfile="machine.id" -it compressor ./main benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
   - docker cp $(cat machine.id):/go/src/github.com/mrfleap/custom-compression/index.html ./index.html
   - rm machine.id
