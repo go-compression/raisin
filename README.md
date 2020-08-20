@@ -1,6 +1,6 @@
 # Raisin
 
-[![Build Status](https://travis-ci.com/mrfleap/raisin.svg?branch=master)](https://travis-ci.com/mrfleap/raisin) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/raisin)](https://goreportcard.com/report/github.com/mrfleap/raisin) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/raisin/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/raisin?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/mrfleap/raisin)
+[![Build Status](https://travis-ci.com/go-compression/raisin.svg?branch=master)](https://travis-ci.com/go-compression/raisin) [![Go Report Card](https://goreportcard.com/badge/github.com/go-compression/raisin)](https://goreportcard.com/report/github.com/go-compression/raisin) [![Coverage Status](https://coveralls.io/repos/github/go-compression/raisin/badge.svg?branch=master)](https://coveralls.io/github/go-compression/raisin?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/go-compression/raisin)
 
 [View benchmarks for latest deployment](https://mrfleap.github.io/raisin/)
 
@@ -13,7 +13,7 @@ This project contains the source code for a summer mentorship about learning how
 To start using this package from the command line, install it with the command
 
 ```console
-$ go install github.com/mrfleap/raisin/
+$ go install github.com/go-compression/raisin/
 ```
 
 Once done, you should be able to start using it
@@ -170,7 +170,7 @@ $ raisin benchmark -algorithm=lzss,huffman,arithmetic,gzip,[lzss,arithmetic] tes
 └─────────────────┴────────────┴───────────────────┴────────────────┴─────────────────────┴──────────┘
 ```
 
-A larger example, taken from the `.travis.yml` file to generate the [benchmark page](https://mrfleap.github.io/raisin/). Notice the `-generate` flag, this tells it to generate an html file and output it as `index.html`, which is then used and uploaded to the [GitHub Pages branch](https://github.com/mrfleap/raisin/tree/gh-pages). Keep in mind the program expects a template file to be at `templates/benchmark.html` relative to your working directory. The command is as follows:
+A larger example, taken from the `.travis.yml` file to generate the [benchmark page](https://mrfleap.github.io/raisin/). Notice the `-generate` flag, this tells it to generate an html file and output it as `index.html`, which is then used and uploaded to the [GitHub Pages branch](https://github.com/go-compression/raisin/tree/gh-pages). Keep in mind the program expects a template file to be at `templates/benchmark.html` relative to your working directory. The command is as follows:
 
 ```console
 $ raisin benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
@@ -183,7 +183,7 @@ Shout-out to [jedib0t](https://github.com/jedib0t) for his wonderful [go-pretty 
 To build the binary from source, simply `go get` the package:
 
 ```console
-$ go get -u github.com/mrfleap/raisin
+$ go get -u github.com/go-compression/raisin
 ```
 
 Install the dependencies:
@@ -205,7 +205,7 @@ To use this package as a module, simply import the engine package and use the io
 ```go
 import (
 	"fmt"
-	"github.com/mrfleap/raisin/engine"
+	"github.com/go-compression/raisin/engine"
 )
 
 func main() {
@@ -220,4 +220,4 @@ func main() {
 
 ## Documentation
 
-Documentation is available at [godoc](https://godoc.org/github.com/mrfleap/raisin), please note that most of the code is currently undocumented as it is still a work in progress.
+Documentation is available at [godoc](https://godoc.org/github.com/go-compression/raisin), please note that most of the code is currently undocumented as it is still a work in progress.

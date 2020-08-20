@@ -1,4 +1,4 @@
-module github.com/mrfleap/raisin
+module github.com/go-compression/raisin
 
 go 1.15
 
