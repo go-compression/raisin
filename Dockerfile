@@ -4,11 +4,11 @@ RUN apk add --update \
     unzip \
     git \
     && rm -rf /var/cache/apk/*
-# RUN adduser -S -D -H -h /go/src/github.com/mrfleap/custom-compression appuser
+# RUN adduser -S -D -H -h /go/src/github.com/mrfleap/raisin appuser
 # USER appuser
-# RUN mkdir /go/src/github.com/mrfleap/custom-compression
-ADD . /go/src/github.com/mrfleap/custom-compression
-WORKDIR /go/src/github.com/mrfleap/custom-compression
+# RUN mkdir /go/src/github.com/mrfleap/raisin
+ADD . /go/src/github.com/mrfleap/raisin
+WORKDIR /go/src/github.com/mrfleap/raisin
 RUN go get
 RUN go install
 RUN go build -o main .

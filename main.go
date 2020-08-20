@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	engine "github.com/mrfleap/custom-compression/engine"
+	engine "github.com/mrfleap/raisin/engine"
 	"io/ioutil"
 	"os"
 	"path/filepath"

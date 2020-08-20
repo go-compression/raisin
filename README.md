@@ -1,8 +1,8 @@
 # Custom Compression Engine
 
-[![Build Status](https://travis-ci.com/mrfleap/custom-compression.svg?branch=master)](https://travis-ci.com/mrfleap/custom-compression) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/custom-compression)](https://goreportcard.com/report/github.com/mrfleap/custom-compression) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/custom-compression/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/custom-compression?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/mrfleap/custom-compression)
+[![Build Status](https://travis-ci.com/mrfleap/raisin.svg?branch=master)](https://travis-ci.com/mrfleap/raisin) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/raisin)](https://goreportcard.com/report/github.com/mrfleap/raisin) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/raisin/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/raisin?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/mrfleap/raisin)
 
-[View benchmarks for latest deployment](https://mrfleap.github.io/custom-compression/)
+[View benchmarks for latest deployment](https://mrfleap.github.io/raisin/)
 
 This project contains the source code for a summer mentorship about learning how to implement and create compression algorithms in Go.
 
@@ -13,14 +13,14 @@ This project contains several common compression algorithms implemented in Go al
 To start using this package from the command line, install it with the command
 
 ```console
-$ go install github.com/mrfleap/custom-compression/
+$ go install github.com/mrfleap/raisin/
 ```
 
 Once done, you should be able to start using it
 
 ```console
 $ echo "Hello world!" > test.txt
-$ custom-compression compress test.txt
+$ raisin compress test.txt
 Compressing...
 Original bytes: 13
 Compressed bytes: 14
@@ -29,7 +29,7 @@ $ cat test.txt.compressed
 �ӷ     �?��KD+
                �
 $ rm test.txt
-$ custom-compression decompress test.txt.compressed
+$ raisin decompress test.txt.compressed
 Decompressing...
 $ cat test.txt
 Hello world!
@@ -56,23 +56,23 @@ The most important flag is the `-algorithm` flag which allows you to specify whi
 Here's an example of usage:
 
 ```console
-$ custom-compression compress -algorithm=arithmetic test.txt
+$ raisin compress -algorithm=arithmetic test.txt
 ```
 
 You can also combine algorithms together in "layers", this will essentially compress the file with the first algorithm, then the second, etc. This stacking of algorithms is what powers virtually all modern compression, gzip and zip is powered by the FLATE algorithm which is essentially lempel-ziv (similar to lzss) and huffman coding stacked on toip of each other.
 
 ```console
-$ custom-compression compress -algorithm=lzss,huffman test.txt
+$ raisin compress -algorithm=lzss,huffman test.txt
 Compressing...
 Compression ratio: 307.69%
-$ custom-compression decompress -algorithm=lzss,huffman test.txt.compressed
+$ raisin decompress -algorithm=lzss,huffman test.txt.compressed
 Decompressing...
 ```
 
 On top of this, you can easily compress or decompress multiple files by chaining them together with commas.
 
 ```console
-$ custom-compression compress test1.txt,test2.txt
+$ raisin compress test1.txt,test2.txt
 Compressing...
 Compression ratio: 68.53%
 $ ls
@@ -89,16 +89,16 @@ Let's take at the usage of `delete`, keep in mind that `delete` is on by default
 
 ```console
 $ echo "Hello world!" > test.txt
-$ custom-compression compress -delete test.txt
+$ raisin compress -delete test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
 test.txt.compressed
-$ custom-compression decompress -delete test.txt.compressed
+$ raisin decompress -delete test.txt.compressed
 Decompressing...
 $ ls
 test.txt
-$ custom-compression compress -delete=false test.txt
+$ raisin compress -delete=false test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
@@ -109,12 +109,12 @@ The `out` command simply lets you change what file is outputted when compressing
 
 ```console
 $ echo "Hello world!" > test.txt
-$ custom-compression compress -out=compressed.txt test.txt
+$ raisin compress -out=compressed.txt test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
 test.txt  compressed.txt
-$ custom-compression decompress -out=decompressed.txt compressed.txt
+$ raisin decompress -out=decompressed.txt compressed.txt
 Decompressing...
 $ ls
 test.txt  decompressed.txt
@@ -125,12 +125,12 @@ test.txt  decompressed.txt
 ```console
 $ ls
 test1.txt  test2.txt  test3.txt
-$ custom-compression compress -delete -outext=.testing test1.txt,test2.txt,test3.txt
+$ raisin compress -delete -outext=.testing test1.txt,test2.txt,test3.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
 test1.txt.testing  test2.txt.testing  test3.txt.testing
-$ custom-compression decompress -outext=.decompressed test1.txt.testing,test2.txt.testing,test3.txt.testing
+$ raisin decompress -outext=.decompressed test1.txt.testing,test2.txt.testing,test3.txt.testing
 Decompressing...
 $ ls
 test1.txt  test2.txt  test3.txt
@@ -141,7 +141,7 @@ test1.txt  test2.txt  test3.txt
 To build the binary from source, simply `go get` the package:
 
 ```console
-$ go get -u github.com/mrfleap/custom-compression
+$ go get -u github.com/mrfleap/raisin
 ```
 
 Install the dependencies:
@@ -163,7 +163,7 @@ To use this package as a module, simply import the engine package and use the io
 ```go
 import (
 	"fmt"
-	"github.com/mrfleap/custom-compression/engine"
+	"github.com/mrfleap/raisin/engine"
 )
 
 func main() {
@@ -178,4 +178,4 @@ func main() {
 
 ## Documentation
 
-Documentation is available at [godoc](https://godoc.org/github.com/mrfleap/custom-compression), please note that most of the code is currently undocumented as it is still a work in progress.
+Documentation is available at [godoc](https://godoc.org/github.com/mrfleap/raisin), please note that most of the code is currently undocumented as it is still a work in progress.
