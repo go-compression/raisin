@@ -9,4 +9,9 @@ func TestByteCountSI(t *testing.T) {
 	if got != "1.0 kB" {
 		t.Errorf("Got %s but wanted 1.0 kB", got)
 	}
+
+	got = ByteCountSI(10)
+	if got != "10 B" {
+		t.Errorf("Got %s but wanted 10 B", got)
+	}
 }
