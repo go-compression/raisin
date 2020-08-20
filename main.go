@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	engine "github.com/mrfleap/raisin/engine"
+	engine "github.com/go-compression/raisin/engine"
 	"io/ioutil"
 	"os"
 	"path/filepath"

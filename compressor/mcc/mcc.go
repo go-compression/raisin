@@ -3,7 +3,7 @@ package mcc
 import (
 	"fmt"
 	huff "github.com/icza/huffman"
-	// huffman "github.com/mrfleap/raisin/compressor/huffman"
+	// huffman "github.com/go-compression/raisin/compressor/huffman"
 	"io"
 	"io/ioutil"
 	"math"
