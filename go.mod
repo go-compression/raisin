@@ -1,4 +1,4 @@
-module github.com/mrfleap/custom-compression
+module github.com/mrfleap/raisin
 
 go 1.15
 

@@ -8,7 +8,7 @@ Setup [gopy](https://github.com/go-python/gopy#installation)
 
 Run
 
-`$ gopy build --output=engine github.com/mrfleap/custom-compression/engine`
+`$ gopy build --output=engine github.com/mrfleap/raisin/engine`
 
 Install requirements
 
