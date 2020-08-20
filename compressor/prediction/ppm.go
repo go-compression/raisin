@@ -4,9 +4,9 @@ package prediction
 // 	"io/ioutil"
 // )
 
-// Algorithim Deatils
+// Algorithm Details
 /*
-	If the symbol has not occured in context, return escape symbol
+	If the symbol has not occurred in context, return escape symbol
 		Use the next smaller context
 
 	Each time a a symbol is encountered, the count corresponding to that symbol is updated in each table.
