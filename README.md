@@ -10,7 +10,7 @@ This project contains the source code for a summer mentorship about learning how
 
 ## Usage from the CLI
 
-To start using this package from the command line, install it with the command
+To start using this package from the command line, install it with `go install`
 
 ```console
 $ go install github.com/go-compression/raisin/
