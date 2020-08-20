@@ -22,8 +22,6 @@ github.com/jedib0t/go-pretty/v6 v6.0.4/go.mod h1:MTr6FgcfNdnN5wPVBzJ6mhJeDyiF0yB
 github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/kzahedi/goent v0.0.0-20190403094137-49773660fa36 h1:j0JAeYw/MMJsEjQgWy/Hza+Va9FRLAHMHPzKNU5N+mA=
 github.com/kzahedi/goent v0.0.0-20190403094137-49773660fa36/go.mod h1:D0EY27kIWl6/sLc2Q/mFn6sRiqaVTBpXmsNcJzfEvZc=
-github.com/lawrencewoodman/roveralls v0.0.0-20171119193843-51b78509b607 h1:3jy2NnZgKbNjlT7ylI96miE6oqNuiZOyl/Q9buy7+7g=
-github.com/lawrencewoodman/roveralls v0.0.0-20171119193843-51b78509b607/go.mod h1:lKH0SNvns71e9X/M6yIsOVZjizqDTwvxtslLeL6F6+I=
 github.com/mattn/go-colorable v0.1.2 h1:/bC9yWikZXAL9uJdulbSfyVNIR3n3trXl+v8+1sx8mU=
 github.com/mattn/go-colorable v0.1.2/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
 github.com/mattn/go-isatty v0.0.8/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
