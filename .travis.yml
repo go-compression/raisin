@@ -12,7 +12,8 @@ before_install:
 
 script:
   - set -e
-  - overalls -project=github.com/mrfleap/custom-compression -covermode=count -- -coverpkg=./...
+  - overalls -project=github.com/mrfleap/custom-compression -covermode=atomic -- -coverpkg=./...
+  - ls
   - $GOPATH/bin/goveralls -coverprofile=overalls.coverprofile -service=travis-ci
   - find . -name '*.coverprofile' -delete
   - docker run --cidfile="machine.id" -it compressor ./main benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
