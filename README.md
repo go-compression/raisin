@@ -1,12 +1,12 @@
-# Custom Compression Engine
+# Raisin
 
 [![Build Status](https://travis-ci.com/mrfleap/raisin.svg?branch=master)](https://travis-ci.com/mrfleap/raisin) [![Go Report Card](https://goreportcard.com/badge/github.com/mrfleap/raisin)](https://goreportcard.com/report/github.com/mrfleap/raisin) [![Coverage Status](https://coveralls.io/repos/github/mrfleap/raisin/badge.svg?branch=master)](https://coveralls.io/github/mrfleap/raisin?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/mrfleap/raisin)
 
 [View benchmarks for latest deployment](https://mrfleap.github.io/raisin/)
 
-This project contains the source code for a summer mentorship about learning how to implement and create compression algorithms in Go.
+A simple lightweight set of implementations and bindings for compression algorithms written in Go.
 
-This project contains several common compression algorithms implemented in Go along with bindings for builtin Go compression algorithms.
+This project contains the source code for a summer mentorship about learning how to implement and create different compression algorithms. This includes common algorithms such as huffman, lempel-ziv, and arithmetic along with bindings for builtin Go compression algorithms.
 
 ## Usage from the CLI
 
@@ -135,6 +135,48 @@ Decompressing...
 $ ls
 test1.txt  test2.txt  test3.txt
 ```
+
+## Benchmarking
+
+You can use the `benchmark` command to generate benchmarked results for a set of algorithms, layers, and files. This is helpful for generating results in a table, [website](https://mrfleap.github.io/raisin/), or in bindings for other languages such as python (see the `ai` folder).
+
+Usage is relatively similar to the `compress` and `decompress` commands.
+
+```console
+$ echo "Hello world!" > test.txt
+$ echo "abcabcabcabcabcabcabcabc" > test2.txt
+$ raisin benchmark -algorithm=lzss,huffman,arithmetic,gzip,[lzss,arithmetic] test.txt,test2.txt
+┌─────────────────┬────────────┬───────────────────┬────────────────┬─────────────────────┬──────────┐
+│ ENGINE          │ TIME TAKEN │ COMPRESSION RATIO │ ACTUAL ENTROPY │ THEORETICAL ENTROPY │ LOSSLESS │
+├─────────────────┼────────────┼───────────────────┼────────────────┼─────────────────────┼──────────┤
+│ lzss            │ 350µs      │ 100.00%           │ 2.20           │ 2.20                │ true     │
+│ arithmetic      │ 50µs       │ 107.69%           │ 2.12           │ 2.20                │ true     │
+│ lzss,arithmetic │ 210µs      │ 107.69%           │ 2.12           │ 2.20                │ true     │
+│ gzip            │ 280µs      │ 284.62%           │ 1.14           │ 2.20                │ true     │
+│ huffman         │ 190µs      │ 307.69%           │ 1.08           │ 2.20                │ true     │
+├─────────────────┼────────────┼───────────────────┼────────────────┼─────────────────────┼──────────┤
+│ File            │ test.txt   │ Size              │ 13 B           │                     │          │
+└─────────────────┴────────────┴───────────────────┴────────────────┴─────────────────────┴──────────┘
+┌─────────────────┬────────────┬───────────────────┬────────────────┬─────────────────────┬──────────┐
+│ ENGINE          │ TIME TAKEN │ COMPRESSION RATIO │ ACTUAL ENTROPY │ THEORETICAL ENTROPY │ LOSSLESS │
+├─────────────────┼────────────┼───────────────────┼────────────────┼─────────────────────┼──────────┤
+│ lzss,arithmetic │ 160µs      │ 84.00%            │ 1.25           │ 1.22                │ true     │
+│ lzss            │ 310µs      │ 84.00%            │ 1.25           │ 1.22                │ true     │
+│ arithmetic      │ 160µs      │ 84.00%            │ 1.25           │ 1.22                │ true     │
+│ huffman         │ 170µs      │ 92.00%            │ 1.24           │ 1.22                │ true     │
+│ gzip            │ 430µs      │ 120.00%           │ 1.17           │ 1.22                │ true     │
+├─────────────────┼────────────┼───────────────────┼────────────────┼─────────────────────┼──────────┤
+│ File            │ test2.txt  │ Size              │ 25 B           │                     │          │
+└─────────────────┴────────────┴───────────────────┴────────────────┴─────────────────────┴──────────┘
+```
+
+A larger example, taken from the `.travis.yml` file to generate the [benchmark page](https://mrfleap.github.io/raisin/). Notice the `-generate` flag, this tells it to generate an html file and output it as `index.html`, which is then used and uploaded to the [GitHub Pages branch](https://github.com/mrfleap/raisin/tree/gh-pages). Keep in mind the program expects a template file to be at `templates/benchmark.html` relative to your working directory. The command is as follows:
+
+```console
+$ raisin benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
+```
+
+Shout-out to [jedib0t](https://github.com/jedib0t) for his wonderful [go-pretty module](https://github.com/jedib0t/go-pretty) for generating these tables and the HTML tables used in the GitHub Pages site.
 
 ## Building
 
