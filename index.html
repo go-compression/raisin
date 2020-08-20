@@ -78,7 +78,7 @@
                 }
                 return Math.floor(seconds) + " seconds";
             }
-            var ts = "1597960979"
+            var ts = "1597962740"
             var date = new Date(ts * 1000);
             var result = timeSince(date)
             var p = document.getElementById("time-since");
@@ -99,7 +99,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>304.29ms</td>
+    <td>293.19ms</td>
     <td>35.67%</td>
     <td>5.99</td>
     <td>3.17</td>
@@ -107,7 +107,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>240.03ms</td>
+    <td>285.39ms</td>
     <td>35.71%</td>
     <td>5.98</td>
     <td>3.17</td>
@@ -115,7 +115,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>352.42ms</td>
+    <td>431.3ms</td>
     <td>35.72%</td>
     <td>5.98</td>
     <td>3.17</td>
@@ -123,7 +123,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>315.97ms</td>
+    <td>271.81ms</td>
     <td>50.54%</td>
     <td>4.91</td>
     <td>3.17</td>
@@ -131,7 +131,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>460.09ms</td>
+    <td>517.99ms</td>
     <td>57.63%</td>
     <td>4.54</td>
     <td>3.17</td>
@@ -139,7 +139,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>1.62273s</td>
+    <td>1.488s</td>
     <td>60.19%</td>
     <td>4.46</td>
     <td>3.17</td>
@@ -147,14 +147,14 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>1.51015s</td>
+    <td>1.2675s</td>
     <td>95.39%</td>
     <td>3.30</td>
     <td>3.17</td>
     <td>false</td>
   </tr>
   <tr>
-    <td>huffman</td>
+    <td>dmc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -162,7 +162,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>lzss,huffman</td>
+    <td>huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -178,7 +178,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>dmc</td>
+    <td>lzss,huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -208,7 +208,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>197.75ms</td>
+    <td>235.89ms</td>
     <td>38.92%</td>
     <td>6.14</td>
     <td>3.33</td>
@@ -216,7 +216,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>967.47ms</td>
+    <td>500.39ms</td>
     <td>38.94%</td>
     <td>6.14</td>
     <td>3.33</td>
@@ -224,7 +224,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>864.36ms</td>
+    <td>768.78ms</td>
     <td>38.95%</td>
     <td>6.14</td>
     <td>3.33</td>
@@ -232,7 +232,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>476.18ms</td>
+    <td>171.36ms</td>
     <td>53.80%</td>
     <td>5.04</td>
     <td>3.33</td>
@@ -240,7 +240,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>1.66145s</td>
+    <td>1.42473s</td>
     <td>60.55%</td>
     <td>4.68</td>
     <td>3.33</td>
@@ -248,7 +248,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>7.49871s</td>
+    <td>6.35613s</td>
     <td>61.50%</td>
     <td>4.53</td>
     <td>3.33</td>
@@ -256,10 +256,18 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>2.3476s</td>
+    <td>1.94455s</td>
     <td>96.95%</td>
     <td>3.34</td>
     <td>3.33</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>arithmetic,huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
     <td>false</td>
   </tr>
   <tr>
@@ -272,14 +280,6 @@
   </tr>
   <tr>
     <td>huffman</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>arithmetic,huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -317,7 +317,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>87.16ms</td>
+    <td>911.43ms</td>
     <td>32.11%</td>
     <td>7.75</td>
     <td>3.62</td>
@@ -325,7 +325,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>71.65ms</td>
+    <td>168.43ms</td>
     <td>32.20%</td>
     <td>7.74</td>
     <td>3.62</td>
@@ -333,7 +333,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>220.01ms</td>
+    <td>94.36ms</td>
     <td>32.25%</td>
     <td>7.73</td>
     <td>3.62</td>
@@ -341,7 +341,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>211.55ms</td>
+    <td>160ms</td>
     <td>52.01%</td>
     <td>5.71</td>
     <td>3.62</td>
@@ -349,7 +349,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>768.46ms</td>
+    <td>324.5ms</td>
     <td>66.28%</td>
     <td>4.85</td>
     <td>3.62</td>
@@ -357,7 +357,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>1.78966s</td>
+    <td>3.07347s</td>
     <td>53.48%</td>
     <td>5.70</td>
     <td>3.62</td>
@@ -365,38 +365,38 @@
   </tr>
   <tr>
     <td>dmc</td>
-    <td>30.53707s</td>
+    <td>30.12213s</td>
     <td>61.99%</td>
     <td>0.00</td>
     <td>3.62</td>
     <td>false</td>
   </tr>
   <tr>
+    <td>arithmetic,huffman</td>
+    <td>5.80339s</td>
+    <td>63.43%</td>
+    <td>0.31</td>
+    <td>3.62</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>lzss,huffman</td>
+    <td>6.29644s</td>
+    <td>63.76%</td>
+    <td>1.91</td>
+    <td>3.62</td>
+    <td>false</td>
+  </tr>
+  <tr>
     <td>lzss</td>
-    <td>771.95ms</td>
+    <td>108.62ms</td>
     <td>76.37%</td>
     <td>4.46</td>
     <td>3.62</td>
     <td>false</td>
   </tr>
   <tr>
-    <td>lzss,huffman</td>
-    <td>failed</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>huffman</td>
-    <td>failed</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>arithmetic,huffman</td>
     <td>failed</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -426,7 +426,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>213.05ms</td>
+    <td>474.54ms</td>
     <td>27.95%</td>
     <td>7.86</td>
     <td>3.47</td>
@@ -434,7 +434,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>51.71ms</td>
+    <td>204.66ms</td>
     <td>28.02%</td>
     <td>7.85</td>
     <td>3.47</td>
@@ -442,7 +442,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>258.64ms</td>
+    <td>173.97ms</td>
     <td>28.13%</td>
     <td>7.83</td>
     <td>3.47</td>
@@ -450,7 +450,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>443.36ms</td>
+    <td>199.47ms</td>
     <td>44.51%</td>
     <td>5.98</td>
     <td>3.47</td>
@@ -458,7 +458,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>447.59ms</td>
+    <td>548.42ms</td>
     <td>64.20%</td>
     <td>4.72</td>
     <td>3.47</td>
@@ -466,7 +466,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>1.21573s</td>
+    <td>4.24947s</td>
     <td>49.83%</td>
     <td>5.51</td>
     <td>3.47</td>
@@ -474,7 +474,7 @@
   </tr>
   <tr>
     <td>dmc</td>
-    <td>11.89523s</td>
+    <td>11.35882s</td>
     <td>62.33%</td>
     <td>0.01</td>
     <td>3.47</td>
@@ -482,18 +482,10 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>578.55ms</td>
+    <td>431.56ms</td>
     <td>72.39%</td>
     <td>4.31</td>
     <td>3.47</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>huffman</td>
-    <td>failed</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
     <td>false</td>
   </tr>
   <tr>
@@ -506,6 +498,14 @@
   </tr>
   <tr>
     <td>arithmetic,huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
     <td>failed</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -535,7 +535,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>111.23ms</td>
+    <td>2.4ms</td>
     <td>32.55%</td>
     <td>6.42</td>
     <td>3.21</td>
@@ -543,7 +543,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>50.52ms</td>
+    <td>2.5ms</td>
     <td>32.71%</td>
     <td>6.40</td>
     <td>3.21</td>
@@ -551,7 +551,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>248ms</td>
+    <td>2.44ms</td>
     <td>33.03%</td>
     <td>6.37</td>
     <td>3.21</td>
@@ -559,7 +559,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>138.19ms</td>
+    <td>2.01ms</td>
     <td>48.67%</td>
     <td>5.12</td>
     <td>3.21</td>
@@ -567,23 +567,15 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>796.23ms</td>
+    <td>1.06439s</td>
     <td>52.27%</td>
     <td>4.90</td>
     <td>3.21</td>
     <td>true</td>
   </tr>
   <tr>
-    <td>lzss,huffman</td>
-    <td>124.27ms</td>
-    <td>56.60%</td>
-    <td>4.67</td>
-    <td>3.21</td>
-    <td>true</td>
-  </tr>
-  <tr>
     <td>arithmetic</td>
-    <td>107.51ms</td>
+    <td>202.62ms</td>
     <td>61.78%</td>
     <td>4.42</td>
     <td>3.21</td>
@@ -591,7 +583,7 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>218.33ms</td>
+    <td>782.24ms</td>
     <td>75.30%</td>
     <td>3.89</td>
     <td>3.21</td>
@@ -599,7 +591,7 @@
   </tr>
   <tr>
     <td>dmc</td>
-    <td>579.04ms</td>
+    <td>2.03579s</td>
     <td>63.91%</td>
     <td>0.02</td>
     <td>3.21</td>
@@ -607,10 +599,18 @@
   </tr>
   <tr>
     <td>huffman</td>
-    <td>297.79ms</td>
-    <td>77.77%</td>
-    <td>5.87</td>
-    <td>3.21</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>lzss,huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
     <td>false</td>
   </tr>
   <tr>
@@ -644,7 +644,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>7.93202s</td>
+    <td>5.44898s</td>
     <td>20.15%</td>
     <td>4.34</td>
     <td>2.48</td>
@@ -652,7 +652,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>7.8497s</td>
+    <td>3.32051s</td>
     <td>20.19%</td>
     <td>4.34</td>
     <td>2.48</td>
@@ -660,7 +660,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>5.38259s</td>
+    <td>3.93456s</td>
     <td>20.20%</td>
     <td>4.34</td>
     <td>2.48</td>
@@ -668,7 +668,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>4.33939s</td>
+    <td>3.26628s</td>
     <td>26.20%</td>
     <td>4.34</td>
     <td>2.48</td>
@@ -676,7 +676,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>8.40225s</td>
+    <td>7.17473s</td>
     <td>46.83%</td>
     <td>3.67</td>
     <td>2.48</td>
@@ -684,7 +684,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>17.29136s</td>
+    <td>17.52757s</td>
     <td>56.95%</td>
     <td>4.78</td>
     <td>2.48</td>
@@ -692,18 +692,10 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>12.61014s</td>
+    <td>13.44509s</td>
     <td>92.80%</td>
     <td>3.46</td>
     <td>2.48</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>arithmetic,huffman</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
     <td>false</td>
   </tr>
   <tr>
@@ -716,6 +708,14 @@
   </tr>
   <tr>
     <td>lzss,huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>arithmetic,huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -753,7 +753,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>1.02682s</td>
+    <td>1.25507s</td>
     <td>33.88%</td>
     <td>6.36</td>
     <td>3.24</td>
@@ -761,7 +761,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>1.34313s</td>
+    <td>1.8161s</td>
     <td>33.93%</td>
     <td>6.35</td>
     <td>3.24</td>
@@ -769,7 +769,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>1.5048s</td>
+    <td>1.72414s</td>
     <td>33.93%</td>
     <td>6.35</td>
     <td>3.24</td>
@@ -777,7 +777,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>1.2448s</td>
+    <td>1.44592s</td>
     <td>51.15%</td>
     <td>5.02</td>
     <td>3.24</td>
@@ -785,7 +785,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>4.34125s</td>
+    <td>5.25378s</td>
     <td>60.41%</td>
     <td>4.52</td>
     <td>3.24</td>
@@ -793,7 +793,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>5.67925s</td>
+    <td>9.42709s</td>
     <td>59.70%</td>
     <td>4.52</td>
     <td>3.24</td>
@@ -801,7 +801,7 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>14.37013s</td>
+    <td>9.22155s</td>
     <td>94.25%</td>
     <td>3.35</td>
     <td>3.24</td>
@@ -809,14 +809,6 @@
   </tr>
   <tr>
     <td>arithmetic,huffman</td>
-    <td>&gt;1m0s</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>dmc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -833,6 +825,14 @@
   </tr>
   <tr>
     <td>lzss,huffman</td>
+    <td>&gt;1m0s</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>dmc</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -862,7 +862,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>425.37ms</td>
+    <td>1.19944s</td>
     <td>40.26%</td>
     <td>5.54</td>
     <td>3.14</td>
@@ -870,7 +870,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>3.76963s</td>
+    <td>3.67522s</td>
     <td>40.29%</td>
     <td>5.54</td>
     <td>3.14</td>
@@ -878,7 +878,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>3.59882s</td>
+    <td>3.85086s</td>
     <td>40.30%</td>
     <td>5.54</td>
     <td>3.14</td>
@@ -886,7 +886,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>3.42566s</td>
+    <td>2.49799s</td>
     <td>52.70%</td>
     <td>4.74</td>
     <td>3.14</td>
@@ -894,7 +894,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>12.80556s</td>
+    <td>8.48019s</td>
     <td>57.04%</td>
     <td>4.52</td>
     <td>3.14</td>
@@ -902,7 +902,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>23.70894s</td>
+    <td>17.82286s</td>
     <td>58.72%</td>
     <td>4.45</td>
     <td>3.14</td>
@@ -910,14 +910,14 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>15.11521s</td>
+    <td>12.1079s</td>
     <td>99.56%</td>
     <td>3.16</td>
     <td>3.14</td>
     <td>false</td>
   </tr>
   <tr>
-    <td>huffman</td>
+    <td>lzss,huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -933,7 +933,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>lzss,huffman</td>
+    <td>arithmetic,huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -941,7 +941,7 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>arithmetic,huffman</td>
+    <td>huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -971,7 +971,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>5.21842s</td>
+    <td>4.85802s</td>
     <td>10.03%</td>
     <td>-14.56</td>
     <td>0.84</td>
@@ -979,7 +979,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>7.35806s</td>
+    <td>7.7189s</td>
     <td>10.71%</td>
     <td>-13.02</td>
     <td>0.84</td>
@@ -987,7 +987,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>5.31463s</td>
+    <td>7.03328s</td>
     <td>10.71%</td>
     <td>-13.02</td>
     <td>0.84</td>
@@ -995,7 +995,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>4.81584s</td>
+    <td>7.95247s</td>
     <td>12.83%</td>
     <td>-9.47</td>
     <td>0.84</td>
@@ -1003,7 +1003,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>9.32652s</td>
+    <td>11.22978s</td>
     <td>22.82%</td>
     <td>-2.80</td>
     <td>0.84</td>
@@ -1011,7 +1011,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>38.99111s</td>
+    <td>32.36025s</td>
     <td>16.60%</td>
     <td>-6.89</td>
     <td>0.84</td>
@@ -1019,22 +1019,14 @@
   </tr>
   <tr>
     <td>lzss</td>
-    <td>49.70107s</td>
+    <td>49.83658s</td>
     <td>25.32%</td>
     <td>-2.83</td>
     <td>0.84</td>
     <td>false</td>
   </tr>
   <tr>
-    <td>dmc</td>
-    <td>failed</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>huffman</td>
+    <td>lzss,huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -1050,7 +1042,15 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>lzss,huffman</td>
+    <td>dmc</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>huffman</td>
     <td>&gt;1m0s</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -1080,7 +1080,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>1.0343s</td>
+    <td>2.29411s</td>
     <td>34.68%</td>
     <td>7.60</td>
     <td>3.69</td>
@@ -1088,7 +1088,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>1.04162s</td>
+    <td>1.82001s</td>
     <td>34.74%</td>
     <td>7.59</td>
     <td>3.69</td>
@@ -1096,7 +1096,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>1.04328s</td>
+    <td>500.8ms</td>
     <td>34.77%</td>
     <td>7.58</td>
     <td>3.69</td>
@@ -1104,7 +1104,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>3.11141s</td>
+    <td>1.4487s</td>
     <td>52.39%</td>
     <td>5.82</td>
     <td>3.69</td>
@@ -1112,7 +1112,7 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>2.9903s</td>
+    <td>1.07312s</td>
     <td>74.25%</td>
     <td>4.57</td>
     <td>3.69</td>
@@ -1120,30 +1120,22 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>3.69839s</td>
+    <td>4.28378s</td>
     <td>61.78%</td>
     <td>5.25</td>
     <td>3.69</td>
     <td>false</td>
   </tr>
   <tr>
-    <td>huffman</td>
-    <td>9.69435s</td>
-    <td>66.50%</td>
-    <td>4.85</td>
-    <td>3.69</td>
-    <td>false</td>
-  </tr>
-  <tr>
     <td>lzss</td>
-    <td>4.89446s</td>
+    <td>2.28946s</td>
     <td>82.31%</td>
     <td>4.29</td>
     <td>3.69</td>
     <td>false</td>
   </tr>
   <tr>
-    <td>lzss,huffman</td>
+    <td>dmc</td>
     <td>failed</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -1159,7 +1151,15 @@
     <td>false</td>
   </tr>
   <tr>
-    <td>dmc</td>
+    <td>huffman</td>
+    <td>failed</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>DNF</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>lzss,huffman</td>
     <td>failed</td>
     <td>DNF</td>
     <td>DNF</td>
@@ -1189,7 +1189,7 @@
   <tbody>
   <tr>
     <td>flate</td>
-    <td>678.86ms</td>
+    <td>491.17ms</td>
     <td>40.81%</td>
     <td>6.12</td>
     <td>3.40</td>
@@ -1197,7 +1197,7 @@
   </tr>
   <tr>
     <td>zlib</td>
-    <td>66.06ms</td>
+    <td>1.05992s</td>
     <td>40.95%</td>
     <td>6.11</td>
     <td>3.40</td>
@@ -1205,7 +1205,7 @@
   </tr>
   <tr>
     <td>gzip</td>
-    <td>1.12537s</td>
+    <td>1.40707s</td>
     <td>41.23%</td>
     <td>6.09</td>
     <td>3.40</td>
@@ -1213,7 +1213,7 @@
   </tr>
   <tr>
     <td>lzw</td>
-    <td>65.94ms</td>
+    <td>1.17559s</td>
     <td>55.31%</td>
     <td>5.07</td>
     <td>3.40</td>
@@ -1221,15 +1221,23 @@
   </tr>
   <tr>
     <td>arithmetic</td>
-    <td>584.05ms</td>
+    <td>1.50292s</td>
     <td>64.75%</td>
     <td>4.57</td>
     <td>3.40</td>
     <td>true</td>
   </tr>
   <tr>
+    <td>huffman</td>
+    <td>372.47ms</td>
+    <td>68.28%</td>
+    <td>4.41</td>
+    <td>3.40</td>
+    <td>true</td>
+  </tr>
+  <tr>
     <td>dmc</td>
-    <td>1.56258s</td>
+    <td>413.92ms</td>
     <td>48.97%</td>
     <td>0.02</td>
     <td>3.40</td>
@@ -1237,7 +1245,7 @@
   </tr>
   <tr>
     <td>lzss,arithmetic</td>
-    <td>3.1037s</td>
+    <td>1.72549s</td>
     <td>62.10%</td>
     <td>4.69</td>
     <td>3.40</td>
@@ -1245,26 +1253,18 @@
   </tr>
   <tr>
     <td>lzss,huffman</td>
-    <td>2.40623s</td>
+    <td>608.89ms</td>
     <td>66.22%</td>
-    <td>6.05</td>
+    <td>4.50</td>
     <td>3.40</td>
     <td>false</td>
   </tr>
   <tr>
     <td>lzss</td>
-    <td>346.83ms</td>
+    <td>18.29ms</td>
     <td>88.74%</td>
     <td>3.69</td>
     <td>3.40</td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td>huffman</td>
-    <td>failed</td>
-    <td>DNF</td>
-    <td>DNF</td>
-    <td>DNF</td>
     <td>false</td>
   </tr>
   <tr>
