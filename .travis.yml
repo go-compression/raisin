@@ -12,7 +12,9 @@ before_install:
 
 script:
   - set -e
-  - $GOPATH/bin/goveralls -service=travis-ci
+  - go test -race -covermode atomic -coverprofile=profile.cov -coverpkg ./...
+  - $GOPATH/bin/goveralls -coverprofile=profile.cov -service=travis-ci
+  - rm profile.cov
   - docker run --cidfile="machine.id" -it compressor ./main benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
   - docker cp $(cat machine.id):/go/src/github.com/mrfleap/custom-compression/index.html ./index.html
   - rm machine.id
