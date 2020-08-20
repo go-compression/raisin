@@ -384,18 +384,18 @@ func decodeBytes(bitstream []int, literals []byte) []byte {
 	return output
 }
 
-const seperator = byte('\\')
+const separator = byte('\\')
 
 func encodeStreamAndLiterals(bitstream []int, literals []byte) []byte {
 	bits := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(bitstream)), ","), "[]")
-	return append(append([]byte(bits), seperator), literals...)
+	return append(append([]byte(bits), separator), literals...)
 }
 
 func decodeStreamAndLiterals(bytes []byte) ([]int, []byte) {
 	stringInput := string(bytes)
-	seperatorIndex := strings.IndexByte(stringInput, seperator)
-	bitstrings := strings.Split(stringInput[:seperatorIndex], ",")
-	literals := bytes[seperatorIndex+1:]
+	separatorIndex := strings.IndexByte(stringInput, separator)
+	bitstrings := strings.Split(stringInput[:separatorIndex], ",")
+	literals := bytes[separatorIndex+1:]
 	bits := make([]int, len(bitstrings))
 	for i, bitstring := range bitstrings {
 		num, err := strconv.Atoi(bitstring)

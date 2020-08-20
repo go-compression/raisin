@@ -15,18 +15,18 @@ import (
 )
 
 type MarkovChain struct {
-	Value      byte
-	Nodes      *[]MarkovChain
-	Occurences int
-	MoveUp     int
+	Value       byte
+	Nodes       *[]MarkovChain
+	Occurrences int
+	MoveUp      int
 }
 
 func buildMarkovChain(value byte) MarkovChain {
-	return MarkovChain{Value: value, Nodes: &[]MarkovChain{}, Occurences: 1, MoveUp: 0}
+	return MarkovChain{Value: value, Nodes: &[]MarkovChain{}, Occurrences: 1, MoveUp: 0}
 }
 
 func buildMarkovChainMoveUp(moveUp int) MarkovChain {
-	return MarkovChain{Nodes: &[]MarkovChain{}, Occurences: 1, MoveUp: moveUp}
+	return MarkovChain{Nodes: &[]MarkovChain{}, Occurrences: 1, MoveUp: moveUp}
 }
 
 func Compress(fileContents []byte) []byte {
@@ -44,7 +44,7 @@ func Compress(fileContents []byte) []byte {
 			if moveUpIndex == -1 {
 				*stack[len(stack)-1].Nodes = append(*stack[len(stack)-1].Nodes, buildMarkovChainMoveUp(len(stack)-valueUpStack))
 			} else {
-				(*stack[len(stack)-1].Nodes)[moveUpIndex].Occurences++
+				(*stack[len(stack)-1].Nodes)[moveUpIndex].Occurrences++
 			}
 			stack = stack[:valueUpStack]
 		}
@@ -57,9 +57,9 @@ func Compress(fileContents []byte) []byte {
 
 			stack = append(stack, newNode)
 		} else {
-			// Found in stack, add to occurences
-			(*node.Nodes)[index].Occurences++
-			if (*node.Nodes)[index].Occurences > 1 {
+			// Found in stack, add to Occurrences
+			(*node.Nodes)[index].Occurrences++
+			if (*node.Nodes)[index].Occurrences > 1 {
 				// Clone a new state
 				stack = append(stack, (*node.Nodes)[index])
 			}
@@ -68,7 +68,7 @@ func Compress(fileContents []byte) []byte {
 	runtime.ReadMemStats(&m2)
 	memUsage(&m1, &m2)
 
-	SortNodesByOccurences(&chain)
+	SortNodesByOccurrences(&chain)
 	// PrintMarkovChain(&chain, 0)
 	// fmt.Println("Total upward travels:", UpwardTravels(&chain))
 	// fmt.Println("Compiling into bits")
@@ -193,13 +193,13 @@ func GetOutputFromBits(bits []int, node *MarkovChain, previousStack *[]MarkovCha
 	}
 }
 
-func SortNodesByOccurences(chain *MarkovChain) {
+func SortNodesByOccurrences(chain *MarkovChain) {
 	sort.Slice(*chain.Nodes, func(i, j int) bool {
-		return (*chain.Nodes)[i].Occurences > (*chain.Nodes)[j].Occurences
+		return (*chain.Nodes)[i].Occurrences > (*chain.Nodes)[j].Occurrences
 	})
 	for _, node := range *chain.Nodes {
 		if len(*node.Nodes) > 0 {
-			SortNodesByOccurences(&node)
+			SortNodesByOccurrences(&node)
 		}
 	}
 }
@@ -260,9 +260,9 @@ func PrintMarkovChain(chain *MarkovChain, indentation int) {
 			char = "spc"
 		}
 		if node.MoveUp != 0 {
-			fmt.Print(strings.Repeat("--", indentation), "Up ", node.MoveUp, " O: ", node.Occurences, "\n")
+			fmt.Print(strings.Repeat("--", indentation), "Up ", node.MoveUp, " O: ", node.Occurrences, "\n")
 		} else {
-			fmt.Print(strings.Repeat("--", indentation), char, " O: ", node.Occurences, "\n")
+			fmt.Print(strings.Repeat("--", indentation), char, " O: ", node.Occurrences, "\n")
 		}
 
 		if node.Nodes != nil {
