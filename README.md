@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/go-compression/raisin.svg?branch=master)](https://travis-ci.com/go-compression/raisin) [![Go Report Card](https://goreportcard.com/badge/github.com/go-compression/raisin)](https://goreportcard.com/report/github.com/go-compression/raisin) [![Coverage Status](https://coveralls.io/repos/github/go-compression/raisin/badge.svg?branch=master)](https://coveralls.io/github/go-compression/raisin?branch=master) [![Documentation](https://godoc.org/github.com/yangwenmai/how-to-add-badge-in-github-readme?status.svg)](http://godoc.org/github.com/go-compression/raisin)
 
-[View benchmarks for latest deployment](https://mrfleap.github.io/raisin/)
+[View benchmarks for latest deployment](https://go-compression.github.io/raisin/)
 
 A simple lightweight set of implementations and bindings for compression algorithms written in Go.
 
@@ -138,7 +138,7 @@ test1.txt  test2.txt  test3.txt
 
 ## Benchmarking
 
-You can use the `benchmark` command to generate benchmarked results for a set of algorithms, layers, and files. This is helpful for generating results in a table, [website](https://mrfleap.github.io/raisin/), or in bindings for other languages such as python (see the `ai` folder).
+You can use the `benchmark` command to generate benchmarked results for a set of algorithms, layers, and files. This is helpful for generating results in a table, [website](https://go-compression.github.io/raisin/), or in bindings for other languages such as python (see the `ai` folder).
 
 Usage is relatively similar to the `compress` and `decompress` commands.
 
@@ -170,7 +170,7 @@ $ raisin benchmark -algorithm=lzss,huffman,arithmetic,gzip,[lzss,arithmetic] tes
 └─────────────────┴────────────┴───────────────────┴────────────────┴─────────────────────┴──────────┘
 ```
 
-A larger example, taken from the `.travis.yml` file to generate the [benchmark page](https://mrfleap.github.io/raisin/). Notice the `-generate` flag, this tells it to generate an html file and output it as `index.html`, which is then used and uploaded to the [GitHub Pages branch](https://github.com/go-compression/raisin/tree/gh-pages). Keep in mind the program expects a template file to be at `templates/benchmark.html` relative to your working directory. The command is as follows:
+A larger example, taken from the `.travis.yml` file to generate the [benchmark page](https://go-compression.github.io/raisin/). Notice the `-generate` flag, this tells it to generate an html file and output it as `index.html`, which is then used and uploaded to the [GitHub Pages branch](https://github.com/go-compression/raisin/tree/gh-pages). Keep in mind the program expects a template file to be at `templates/benchmark.html` relative to your working directory. The command is as follows:
 
 ```console
 $ raisin benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
