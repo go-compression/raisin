@@ -10,7 +10,7 @@ This project contains the source code for a summer mentorship about learning how
 
 ## Usage from the CLI
 
-To start using this package from the command line, install it with `go install`
+To start using this package from the command line, install it with `go get` and `go install`
 
 ```console
 $ go get -u github.com/go-compression/raisin
@@ -26,11 +26,11 @@ Compressing...
 Original bytes: 13
 Compressed bytes: 14
 Compression ratio: 107.69%
-$ cat test.txt.compressed
+$ cat test.txt.rsn
 �ӷ     �?��KD+
                �
 $ rm test.txt
-$ raisin -decompress test.txt.compressed
+$ raisin -decompress test.txt.rsn
 Decompressing...
 $ cat test.txt
 Hello world!
@@ -38,9 +38,9 @@ Hello world!
 
 The possible commands include:
 
-- `-compress` - Compress a given file and output the compressed contents to a file with ".compressed" at the end
-- `-decompress` - Decompress a given file and output the decompressed contents to a file without ".compressed" at the end
-- `-benchmark` - Benchmark a given file and measure the compression ratio, outputs a .compressed and a .decompressed file
+- `-compress` - Compress a given file and output the compressed contents to a file with ".rsn" at the end
+- `-decompress` - Decompress a given file and output the decompressed contents to a file without ".rsn" at the end
+- `-benchmark` - Benchmark a given file and measure the compression ratio, outputs a .rsn and a .decompressed file
 
 The most important flag is the `-algorithm` flag which allows you to specify which algorithm to use during compression, decompression, or benchmarking. By default for `compress` and `decompress` this is `lzss,arithmetic`. The possible algorithms include:
 
@@ -66,7 +66,7 @@ You can also combine algorithms together in "layers", this will essentially comp
 $ raisin -algorithm=lzss,huffman test.txt
 Compressing...
 Compression ratio: 307.69%
-$ raisin -decompress -algorithm=lzss,huffman test.txt.compressed
+$ raisin -decompress -algorithm=lzss,huffman test.txt.rsn
 Decompressing...
 ```
 
@@ -77,13 +77,13 @@ $ raisin test1.txt,test2.txt
 Compressing...
 Compression ratio: 68.53%
 $ ls
-test1.txt  test1.txt.compressed  test2.txt  test2.txt.compressed
+test1.txt  test1.txt.rsn  test2.txt  test2.txt.rsn
 ```
 
 When using `compress` and `decompress` a few more options become available to make it easy to use from the command line:
 
 - `delete` - Delete original file after compression/decompressed (defaults to true for decompression)
-- `out` - File name to be outputted (defaults to original file + .compressed for compression and file - .compressed for decompression, only available with a single file being compressed/decompressed)
+- `out` - File name to be outputted (defaults to original file + .rsn for compression and file - .rsn for decompression, only available with a single file being compressed/decompressed)
 - `outext` - File extension to be outputted when compressing multiple files (unavailable with a single file being compressed/decompressed)
 
 Let's take at the usage of `delete`, keep in mind that `delete` is on by default for `decompress`ing.
@@ -94,8 +94,8 @@ $ raisin -delete test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
-test.txt.compressed
-$ raisin -decompress -delete test.txt.compressed
+test.txt.rsn
+$ raisin -decompress -delete test.txt.rsn
 Decompressing...
 $ ls
 test.txt
@@ -103,7 +103,7 @@ $ raisin -delete=false test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
-test.txt  test.txt.compressed
+test.txt  test.txt.rsn
 ```
 
 The `out` command simply lets you change what file is outputted when compressing a single file:
@@ -121,7 +121,7 @@ $ ls
 test.txt  decompressed.txt
 ```
 
-`outext` is similar to `out` but exists for when we compress/decompress multiple files. If `outext` is provided, it will be used as the **out**put **ext**ension for the files. Note that the default for compression for outext is `.compressed` and for decompression it's an empty string (`outext=`) which tells the program to remove the last extension.
+`outext` is similar to `out` but exists for when we compress/decompress multiple files. If `outext` is provided, it will be used as the **out**put **ext**ension for the files. Note that the default for compression for outext is `.rsn` and for decompression it's an empty string (`outext=`) which tells the program to remove the last extension.
 
 ```console
 $ ls

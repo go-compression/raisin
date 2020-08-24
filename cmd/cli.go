@@ -106,9 +106,9 @@ func MainBehavior() []engine.Result {
 
 		var output, outputExtension *string
 		if len(files) == 1 {
-			output = flag.String("out", files[0]+".compressed", fmt.Sprintf("File name to output to"))
+			output = flag.String("out", files[0]+".rsn", fmt.Sprintf("File name to output to"))
 		} else {
-			outputExtension = flag.String("outext", "compressed", fmt.Sprintf("File extension used for the result"))
+			outputExtension = flag.String("outext", "rsn", fmt.Sprintf("File extension used for the result"))
 		}
 
 		deleteAfter := flag.Bool("delete", false, fmt.Sprintf("Delete file after compression"))
@@ -116,7 +116,7 @@ func MainBehavior() []engine.Result {
 		flag.Parse()
 
 		algorithms := strings.Split(*algorithm, ",")
-		for i := range files {
+		for i := range algorithms {
 			algorithms[i] = strings.TrimSpace(algorithms[i])
 		}
 
@@ -152,7 +152,7 @@ func MainBehavior() []engine.Result {
 		flag.Parse()
 
 		algorithms := strings.Split(*algorithm, ",")
-		for i := range files {
+		for i := range algorithms {
 			algorithms[i] = strings.TrimSpace(algorithms[i])
 		}
 
