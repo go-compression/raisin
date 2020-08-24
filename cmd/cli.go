@@ -1,4 +1,5 @@
-package main
+package cmd
+
 
 import (
 	"flag"
@@ -11,19 +12,16 @@ import (
 	// "github.com/pkg/profile" // Profiling package
 )
 
-// https://github.com/spf13/cobra#getting-started
-
 // Commands represents all possible commands that can be used durinv CLI invocation
 var Commands = [...]string{"compress", "decompress", "benchmark", "help"}
 
-func main() {
+
+// MainBehavior represents the main behavior function of the command line. This includes processing of flags and invoking of compression algorithms.
+func MainBehavior() []engine.Result {
 	// Profiling statement here V
 	// defer profile.Start().Stop()
 	// ^
-	mainBehavior()
-}
 
-func mainBehavior() []engine.Result {
 	application := os.Args[0]
 
 	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
@@ -35,7 +33,9 @@ func mainBehavior() []engine.Result {
 
 	commandArgs := make([]string, len(os.Args))
 	copy(commandArgs, os.Args)
-	commandArgs = append(commandArgs[1:2], "")
+	if len(commandArgs) > 1 {
+		commandArgs = append(commandArgs[1:2], "")
+	}
 	if commandArgs[0] == "-compress" || commandArgs[0] == "-decompress" || 
 		commandArgs[0] == "-benchmark" || commandArgs[0] == "-help" {
 			flag.CommandLine.Parse(commandArgs)
@@ -71,13 +71,18 @@ func mainBehavior() []engine.Result {
 	}
 
 	// Get flag argument that is not a flag "-algorithm..."
-	file := os.Args[1]
-	for i := 2; len(file) > 0 && file[0] == '-'; i++ {
-		file = os.Args[i]
+	var file string
+	if len(os.Args) > 1 {
+		file = os.Args[1]
+		for i := 2; len(file) > 0 && file[0] == '-'; i++ {
+			file = os.Args[i]
+		}
 	}
+
 
 	if file == "" && !strings.Contains(file, ",") {
 		if *compressCmd {
+			fmt.Println(file)
 			errorWithMsg("Please provide a file to be compressed\n")
 		} else if *benchmarkCmd {
 			errorWithMsg("Please provide a file to be benchmarked\n")

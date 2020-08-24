@@ -14,7 +14,7 @@ To start using this package from the command line, install it with `go install`
 
 ```console
 $ go get -u github.com/go-compression/raisin
-$ go install github.com/go-compression/raisin/...
+$ go install github.com/go-compression/raisin/cmd/...
 ```
 
 Once done, you should be able to start using it
