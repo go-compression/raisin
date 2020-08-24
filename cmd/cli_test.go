@@ -43,7 +43,7 @@ func testContents(t *testing.T, contents []byte, path string) {
 		os.Args = []string{"raisin", "-algorithm=" + algorithm, path}
 		MainBehavior()
 
-		os.Args = []string{"raisin", "-decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
+		os.Args = []string{"raisin", "-decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".rsn"}
 		MainBehavior()
 
 		var decompressed []byte
@@ -83,7 +83,7 @@ func BenchmarkMainBehavior(b *testing.B) {
 			os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
 			MainBehavior()
 
-			os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
+			os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".rsn"}
 			MainBehavior()
 
 			var decompressed []byte
