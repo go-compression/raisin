@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	// "fmt"
@@ -31,7 +31,7 @@ func testContents(t *testing.T, contents []byte, path string) {
 	check(err)
 
 	os.Args = []string{"raisin", "-benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
-	results := mainBehavior()
+	results := MainBehavior()
 
 	for _, result := range results {
 		if !result.Lossless && stringInSlice(result.CompressionEngine, losslessAlgorithms) {
@@ -41,10 +41,10 @@ func testContents(t *testing.T, contents []byte, path string) {
 
 	for _, algorithm := range algorithms {
 		os.Args = []string{"raisin", "-algorithm=" + algorithm, path}
-		mainBehavior()
+		MainBehavior()
 
 		os.Args = []string{"raisin", "-decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
-		mainBehavior()
+		MainBehavior()
 
 		var decompressed []byte
 		decompressed, err = ioutil.ReadFile(path)
@@ -71,7 +71,7 @@ func BenchmarkMainBehavior(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		os.Args = []string{"raisin", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
-		results := mainBehavior()
+		results := MainBehavior()
 
 		for _, result := range results {
 			if !result.Lossless && stringInSlice(result.CompressionEngine, losslessAlgorithms) {
@@ -81,10 +81,10 @@ func BenchmarkMainBehavior(b *testing.B) {
 
 		for _, algorithm := range algorithms {
 			os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
-			mainBehavior()
+			MainBehavior()
 
 			os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
-			mainBehavior()
+			MainBehavior()
 
 			var decompressed []byte
 			decompressed, err = ioutil.ReadFile(path)

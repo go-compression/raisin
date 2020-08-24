@@ -5,8 +5,9 @@ COMPRESSIONTESTFILE.txt
 decompressed.txt
 
 # Built binaries
-main
-raisin
+/main
+/raisin
+/grape
 
 # Binaries for programs and plugins
 *.exe
