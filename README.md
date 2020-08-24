@@ -21,7 +21,7 @@ Once done, you should be able to start using it
 
 ```console
 $ echo "Hello world!" > test.txt
-$ raisin compress test.txt
+$ raisin test.txt
 Compressing...
 Original bytes: 13
 Compressed bytes: 14
@@ -30,7 +30,7 @@ $ cat test.txt.compressed
 �ӷ     �?��KD+
                �
 $ rm test.txt
-$ raisin decompress test.txt.compressed
+$ raisin -decompress test.txt.compressed
 Decompressing...
 $ cat test.txt
 Hello world!
@@ -38,9 +38,9 @@ Hello world!
 
 The possible commands include:
 
-- `compress` - Compress a given file and output the compressed contents to a file with ".compressed" at the end
-- `decompress` - Decompress a given file and output the decompressed contents to a file without ".compressed" at the end
-- `benchmark` - Benchmark a given file and measure the compression ratio, outputs a .compressed and a .decompressed file
+- `-compress` - Compress a given file and output the compressed contents to a file with ".compressed" at the end
+- `-decompress` - Decompress a given file and output the decompressed contents to a file without ".compressed" at the end
+- `-benchmark` - Benchmark a given file and measure the compression ratio, outputs a .compressed and a .decompressed file
 
 The most important flag is the `-algorithm` flag which allows you to specify which algorithm to use during compression, decompression, or benchmarking. By default for `compress` and `decompress` this is `lzss,arithmetic`. The possible algorithms include:
 
@@ -57,23 +57,23 @@ The most important flag is the `-algorithm` flag which allows you to specify whi
 Here's an example of usage:
 
 ```console
-$ raisin compress -algorithm=arithmetic test.txt
+$ raisin -algorithm=arithmetic test.txt
 ```
 
 You can also combine algorithms together in "layers", this will essentially compress the file with the first algorithm, then the second, etc. This stacking of algorithms is what powers virtually all modern compression, gzip and zip is powered by the FLATE algorithm which is essentially lempel-ziv (similar to lzss) and huffman coding stacked on toip of each other.
 
 ```console
-$ raisin compress -algorithm=lzss,huffman test.txt
+$ raisin -algorithm=lzss,huffman test.txt
 Compressing...
 Compression ratio: 307.69%
-$ raisin decompress -algorithm=lzss,huffman test.txt.compressed
+$ raisin -decompress -algorithm=lzss,huffman test.txt.compressed
 Decompressing...
 ```
 
 On top of this, you can easily compress or decompress multiple files by chaining them together with commas.
 
 ```console
-$ raisin compress test1.txt,test2.txt
+$ raisin test1.txt,test2.txt
 Compressing...
 Compression ratio: 68.53%
 $ ls
@@ -90,16 +90,16 @@ Let's take at the usage of `delete`, keep in mind that `delete` is on by default
 
 ```console
 $ echo "Hello world!" > test.txt
-$ raisin compress -delete test.txt
+$ raisin -delete test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
 test.txt.compressed
-$ raisin decompress -delete test.txt.compressed
+$ raisin -decompress -delete test.txt.compressed
 Decompressing...
 $ ls
 test.txt
-$ raisin compress -delete=false test.txt
+$ raisin -delete=false test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
@@ -110,12 +110,12 @@ The `out` command simply lets you change what file is outputted when compressing
 
 ```console
 $ echo "Hello world!" > test.txt
-$ raisin compress -out=compressed.txt test.txt
+$ raisin -out=compressed.txt test.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
 test.txt  compressed.txt
-$ raisin decompress -out=decompressed.txt compressed.txt
+$ raisin -decompress -out=decompressed.txt compressed.txt
 Decompressing...
 $ ls
 test.txt  decompressed.txt
@@ -126,12 +126,12 @@ test.txt  decompressed.txt
 ```console
 $ ls
 test1.txt  test2.txt  test3.txt
-$ raisin compress -delete -outext=.testing test1.txt,test2.txt,test3.txt
+$ raisin -delete -outext=.testing test1.txt,test2.txt,test3.txt
 Compressing...
 Compression ratio: 107.69%
 $ ls
 test1.txt.testing  test2.txt.testing  test3.txt.testing
-$ raisin decompress -outext=.decompressed test1.txt.testing,test2.txt.testing,test3.txt.testing
+$ raisin -decompress -outext=.decompressed test1.txt.testing,test2.txt.testing,test3.txt.testing
 Decompressing...
 $ ls
 test1.txt  test2.txt  test3.txt
@@ -146,7 +146,7 @@ Usage is relatively similar to the `compress` and `decompress` commands.
 ```console
 $ echo "Hello world!" > test.txt
 $ echo "abcabcabcabcabcabcabcabc" > test2.txt
-$ raisin benchmark -algorithm=lzss,huffman,arithmetic,gzip,[lzss,arithmetic] test.txt,test2.txt
+$ raisin -benchmark -algorithm=lzss,huffman,arithmetic,gzip,[lzss,arithmetic] test.txt,test2.txt
 ┌─────────────────┬────────────┬───────────────────┬────────────────┬─────────────────────┬──────────┐
 │ ENGINE          │ TIME TAKEN │ COMPRESSION RATIO │ ACTUAL ENTROPY │ THEORETICAL ENTROPY │ LOSSLESS │
 ├─────────────────┼────────────┼───────────────────┼────────────────┼─────────────────────┼──────────┤
@@ -174,7 +174,7 @@ $ raisin benchmark -algorithm=lzss,huffman,arithmetic,gzip,[lzss,arithmetic] tes
 A larger example, taken from the `.travis.yml` file to generate the [benchmark page](https://go-compression.github.io/raisin/). Notice the `-generate` flag, this tells it to generate an html file and output it as `index.html`, which is then used and uploaded to the [GitHub Pages branch](https://github.com/go-compression/raisin/tree/gh-pages). Keep in mind the program expects a template file to be at `templates/benchmark.html` relative to your working directory. The command is as follows:
 
 ```console
-$ raisin benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
+$ raisin -benchmark -generate -algorithm=lzss,dmc,huffman,flate,gzip,lzw,zlib,arithmetic,[lzss,huffman],[lzss,arithmetic],[arithmetic,huffman] alice29.txt,asyoulik.txt,cp.html,fields.c,grammar.lsp,kennedy.xls,lcet10.txt,plrabn12.txt,ptt5,sum,xargs.1
 ```
 
 Shout-out to [jedib0t](https://github.com/jedib0t) for his wonderful [go-pretty module](https://github.com/jedib0t/go-pretty) for generating these tables and the HTML tables used in the GitHub Pages site.

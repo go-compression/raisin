@@ -30,7 +30,7 @@ func testContents(t *testing.T, contents []byte, path string) {
 	err := ioutil.WriteFile(path, contents, 0644)
 	check(err)
 
-	os.Args = []string{"raisin", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
+	os.Args = []string{"raisin", "-benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
 	results := mainBehavior()
 
 	for _, result := range results {
@@ -40,10 +40,10 @@ func testContents(t *testing.T, contents []byte, path string) {
 	}
 
 	for _, algorithm := range algorithms {
-		os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
+		os.Args = []string{"raisin", "-algorithm=" + algorithm, path}
 		mainBehavior()
 
-		os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
+		os.Args = []string{"raisin", "-decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".compressed"}
 		mainBehavior()
 
 		var decompressed []byte
