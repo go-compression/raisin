@@ -1,6 +1,5 @@
 package cmd
 
-
 import (
 	"flag"
 	"fmt"
@@ -14,7 +13,6 @@ import (
 
 // Commands represents all possible commands that can be used durinv CLI invocation
 var Commands = [...]string{"compress", "decompress", "benchmark", "help"}
-
 
 // MainBehavior represents the main behavior function of the command line. This includes processing of flags and invoking of compression algorithms.
 func MainBehavior() []engine.Result {
@@ -36,9 +34,9 @@ func MainBehavior() []engine.Result {
 	if len(commandArgs) > 1 {
 		commandArgs = append(commandArgs[1:2], "")
 	}
-	if commandArgs[0] == "-compress" || commandArgs[0] == "-decompress" || 
+	if commandArgs[0] == "-compress" || commandArgs[0] == "-decompress" ||
 		commandArgs[0] == "-benchmark" || commandArgs[0] == "-help" {
-			flag.CommandLine.Parse(commandArgs)
+		flag.CommandLine.Parse(commandArgs)
 	}
 
 	var generateHTML *bool
@@ -79,10 +77,8 @@ func MainBehavior() []engine.Result {
 		}
 	}
 
-
 	if file == "" && !strings.Contains(file, ",") {
 		if *compressCmd {
-			fmt.Println(file)
 			errorWithMsg("Please provide a file to be compressed\n")
 		} else if *benchmarkCmd {
 			errorWithMsg("Please provide a file to be benchmarked\n")
