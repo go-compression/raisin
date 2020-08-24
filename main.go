@@ -26,15 +26,20 @@ func main() {
 func mainBehavior() []engine.Result {
 	application := os.Args[0]
 
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+
 	compressCmd := flag.Bool("compress", false, "Compress file")
-	decompressCmd := flag.CommandLine.Bool("decompress", false, "Decompress file")
-	benchmarkCmd := flag.CommandLine.Bool("benchmark", false, "Benchmark file")
+	decompressCmd := flag.Bool("decompress", false, "Decompress file")
+	benchmarkCmd := flag.Bool("benchmark", false, "Benchmark file")
 	helpCmd := flag.Bool("help", false, "Help")
 
 	commandArgs := make([]string, len(os.Args))
 	copy(commandArgs, os.Args)
 	commandArgs = append(commandArgs[1:2], "")
-	flag.CommandLine.Parse(commandArgs)
+	if commandArgs[0] == "-compress" || commandArgs[0] == "-decompress" || 
+		commandArgs[0] == "-benchmark" || commandArgs[0] == "-help" {
+			flag.CommandLine.Parse(commandArgs)
+	}
 
 	var generateHTML *bool
 	if *benchmarkCmd {
