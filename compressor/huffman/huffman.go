@@ -1,4 +1,4 @@
-package huffman
+package main
 
 import (
 	"container/heap"
@@ -69,6 +69,7 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 	}
 	sort.Ints(keys)
 	sort.Ints(values)
+
 	var temp1 []rune
 	var temp2 []int
 	//symFreqs2 := make(map[rune]int)
@@ -78,6 +79,8 @@ func buildTree(symFreqs map[rune]int) HuffmanTree {
 				temp1 = append(temp1, rune(key))
 				temp2 = append(temp2, value)
 				keys = remove(keys, i)
+				sort.Ints(keys)
+				sort.Ints(values)
 				break
 			}
 		}
@@ -196,15 +199,25 @@ func decodeTree(tree string) HuffmanTree {
 	var freq int
 	for i := 0; i < len(tree); i++ {
 		if string(tree[i]) != "|" {
-			fmt.Fprintf(&temp, "%s", string(tree[i]))
+
+			if _, err := strconv.Atoi(string(tree[i])); err == nil {
+				fmt.Fprintf(&temp, "%s", string(tree[i]))
+			}
 		} else {
-			freq, _ = strconv.Atoi(temp.String())
+			freq, _ = strconv.Atoi(strings.TrimSpace(temp.String()))
+
 			temp.Reset()
 			if string(tree[i+1]) == "\\" && string(tree[i+2]) == "n" {
 				symFreqs[10] = freq
 				i++
 			} else {
-				symFreqs[rune(tree[i+1])] = freq
+				for j, c := range tree {
+					if j == i+1 {
+
+						symFreqs[c] = freq
+						break
+					}
+				}
 			}
 			i++
 		}
@@ -219,10 +232,9 @@ func encode(tree HuffmanTree, input string) []byte {
 	tempV := make([]rune, 0)
 	tempB := make([]string, 0)
 	vals, bin := printCodes(tree, []byte{}, tempV, tempB)
-
-	for i := 0; i < len(input); i++ {
-		if indexOf(rune(input[i]), vals) != -1 {
-			fmt.Fprintf(&answer, "%s", bin[indexOf(rune(input[i]), vals)])
+	for _, c := range input {
+		if indexOf(c, vals) != -1 {
+			fmt.Fprintf(&answer, "%s", bin[indexOf(c, vals)])
 		} else {
 			fmt.Fprintf(&answer, "%s", bin[0])
 		}
@@ -231,6 +243,7 @@ func encode(tree HuffmanTree, input string) []byte {
 	//Println(len(answer))
 
 	diff := bitString(string(strconv.FormatInt(int64(8-len(answer.String())%8), 2)))
+
 	if diff == "1000" {
 		diff = bitString("0")
 	}
@@ -303,6 +316,7 @@ func Compress(fileContents []byte) []byte {
 			fmt.Fprintf(&estring, "%s|\\n", strconv.Itoa(val))
 		}
 	}
+	//fmt.Println(estring.String())
 	exampleTree := buildTree(symFreqs)
 
 	out := encode(exampleTree, content)
@@ -328,10 +342,12 @@ func main() {
 	for key, val := range symFreqs {
 		if key != 10 {
 			fmt.Fprintf(&estring, "%s|%s", strconv.Itoa(val), string(key))
+
 		} else {
 			fmt.Fprintf(&estring, "%s|\\n", strconv.Itoa(val))
 		}
 	}
+
 	exampleTree := buildTree(symFreqs)
 
 	out := encode(exampleTree, content)
