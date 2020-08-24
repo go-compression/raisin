@@ -24,24 +24,45 @@ func main() {
 }
 
 func mainBehavior() []engine.Result {
-	compressCmd := flag.NewFlagSet("compress", flag.ExitOnError)
+	application := os.Args[0]
 
-	decompressCmd := flag.NewFlagSet("decompress", flag.ExitOnError)
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
-	benchmarkCmd := flag.NewFlagSet("benchmark", flag.ExitOnError)
+	compressCmd := flag.Bool("compress", false, "Compress file")
+	decompressCmd := flag.Bool("decompress", false, "Decompress file")
+	benchmarkCmd := flag.Bool("benchmark", false, "Benchmark file")
+	helpCmd := flag.Bool("help", false, "Help")
 
-	generateHTML := benchmarkCmd.Bool("generate", false, "Compile benchmark results as an html file")
-
-	flag.Parse()
-	command := flag.Arg(0)
-	if command == "" {
-		errorWithMsg(fmt.Sprintf(
-			"Please provide a valid command, possible commands include: \n\t %s\n", strings.Join(Commands[:], ", ")))
+	commandArgs := make([]string, len(os.Args))
+	copy(commandArgs, os.Args)
+	commandArgs = append(commandArgs[1:2], "")
+	if commandArgs[0] == "-compress" || commandArgs[0] == "-decompress" || 
+		commandArgs[0] == "-benchmark" || commandArgs[0] == "-help" {
+			flag.CommandLine.Parse(commandArgs)
 	}
 
-	// Non compression commands
-	switch command {
-	case "help":
+	var generateHTML *bool
+	if *benchmarkCmd {
+		generateHTML = flag.Bool("generate", false, "Compile benchmark results as an html file")
+	}
+
+	commandsSelected := boolsTrue([]bool{*compressCmd, *decompressCmd, *benchmarkCmd, *helpCmd})
+
+	if commandsSelected > 1 {
+		errorWithMsg(fmt.Sprintf(
+			"Please specify a single command. \n"))
+	} else if commandsSelected < 1 {
+		True := true
+		if strings.HasSuffix(application, "grape") {
+			decompressCmd = &True
+		} else {
+			compressCmd = &True
+		}
+		// errorWithMsg(fmt.Sprintf(
+		// 	"Please specify at least one command. \n"))
+	}
+
+	if *helpCmd {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Valid commands include: \n\t %s\n", strings.Join(Commands[:], ", "))
 		fmt.Fprintf(os.Stderr, "Flags:\n")
@@ -50,13 +71,19 @@ func mainBehavior() []engine.Result {
 	}
 
 	// Get flag argument that is not a flag "-algorithm..."
-	file := flag.Arg(1)
+	file := os.Args[1]
 	for i := 2; len(file) > 0 && file[0] == '-'; i++ {
-		file = flag.Arg(i)
+		file = os.Args[i]
 	}
 
 	if file == "" && !strings.Contains(file, ",") {
-		errorWithMsg("Please provide a file to be compressed/decompressed\n")
+		if *compressCmd {
+			errorWithMsg("Please provide a file to be compressed\n")
+		} else if *benchmarkCmd {
+			errorWithMsg("Please provide a file to be benchmarked\n")
+		} else {
+			errorWithMsg("Please provide a file to be decompressed\n")
+		}
 	} else if strings.Contains(file, ",") {
 		for _, filename := range strings.Split(file, ",") {
 			if _, err := os.Stat(filename); os.IsNotExist(err) {
@@ -67,9 +94,8 @@ func mainBehavior() []engine.Result {
 		errorWithMsg(fmt.Sprintf("Could not open file (likely does not exist): %s\n", file))
 	}
 
-	switch command {
-	case "compress", "c":
-		algorithm := compressCmd.String("algorithm", "lzss,arithmetic",
+	if *compressCmd {
+		algorithm := flag.String("algorithm", "lzss,arithmetic",
 			fmt.Sprintf("Which algorithm(s) to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
 		files := strings.Split(file, ",")
@@ -79,15 +105,14 @@ func mainBehavior() []engine.Result {
 
 		var output, outputExtension *string
 		if len(files) == 1 {
-			output = compressCmd.String("out", files[0]+".compressed", fmt.Sprintf("File name to output to"))
+			output = flag.String("out", files[0]+".compressed", fmt.Sprintf("File name to output to"))
 		} else {
-			outputExtension = compressCmd.String("outext", "compressed", fmt.Sprintf("File extension used for the result"))
+			outputExtension = flag.String("outext", "compressed", fmt.Sprintf("File extension used for the result"))
 		}
 
-		deleteAfter := compressCmd.Bool("delete", false, fmt.Sprintf("Delete file after compression"))
+		deleteAfter := flag.Bool("delete", false, fmt.Sprintf("Delete file after compression"))
 
-		posAfterCommand := getPosAfterCommand("compress", os.Args)
-		compressCmd.Parse(os.Args[posAfterCommand:])
+		flag.Parse()
 
 		algorithms := strings.Split(*algorithm, ",")
 		for i := range files {
@@ -103,8 +128,8 @@ func mainBehavior() []engine.Result {
 		if *deleteAfter {
 			deleteFiles(files)
 		}
-	case "decompress", "d":
-		algorithm := decompressCmd.String("algorithm", "lzss,arithmetic",
+	} else if *decompressCmd {
+		algorithm := flag.String("algorithm", "lzss,arithmetic",
 			fmt.Sprintf("Which algorithm(s) to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
 		files := strings.Split(file, ",")
@@ -116,15 +141,14 @@ func mainBehavior() []engine.Result {
 		if len(files) == 1 {
 			ext := filepath.Ext(files[0])
 			path := strings.TrimSuffix(files[0], ext)
-			output = decompressCmd.String("out", path, fmt.Sprintf("File name to output to"))
+			output = flag.String("out", path, fmt.Sprintf("File name to output to"))
 		} else {
-			outputExtension = decompressCmd.String("outext", "", fmt.Sprintf("File extension used for the result"))
+			outputExtension = flag.String("outext", "", fmt.Sprintf("File extension used for the result"))
 		}
 
-		deleteAfter := decompressCmd.Bool("delete", true, fmt.Sprintf("Delete file after compression"))
+		deleteAfter := flag.Bool("delete", true, fmt.Sprintf("Delete file after compression"))
 
-		posAfterCommand := getPosAfterCommand("decompress", os.Args)
-		decompressCmd.Parse(os.Args[posAfterCommand:])
+		flag.Parse()
 
 		algorithms := strings.Split(*algorithm, ",")
 		for i := range files {
@@ -140,12 +164,11 @@ func mainBehavior() []engine.Result {
 		if *deleteAfter {
 			deleteFiles(files)
 		}
-	case "benchmark":
-		algorithm := benchmarkCmd.String("algorithm", "lzss,arithmetic,huffman,[lzss,arithmetic],gzip",
+	} else if *benchmarkCmd {
+		algorithm := flag.String("algorithm", "lzss,arithmetic,huffman,[lzss,arithmetic],gzip",
 			fmt.Sprintf("Which algorithm(s) to use, choices include: \n\t%s", strings.Join(engine.Engines[:], ", ")))
 
-		posAfterCommand := getPosAfterCommand("benchmark", os.Args)
-		benchmarkCmd.Parse(os.Args[posAfterCommand:])
+		flag.Parse()
 
 		if file == "help" {
 			fmt.Fprintf(os.Stderr, "Flags:\n")
@@ -167,11 +190,11 @@ func mainBehavior() []engine.Result {
 			fmt.Println("Wrote table to index.html")
 		}
 		return results
-	default:
+	} else {
 		errorWithMsg(fmt.Sprintf(
 			"'%s' is not a valid command, "+
 				"please provide a valid command, "+
-				"possible commands include: \n\t %s\n", command, strings.Join(Commands[:], ", ")))
+				"possible commands include: \n\t %s\n", "", strings.Join(Commands[:], ", ")))
 	}
 	return nil
 }
@@ -211,6 +234,17 @@ func deleteFiles(files []string) {
 		err := os.Remove(file)
 		check(err)
 	}
+}
+
+func boolsTrue(bools []bool) int {
+	found := 0
+	for _, boolean := range bools {
+		if boolean {
+			found++
+		}
+	}
+	return found
+
 }
 
 func getPosAfterCommand(command string, args []string) int {
