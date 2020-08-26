@@ -70,7 +70,7 @@ func BenchmarkMainBehavior(b *testing.B) {
 	// os.Stderr = w
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		os.Args = []string{"raisin", "benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
+		os.Args = []string{"raisin", "-benchmark", "-algorithm=" + strings.Join(algorithms, ","), path}
 		results := MainBehavior()
 
 		for _, result := range results {
@@ -80,10 +80,10 @@ func BenchmarkMainBehavior(b *testing.B) {
 		}
 
 		for _, algorithm := range algorithms {
-			os.Args = []string{"raisin", "compress", "-algorithm=" + algorithm, path}
+			os.Args = []string{"raisin", "-compress", "-algorithm=" + algorithm, path}
 			MainBehavior()
 
-			os.Args = []string{"raisin", "decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".rsn"}
+			os.Args = []string{"raisin", "-decompress", "-algorithm=" + algorithm, "-out=out.decompressed", path + ".rsn"}
 			MainBehavior()
 
 			var decompressed []byte
