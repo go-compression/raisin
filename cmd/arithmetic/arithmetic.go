@@ -1,30 +1,23 @@
 package main
 
 import (
-	"bytes"
+	// "bytes"
 	"fmt"
-	"github.com/go-compression/raisin/compressor/arithmetic"
+	"github.com/go-compression/raisin/compressor/arithmetic_logical"
 	"syscall/js"
 )
 
 func main() {
+	// arithmeticEncode("TEST")
 	js.Global().Set("arithmeticEncode", jsonWrapper())
 	<-make(chan bool)
 }
 
-func arithmeticEncode(input string) string {
+func arithmeticEncode(input string) (float64, float64) {
 	fmt.Println("Compressing", input)
 
-	var output bytes.Buffer
-
-	w := arithmetic.NewWriter(&output)
-
-	w.Write([]byte(input))
-	w.Close()
-
-	compressed := output.Bytes()
-	fmt.Println("Compressed", string(compressed))
-	return string(compressed)
+	bot, top := arithmetic_logical.Range([]byte(input))
+	return bot, top
 }
 
 func jsonWrapper() js.Func {
@@ -33,8 +26,8 @@ func jsonWrapper() js.Func {
 			return "Invalid no of arguments passed"
 		}
 		input := args[0].String()
-		output := arithmeticEncode(input)
-		return output
+		bot, top := arithmeticEncode(input)
+		return []interface{}{bot, top}
 	})
 	return jsonFunc
 }
