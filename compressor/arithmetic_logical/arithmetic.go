@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"sort"
+	// "sort"
 	"strconv"
 	"strings"
 )
@@ -55,11 +55,25 @@ func (b bitString) AsByteSlice() []byte {
 	return out
 }
 
+func Range(input []byte) (float64, float64) {
+	freqs := buildFreqTable(input)
+	keys := buildKeys(freqs, input)
+
+	bits, top, bot := encode(true, keys, freqs, input)
+	binaryLocation := bits + getRootBinaryPosition(top, bot) + "1"
+
+	bot, top = bitsToRange(binaryLocation)
+
+	_, shouldBeTop, shouldBeBot := encode(false, keys, freqs, input)
+
+	return shouldBeBot, shouldBeTop
+}
+
 func Compress(input []byte) []byte {
-	// freqs := buildFreqTable(input)
-	freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
+	freqs := buildFreqTable(input)
+	// freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
 	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
-	keys := buildKeys(freqs)
+	keys := buildKeys(freqs, input)
 	printFreqs(freqs, keys)
 
 	// bits := encode(keys, freqs, input)
@@ -88,7 +102,7 @@ func Decompress(input []byte) []byte {
 
 	freqs := map[byte]float64{'H': 0.2, 'e': 0.2, 'l': 0.4, 'o': 0.2} // testing
 	// freqs := map[byte]float64{'H': 0.5, 'I': 0.5} // testing
-	keys := buildKeys(freqs)
+	keys := buildKeys(freqs, input)
 	printFreqs(freqs, keys)
 
 	output := decode(keys, freqs, bits)
@@ -270,16 +284,28 @@ func buildFreqTable(input []byte) map[byte]float64 {
 	for c, freq := range symFreqs {
 		symFreqsWhole[c] = float64(freq) / float64(total)
 	}
+
 	return symFreqsWhole
 }
 
-func buildKeys(freqs map[byte]float64) sortBytes {
+func buildKeys(freqs map[byte]float64, input []byte) sortBytes {
 	keys := make(sortBytes, 0)
-	for k := range freqs {
-		keys = append(keys, k)
+	for _, k := range input {
+		if !contains(keys, k) {
+			keys = append(keys, k)
+		}
 	}
-	sort.Sort(keys)
+	// sort.Sort(keys)
 	return keys
+}
+
+func contains(s []byte, e byte) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
 
 func printFreqs(freqs map[byte]float64, keys sortBytes) {
